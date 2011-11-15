@@ -1,0 +1,31 @@
+autodetach on
+bell_msg "^G"
+defencoding utf-8
+encoding utf-8 utf-8
+defscrollback 10000
+escape ^z^z
+startup_message off
+
+caption always "%{= Wk} %-w%{=u R}%n %t%{-}%+w %= %{= Wk} [%l] %{= Wk}%m/%d %{= Wk}%c"
+
+bind n screen
+bind k prev
+bind h kill
+bind j next
+bind l windowlist
+bind q remove
+
+
+termcapinfo xterm-256color 'is=rmJH?7h?1;4;6l'
+termcapinfo xterm 'is=rmJH?7h?1;4;6l'
+
+vbell on
+vbell_msg "Wuff, Wuff!!!!"
+
+screen -t first   0
+screen -t second  1
+screen -t third   2
+screen -t forth   3
+
+
+select 0

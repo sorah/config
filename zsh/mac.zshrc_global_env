@@ -1,0 +1,25 @@
+
+export PATHTOVIM=/Applications/MacVim.app/Contents/MacOS/Vim
+export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
+
+alias vmrun="/Library/Application\ Support/VMware\ Fusion/vmrun"
+alias vim='/Applications/MacVim.app/Contents/MacOS/Vim -g --remote-tab 2>/dev/null >/dev/null'
+alias -g Vim='/Applications/MacVim.app/Contents/MacOS/Vim'
+
+alias ls='ls -G'
+alias app="open -a"
+
+# homebrew
+export LDFLAGS="-L/Users/sorah/brew/lib $CFLAGS"
+export CPPFLAGS="-isystem /Users/sorah/brew/include $CPPFLAGS"
+export NODE_PATH=/Users/sorah/brew/lib/node
+export PATH=~/brew/bin:$PATH
+
+update_terminal_cwd() {
+    local SEARCH=' '
+    local REPLACE='%20'
+    local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
+    printf '%s' "$PWD_URL"
+    printf '\e]7;%s\a' "$PWD_URL"
+}
+
