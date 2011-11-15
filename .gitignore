@@ -2,4 +2,4 @@ vim/dot.vim/other/private.vim
 vim/dot.vim/autoload/*.so
 .DS_Store
 vim/dot.vim/.netrwhist
-vim/dot.vim/.vim/other/private.vim
+vim/dot.vim/other/private.vim
