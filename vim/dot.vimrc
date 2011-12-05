@@ -34,22 +34,23 @@ endif
 "}}}
 
 "reset
-set runtimepath&
-if has('win32') || has('win64')
+
+if has('vim_starting') && (has('win32') || has('win64'))
   set runtimepath+=~/git/config/vim/dot.vim
 endif
 
-"pathogen
+" mrkn256
 filetype off
 
 if has('vim_starting')
   set runtimepath+=$VIMFILES/neobundle.vim
   call neobundle#rc(expand('~/.bundle'))
 endif
-NeoBundle 'Align.vim'
+"NeoBundle 'mrkn/mrkn256.vim'
+NeoBundle 'mattn/webapi-vim'
+NeoBundle 'tyru/restart.vim'
+NeoBundle 'git@github.com:sorah/metarw-simplenote.vim.git'
 NeoBundle 'tpope/vim-rails'
-NeoBundle 'rubycomplete.vim'
-NeoBundle 'mrkn/mrkn256.vim'
 NeoBundle 'sudo.vim'
 NeoBundle 'plasticboy/vim-markdown'
 NeoBundle 'motemen/git-vim'
@@ -70,6 +71,7 @@ NeoBundle 'Shougo/vimproc'
 NeoBundle 'Shougo/vimshell'
 NeoBundle 'ujihisa/vimshell-ssh'
 NeoBundle 'mattn/zencoding-vim'
+NeoBundle 'godlygeek/csapprox'
 filetype on
 filetype plugin on
 filetype indent on
@@ -224,11 +226,9 @@ set helplang=es
 lang en_US.UTF-8
 
 "color settings {{{
-set t_Co=256
 set t_AB=[48;5;%dm
 set t_AF=[38;5;%dm
-if !has('gui_running')
-endif
+set t_Co=256
 colorscheme mrkn256
 "}}}
 
@@ -340,7 +340,6 @@ command! -bar -bang -nargs=? -complete=file Scouter
 
 
 "neocomplcache settings
-let g:neocomplcache_enable_quick_match = 0
 let g:neocomplcache_enable_camel_case_completion = 1
 let g:neocomplcache_enable_underbar_completion = 1
 let g:NeoComplCache_enable_info = 1
@@ -423,16 +422,16 @@ nnoremap <silent> te :tabe<Cr>
 let g:Align_xstrlen=3
 
 "th :tabe ~/
-nnoremap th :tabe ~/
-nnoremap ts :tabe ~/sandbox/
-nnoremap tr :tabe ~/sandbox/ruby/
-nnoremap tt :tabe ~/git/ruby/termtter/
-nnoremap tg :tabe ~/git
-nnoremap eh :e ~/
-nnoremap es :e ~/sandbox/
-nnoremap er :e ~/sandbox/ruby/
-nnoremap et :e ~/git/ruby/termtter/
-nnoremap eg :e ~/git
+nnoremap th :<C-u>tabe ~/
+nnoremap ts :<C-u>tabe ~/sandbox/
+nnoremap tr :<C-u>tabe ~/git/ruby/ruby/
+nnoremap tt :<C-u>cd ~/git/ruby/ruby<Cr>:<C-u>Unite -start-insert file_rec<Cr>
+nnoremap tg :<C-u>tabe ~/git
+nnoremap eh :<C-u>e ~/
+nnoremap es :<C-u>e ~/sandbox/
+nnoremap er :<C-u>e ~/sandbox/ruby/
+nnoremap et :<C-u>e ~/git/ruby/termtter/
+nnoremap eg :<C-u>e ~/git
 
 "q -> C-o
 nnoremap q <C-o>
@@ -551,7 +550,7 @@ endif
 
 "vimproc
 if has('mac')
-  let g:vimproc_dll_path=$VIMFILES."/bundle/vimproc/autoload/proc.bundle"
+  "  let g:vimproc_dll_path=$VIMFILES."/bundle/vimproc/autoload/proc.bundle"
 endif
 if has('win32') || has('win64')
   "let g:vimproc_dll_path=$VIMFILES."/autoload/proc.dll"
@@ -711,6 +710,11 @@ function! OpenNoteHkn(a,b,c)
 endfunction
 command! -nargs=1 -complete=custom,OpenNoteHkn Note call s:OpenNotes(<q-args>)
 nnoremap <C-e> :<C-u>Note 
+
+" metarw
+call metarw#define_wrapper_commands(1)
+
+let g:metarw_simplenote_email = "sorah@tubusu.net"
 
 " RSpec
 function! s:QuickRunRSpecWithoutLine()

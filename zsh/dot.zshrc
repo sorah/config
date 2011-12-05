@@ -25,10 +25,7 @@ export PATH=~/rubies/bin:~/rubies/gem/bin:$PATH
 export PATH=./local/bin:$PATH
 
 # Other env-vars
-export LANG="en_US.UTF-8"
-if [[ -x `which few` ]] then
-  export GIT_PAGER=few
-fi
+export LANG=C
 export LESS='-R'
 
 #aliases
@@ -81,32 +78,6 @@ fi
 change_window_title() { echo -ne "\ek$1\e\\" }
 
 precmd () {
-  # git
-  local git_prompt
-  git_prompt="
-<<'EOS'
-require \"git\"
-require \"notify\"
-path = File.expand_path Dir.pwd
-git = Git.open(path) rescue exit
-changed = git.status.changed.length
-begin
-local = git.log.between(\"origin/master\", \"HEAD\").count
-rescue Git::GitExecuteError
-local = git.log.between(\"master\", \"HEAD\").count
-end
-str = git.current_branch+\"\\n\"
-str << \"#{changed} changes\\n\" if changed > 0
-str << \"#{local} local commits\" if local > 0
-STDOUT.reopen(open(\"/dev/null\",\"w\"))
-STDERR.reopen(open(\"/dev/null\",\"w\"))
-Notify.notify \"git\", str
-EOS
-  "
-  #$RUBY -e '
-  #spawn "'$RUBY'","-e",'$git_prompt'
-  #' 2>/dev/null
-
   # pwd & cmd @ screen
   if [ "$WINDOW" ]; then
     change_window_title `$RUBY -e'
@@ -203,7 +174,7 @@ mds-off() {
 
 
 # irclog4tumblr
-alias i4t="perl -e 'while(<>){s/^..:.. //g;s/flans/akazora/g;print;}'"
+alias i4t="perl -e 'while(<>){s/^...... //g;s/flans/akazora/g;print;}'"
 
 # screen
 if [ "$VIMSHELL" ]; then
