@@ -30,7 +30,10 @@ export LESS='-R'
 
 #aliases
 alias g=git
-alias privs="screen -t privs ssh privs.net"
+alias privs="screen -t privs ssh -A privs.net"
+alias menheler="screen -t menheler ssh -A menheler.pasra.tk"
+alias mayfield="screen -t mayfield ssh -A mayfield.privs.net"
+alias stone9999="sudo stone localhost:4444 localhost:443"
 
 export RUBY=`which ruby`
 
