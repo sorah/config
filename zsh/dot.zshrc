@@ -25,7 +25,7 @@ export PATH=~/rubies/bin:~/rubies/gem/bin:$PATH
 export PATH=./local/bin:$PATH
 
 # Other env-vars
-export LANG=C
+export LANG=en_US.UTF-8
 export LESS='-R'
 
 #aliases
