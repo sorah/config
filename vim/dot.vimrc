@@ -72,6 +72,7 @@ NeoBundle 'Shougo/vimshell'
 NeoBundle 'ujihisa/vimshell-ssh'
 NeoBundle 'mattn/zencoding-vim'
 NeoBundle 'godlygeek/csapprox'
+NeoBundle 'ujihisa/shadow.vim'
 filetype on
 filetype plugin on
 filetype indent on
@@ -801,6 +802,14 @@ augroup MyObjC
 augroup END
 
 let g:yakiudon_root  = "http://d.ajunk.org/"
+
+"quickrun customize for competitive programming
+function! s:CompetitiveSetup()
+  let b:input_tmp = tempname()
+  nnoremap <buffer> <Leader>r :<C-u>exe "QuickRun <".b:input_tmp<Cr>
+  exe "rightbelow vsplit ".b:input_tmp
+endfunction
+command! QuickComp call s:CompetitiveSetup()
 
 "read other vimrc files
 if filereadable($VIMFILES."/other/private.vim")
