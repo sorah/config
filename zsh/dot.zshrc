@@ -197,10 +197,10 @@ if [ ! "$TMUX" -a ! "$WINDOW" -a ! "$VIMSHELL" ]; then
     echo "set -g prefix ^Z" > ~/.tmux.prefix
   fi
 
-  if tmux ls > /dev/null 2>&1 ; then
-    exec tmux attach
+  if tmux has-session; then
+    exec tmux -2 attach
   else
-    exec tmux
+    exec tmux -2
   fi
 fi
 
