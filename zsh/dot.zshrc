@@ -1,5 +1,5 @@
 # sorah's zshrc
-# これはUTF-8
+# この書類のエンコーディングはUTF-8
 
 # Set path in ~/git
 for f in ~/git/*/*/bin
