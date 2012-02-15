@@ -190,29 +190,21 @@ elif [ ! -L "$SSH_AUTH_SOCK" ]; then
   ln -snf "$SSH_AUTH_SOCK" $agent && export SSH_AUTH_SOCK=$agent
 fi
 
-# screen
-if [ "$VIMSHELL" ]; then
-  export PROMPT="|%m| @ %~ $ "
-  export PROMPT2='%_%(?.%f.%S%F) %# '
-fi
-
-if [ ! "$TMUX" ]; then
-  if [ $TERM != "screen" ]; then
-    if [ ! "$VIMSHELL" ]; then
-      if [ ! "$WINDOW" ]; then
-        export TERM=xterm-256color
-        exec screen -UxR
-      fi
-    fi 
+if [ ! "$TMUX" -a ! "$WINDOW" -a ! "$VIMSHELL" ]; then
+  if [ "$SSH_CLIENT" ]; then
+    echo "set -g prefix ^X" > ~/.tmux.prefix
   else
-    if [ ! "$WINDOW" ]; then
-      export TERM=xterm-256color
-      exec screen -UxR
-    fi
-  fi 
+    echo "set -g prefix ^Z" > ~/.tmux.prefix
+  fi
+
+  if tmux ls > /dev/null 2>&1 ; then
+    exec tmux attach
+  else
+    exec tmux
+  fi
 fi
 
-if [ "$WINDOW" ]; then
+if [ "$WINDOW" -o "$TMUX" ]; then
   export TERM=xterm-256color
 fi
 
