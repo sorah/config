@@ -68,8 +68,8 @@ setopt share_history        # share command history data
 
 
 # Load cdd
-if [[ -s ~/git/config/script/cdd ]] then
-  source ~/git/config/script/cdd
+if [[ -s ~/git/config/script/cdd/cdd ]] then
+  source ~/git/config/script/cdd/cdd
   function chpwd() {
     _reg_pwd_screennum
   }

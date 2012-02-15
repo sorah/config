@@ -2,3 +2,6 @@
 [submodule "vim/dot.vim/neobundle.vim"]
 	path = vim/dot.vim/neobundle.vim
 	url = https://github.com/Shougo/neobundle.vim.git
+[submodule "script/cdd"]
+	path = script/cdd
+	url = https://github.com/m4i/cdd.git
