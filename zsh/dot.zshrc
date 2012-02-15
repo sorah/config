@@ -87,57 +87,13 @@ change_window_title() { tmux rename-window -t $TMUX_WINDOW "$*" }
 precmd () {
   # pwd & cmd @ screen
   if [ "$WINDOW" -o "$TMUX" ]; then
-    change_window_title `$RUBY -e'
-    a = ENV["PWD"];
-
-    h = File.exist?("#{ENV["HOME"]}/.cdd") \
-      ? Hash[File.read("#{ENV["HOME"]}/.cdd") \
-                 .split(/\r?\n/) \
-                 .map{|m| x = m.split(/:/);
-                          [File.expand_path(x[1..-1].join),x[0]] } \
-                 .compact] \
-      : nil
-
-    if h
-      n = h.select{|dir,tag| /^\d+$/ =~ tag } \
-           .reject{|dir,tag| tag == ENV["WINDOW"]}
-      m = h.reject{|dir,tag| /^\d+$/ =~ tag }
-    end
-    if (r = m[a] || n[a])
-      print r
-    else
-      a = a.sub(ENV["HOME"],"~").split(/\//); a << "/" if a.empty?;
-      print (a.size > 4 ? a[0..-2].map{|x| x[0] } << a[-1] : a).join("/")
-    end
-    '`
+    change_window_title `$RUBY ~/git/config/script/cdd_title.rb`
   fi
 }
 
 function preexec() {
   if [ "$WINDOW" -o "$TMUX" ]; then
-    change_window_title `$RUBY -e'
-    a = ENV["PWD"];
-
-    h = File.exist?("#{ENV["HOME"]}/.cdd") \
-      ? Hash[File.read("#{ENV["HOME"]}/.cdd") \
-                 .split(/\r?\n/) \
-                 .map{|m| x = m.split(/:/);
-                          [File.expand_path(x[1..-1].join),x[0]] } \
-                 .compact] \
-      : nil
-
-    if h
-      n = h.select{|dir,tag| /^\d+$/ =~ tag } \
-           .reject{|dir,tag| tag == ENV["WINDOW"]}
-      m = h.reject{|dir,tag| /^\d+$/ =~ tag }
-    end
-    if (r = m[a] || n[a])
-      print r
-    else
-      a = a.sub(ENV["HOME"],"~").split(/\//); a << "/" if a.empty?;
-      print (a.size > 4 ? a[0..-2].map{|x| x[0] } << a[-1] : a).join("/")
-    end
-    '`:`$RUBY -e"
+    change_window_title `$RUBY ~/git/config/script/cdd_title.rb`:`$RUBY -e"
     print (<<-EOF.split(' ')[0])
     $1
     EOF"`
