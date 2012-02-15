@@ -34,6 +34,7 @@ alias g=git
 alias privs="screen -t privs ssh -A privs.net"
 alias menheler="screen -t menheler ssh -A menheler.pasra.tk"
 alias mayfield="screen -t mayfield ssh -A mayfield.privs.net"
+alias fairfield="screen -t fairfield ssh fairfield-l" # have to set fairfield's ip on /etc/hosts
 alias stone9999="sudo stone localhost:4444 localhost:443"
 
 export RUBY=`which ruby`
