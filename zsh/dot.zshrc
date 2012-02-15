@@ -31,10 +31,10 @@ export LESS='-R'
 
 #aliases
 alias g=git
-alias privs="screen -t privs ssh -A privs.net"
-alias menheler="screen -t menheler ssh -A menheler.pasra.tk"
-alias mayfield="screen -t mayfield ssh -A mayfield.privs.net"
-alias fairfield="screen -t fairfield ssh fairfield-l" # have to set fairfield's ip on /etc/hosts
+alias privs="tmux new-window -n privs 'ssh -A privs.net'"
+alias menheler="tmux new-window -n menheler 'ssh -A menheler.pasra.tk'"
+alias mayfield="tmux new-window -n mayfield 'ssh -A mayfield.privs.net'"
+alias fairfield="tmux new-window -n fairfield 'ssh fairfield-l'" # have to set fairfield's ip on /etc/hosts
 alias stone9999="sudo stone localhost:4444 localhost:443"
 
 export RUBY=`which ruby`
@@ -80,11 +80,13 @@ if [[ -s ~/git/config/script/cdd/cdd ]] then
   }
 fi
 
-change_window_title() { echo -ne "\ek$1\e\\" }
+# change_window_title() { echo -ne "\ek$1\e\\" }
+TMUX_WINDOW=`tmux display -p '#I'`
+change_window_title() { tmux rename-window -t $TMUX_WINDOW "$*" }
 
 precmd () {
   # pwd & cmd @ screen
-  if [ "$WINDOW" ]; then
+  if [ "$WINDOW" -o "$TMUX" ]; then
     change_window_title `$RUBY -e'
     a = ENV["PWD"];
 
@@ -112,7 +114,7 @@ precmd () {
 }
 
 function preexec() {
-  if [ "$WINDOW" ]; then
+  if [ "$WINDOW" -o "$TMUX" ]; then
     change_window_title `$RUBY -e'
     a = ENV["PWD"];
 
