@@ -1,4 +1,4 @@
 #!/bin/zsh
-cd /Users/sorah/local/src/ruby/build
+cd ~sorah/local/src/ruby/build
 make up main install-nodoc|& tee /tmp/ruby.log
 cp /tmp/ruby.log ./ruby.log
