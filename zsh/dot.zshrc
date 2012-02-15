@@ -23,6 +23,7 @@ export PATH=/usr/local/bin:$PATH
 export PATH=~/sandbox/ruby/utils:$PATH
 export PATH=~/rubies/bin:~/rubies/gem/bin:$PATH
 export PATH=./local/bin:$PATH
+export PATH=~/.gem/ruby/1.9.1/bin/:$PATH
 
 # Other env-vars
 export LANG=en_US.UTF-8
