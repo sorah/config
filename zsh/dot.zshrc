@@ -73,7 +73,7 @@ setopt share_history        # share command history data
 if [[ -s ~/git/config/script/cdd/cdd ]] then
   source ~/git/config/script/cdd/cdd
   function chpwd() {
-    _reg_pwd_screennum
+    _cdd_chpwd
   }
   function cdc() {
     cdd $1 && clear
