@@ -88,8 +88,8 @@ precmd () {
     change_window_title `$RUBY -e'
     a = ENV["PWD"];
 
-    h = File.exist?("#{ENV["HOME"]}/.zsh/cdd_pwd_list") \
-      ? Hash[File.read("#{ENV["HOME"]}/.zsh/cdd_pwd_list") \
+    h = File.exist?("#{ENV["HOME"]}/.cdd") \
+      ? Hash[File.read("#{ENV["HOME"]}/.cdd") \
                  .split(/\r?\n/) \
                  .map{|m| x = m.split(/:/);
                           [File.expand_path(x[1..-1].join),x[0]] } \
@@ -116,8 +116,8 @@ function preexec() {
     change_window_title `$RUBY -e'
     a = ENV["PWD"];
 
-    h = File.exist?("#{ENV["HOME"]}/.zsh/cdd_pwd_list") \
-      ? Hash[File.read("#{ENV["HOME"]}/.zsh/cdd_pwd_list") \
+    h = File.exist?("#{ENV["HOME"]}/.cdd") \
+      ? Hash[File.read("#{ENV["HOME"]}/.cdd") \
                  .split(/\r?\n/) \
                  .map{|m| x = m.split(/:/);
                           [File.expand_path(x[1..-1].join),x[0]] } \
