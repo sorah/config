@@ -24,6 +24,7 @@ export PATH=~/sandbox/ruby/utils:$PATH
 export PATH=~/rubies/bin:~/rubies/gem/bin:$PATH
 export PATH=./local/bin:$PATH
 export PATH=~/.gem/ruby/1.9.1/bin/:$PATH
+export PATH=~/.rbenv/bin:$PATH
 
 # Other env-vars
 export LANG=en_US.UTF-8
@@ -36,6 +37,8 @@ alias menheler="tmux new-window -n menheler 'ssh -A menheler.pasra.tk'"
 alias mayfield="tmux new-window -n mayfield 'ssh -A mayfield.privs.net'"
 alias fairfield="tmux new-window -n fairfield 'ssh fairfield-l'" # have to set fairfield's ip on /etc/hosts
 alias stone9999="sudo stone localhost:4444 localhost:443"
+
+eval "$(rbenv init -)"
 
 export RUBY=`which ruby`
 
@@ -138,6 +141,8 @@ mds-off() {
 
 # irclog4tumblr
 alias i4t="perl -e 'while(<>){s/^...... //g;s/flans/akazora/g;print;}'"
+
+
 
 agent="$HOME/.ssh-agent-`hostname`"
 if [ -S "$agent" ]; then

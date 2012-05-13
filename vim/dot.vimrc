@@ -73,6 +73,9 @@ NeoBundle 'ujihisa/vimshell-ssh'
 NeoBundle 'mattn/zencoding-vim'
 NeoBundle 'godlygeek/csapprox'
 NeoBundle 'ujihisa/shadow.vim'
+NeoBundle 'cakebaker/scss-syntax.vim'
+NeoBundle 'tpope/vim-haml'
+NeoBundle 'Shougo/neocomplcache-snippets-complete'
 filetype on
 filetype plugin on
 filetype indent on
@@ -245,7 +248,7 @@ endif
 "gui {{{
 if has('gui_running')
   if has('mac')
-    set guifont=Monaco:h12
+    set guifont=Inconsolata:h14
     set guifontwide=Monaco:h12
     if !exists("g:sorah_vimrc_loaded")
       set columns=170
@@ -272,6 +275,7 @@ augroup Rails_etc
   autocmd BufNewFile,BufRead app/*/*.rhtml setlocal ft=mason fenc=utf-8
   autocmd BufNewFile,BufRead app/**/*.rb setlocal ft=ruby fenc=utf-8
   autocmd BufNewFile,BufRead app/**/*.yml setlocal ft=ruby fenc=utf-8
+  autocmd BufNewFile,BufRead *.mustache setlocal ft=html fenc=utf-8
 augroup END
 "}}}
 
@@ -381,12 +385,13 @@ nnoremap ? :<C-u>let @/ = ""<CR>
 
 "quickrun.vim settings
 if !exists('g:quickrun_config')
-  let g:quickrun_config = {'*': { 'split': 'vertical rightbelow', 'runmode': 'async:remote:vimproc'}}
-  let g:quickrun_config.markdown = {'exec' : ['markdown.pl %s > /tmp/__markdown.html','open /tmp/__markdown.html']}
-  "let g:quickrun_config.markdown = {'exec' : ['pandoc -f markdown -t html -o /tmp/markdown.html %s', 'open /tmp/markdown.html']}
-  let g:quickrun_config.actionscript = {'exec' : ['mxmlc -output /tmp/__as.swf -default-background-color 0xFFFFFF %s', 'open /tmp/__as.swf']}
-  let g:quickrun_config.coffee = {'command': 'coffee'}
+  let g:quickrun_config = {}
 endif
+let g:quickrun_config = {'_': { 'split': 'vertical rightbelow', 'runner': 'vimproc:updatetime=1'}}
+let g:quickrun_config.markdown = {'exec' : ['markdown.pl %s > /tmp/__markdown.html','open /tmp/__markdown.html']}
+"let g:quickrun_config.markdown = {'exec' : ['pandoc -f markdown -t html -o /tmp/markdown.html %s', 'open /tmp/markdown.html']}
+let g:quickrun_config.actionscript = {'exec' : ['mxmlc -output /tmp/__as.swf -default-background-color 0xFFFFFF %s', 'open /tmp/__as.swf']}
+let g:quickrun_config.coffee = {'command': 'coffee'}
 
 "split shortcut
 nnoremap <silent> <C-w>l <C-w>l:call <SID>Goodwidth()<Cr>

@@ -16,4 +16,4 @@ end
 
 IRB.conf[:AUTO_INDENT]=true
 IRB.conf[:SAVE_HISTORY]=200
-IRB.conf[:PROMPT_MODE] = :simple
+IRB.conf[:PROMPT_MODE] = :SIMPLE
