@@ -1,4 +1,3 @@
-
 export PATHTOVIM=/Applications/MacVim.app/Contents/MacOS/Vim
 export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
 
@@ -12,14 +11,13 @@ alias app="open -a"
 # homebrew
 export LDFLAGS="-L/Users/sorah/brew/lib $CFLAGS"
 export CPPFLAGS="-isystem /Users/sorah/brew/include $CPPFLAGS"
-export NODE_PATH=/Users/sorah/brew/lib/node
-export PATH=~/brew/bin:$PATH
+export NODE_PATH=/Users/sorah/brew/lib/node_modules
+export PATH=~/brew/bin:$NODE_PATH/.bin:$PATH
 
 update_terminal_cwd() {
     local SEARCH=' '
     local REPLACE='%20'
     local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
-    printf '%s' "$PWD_URL"
     printf '\e]7;%s\a' "$PWD_URL"
 }
 

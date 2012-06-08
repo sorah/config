@@ -111,13 +111,16 @@ endif
 "}}}
 
 "path setting {{{
-if !exists("s:complete_addpath_vimrc") && (&term != 'win32' || &term != 'win64') && has('gui_running')
-  let $PATH=$HOME."/local/bin:".$PATH
-  let $RUBYLIB=system("ruby -e 'puts (Dir[File.expand_path(\"~/git/ruby/*/lib\")]-Dir[File.expand_path(\"~/git/ruby/{core,ruby}*/lib\")]).join(\":\")'")
-  let s:complete_addpath_vimrc=1
-endif
-if !exists("s:complete_addpath_vimrc") && (has('win32') || has('win64'))
-  let $PATH="C:\Program Files (x86)\Microsoft Visual Studio 10.0\VSTSDB\Deploy;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\BIN;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\Tools;C:\Windows\Microsoft.NET\Framework\v4.0.30319;C:\Windows\Microsoft.NET\Framework\v3.5;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\VCPackages;C:\Program Files (x86)\HTML Help Workshop;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;".$PATH
+if !exists("s:complete_addpath_vimrc")
+  if (&term != 'win32' || &term != 'win64') && has('gui_running')
+    let $PATH=$HOME."/.rbenv/shims:".$HOME."/.rbenv/bin:".$HOME."/local/bin:".$PATH
+    let $RUBYLIB=system("ruby -e 'puts (Dir[File.expand_path(\"~/git/ruby/*/lib\")]-Dir[File.expand_path(\"~/git/ruby/{core,ruby}*/lib\")]).join(\":\")'")
+  endif
+
+  if has('win32') || has('win64')
+    let $PATH="C:\Program Files (x86)\Microsoft Visual Studio 10.0\VSTSDB\Deploy;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\BIN;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\Tools;C:\Windows\Microsoft.NET\Framework\v4.0.30319;C:\Windows\Microsoft.NET\Framework\v3.5;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\VCPackages;C:\Program Files (x86)\HTML Help Workshop;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;".$PATH
+  endif
+
   let s:complete_addpath_vimrc=1
 endif
 "}}}
