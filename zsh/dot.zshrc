@@ -39,6 +39,8 @@ alias fairfield="tmux new-window -n fairfield 'ssh fairfield-l'" # have to set f
 alias stone9999="sudo stone localhost:4444 localhost:443"
 alias be="bundle exec"
 alias bi="bundle install"
+alias d="git diff"
+alias gg="git grep"
 
 eval "$(rbenv init -)"
 
@@ -180,3 +182,8 @@ fi
 #export GEM_HOME=~/rubies/gem
 
 
+
+#====================
+# powerup your emacs 
+#====================
+alias emacs='vim'

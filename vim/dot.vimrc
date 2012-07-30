@@ -76,6 +76,7 @@ NeoBundle 'ujihisa/shadow.vim'
 NeoBundle 'cakebaker/scss-syntax.vim'
 NeoBundle 'tpope/vim-haml'
 NeoBundle 'Shougo/neocomplcache-snippets-complete'
+NeoBundle 'groenewege/vim-less'
 filetype on
 filetype plugin on
 filetype indent on

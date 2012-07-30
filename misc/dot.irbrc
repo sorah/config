@@ -1,6 +1,8 @@
 require 'irb/completion'
 #require 'irbtools'
-require 'what_methods'
+begin
+  require 'what_methods'
+rescue LoadError; end
 require 'pp'
 
 module Kernel
