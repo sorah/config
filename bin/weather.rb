@@ -22,15 +22,15 @@ def condition_to_symbol(condition)
   case condition.downcase
   when /sunny$/
     h = Time.now.hour
-    (22 < h || h < 5) ? "☾" : "☀"
+    (20 <= h || h <= 6) ? "☾" : "☀"
   when /(rain|drizzle|showers)$/, "flurries"
-    "☔"
+    "☂"
   when /snow( showers)?$/, "sleet", "icy"
     "❅"
   when /cloudy$/, "overcast"
     "☁"
   when /storms?$/
-    "⚡"
+    "⚑ ☂"
   when 'dust', 'fog', 'smoke', 'haze', 'mist'
     "♨"
   when 'windy'
