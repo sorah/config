@@ -2,7 +2,11 @@
 require 'open-uri'
 require 'nokogiri'
 
-router, pass = ARGV[0..1]
+if ARGV.empty?
+  router, pass = File.read(File.expand_path("~/.bf01d")).split(/\r?\n/).map(&:chomp)
+else
+  router, pass = ARGV[0..1]
+end
 url = "http://#{router}:8888/status"
 
 begin
@@ -19,9 +23,11 @@ routex = xml.at("pwrStatus interface[id='#{route}']")
 print "BF-01D #{battery}% - "
 case route
 when 0
-  puts " Wi-Fi: #{routex.at('ssid').inner_text} (#{routex.at('rssi').inner_text})"
+  puts "Wi-Fi: #{routex.at('ssid').inner_text} (#{routex.at('rssi').inner_text})"
 when 1
-  puts " #{routex.at('lte').inner_text == 'true' ? "LTE" : "3G"} (#{routex.at('rssi').inner_text})"
+  puts "#{routex.at('lte').inner_text == 'true' ? "LTE" : "3G"} (#{routex.at('rssi').inner_text})"
 when 2
-  puts " Ethernet"
+  puts "Ethernet"
+else
+  puts "Offline"
 end
