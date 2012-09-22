@@ -77,6 +77,7 @@ NeoBundle 'cakebaker/scss-syntax.vim'
 NeoBundle 'tpope/vim-haml'
 NeoBundle 'Shougo/neocomplcache-snippets-complete'
 NeoBundle 'groenewege/vim-less'
+NeoBundle 'taka84u9/unite-git'
 filetype on
 filetype plugin on
 filetype indent on
@@ -258,7 +259,9 @@ if has('gui_running')
       set columns=170
       set lines=44
     endif
-    set transparency=10
+    if exists("g:sorah_vimrc_loaded")
+      set transparency=10
+    endif
     nnoremap <silent> F :<C-u>set fullscreen!<Cr>
   endif
   set guioptions=gmt
@@ -368,6 +371,8 @@ endif
 nnoremap <silent> <C-a> :setl spell!<Return>
 
 nnoremap ] :<C-u>set transparency=
+noremap <Up> :<C-u>set transparency+=5<Cr>
+noremap <Down> :<C-u>set transparency-=5<Cr>
 
 "key-mapping for edit vimrc
 nnoremap <silent> <Space>ev  :<C-u>tabedit $MYVIMRC<CR>
@@ -476,8 +481,17 @@ vnoremap - =
 
 " unite.vim
 "let g:unite_enable_split_vertically = 1
-nnoremap <C-d> :<C-u>tabe<Cr>:<C-u>Unite -start-insert file_rec<Cr>
-nnoremap <C-z> :<C-u>Unite -start-insert file_rec<Cr>
+
+function! s:SorahFileRec()
+  if match(system("git status"), "^fatal: Not a git repository") == 0
+    execute 'Unite -start-insert file_rec'
+  else
+    execute 'Unite -start-insert git_cached'
+  endif
+endfunction
+
+nnoremap <C-d> :<C-u>tabe<Cr>:<C-u>call <SID>SorahFileRec()<Cr>
+nnoremap <C-z> :<C-u>call <SID>SorahFileRec()<Cr>
 nnoremap <C-x> :<C-u>Unite -start-insert outline<Cr>
 nnoremap <C-s> :<C-u>Unite -start-insert tab<Cr>
 " unite-neco {{{
@@ -612,7 +626,6 @@ nnoremap V :<C-u>vsp<Cr>
 nnoremap Q :<C-u>q<Cr>
 nnoremap E :<C-u>tabe<Space>
 nnoremap e :<C-u>tabe<Cr>
-
 
 "mv editing file
 function! g:MvEditingFile(new_file_name)
