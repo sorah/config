@@ -103,7 +103,7 @@ set listchars=tab:>-,trail:-,extends:>,precedes:<
 
 "encoding settings {{{
 set enc=utf-8
-set fencs=iso-2022-jp,euc-jp,cp932
+set fencs=utf-8,iso-2022-jp,euc-jp,cp932,ucs-bom,default,latin1
 set ambiwidth=double
 set fileformats=unix,dos,mac 
 

@@ -12,7 +12,7 @@ alias app="open -a"
 export LDFLAGS="-L/Users/sorah/brew/lib $CFLAGS"
 export CPPFLAGS="-isystem /Users/sorah/brew/include $CPPFLAGS"
 export NODE_PATH=/Users/sorah/brew/lib/node_modules
-export PATH=~/brew/bin:$NODE_PATH/.bin:$PATH
+export PATH=~/brew/bin:$HOME/brew/share/npm/bin:$PATH
 
 update_terminal_cwd() {
     local SEARCH=' '
