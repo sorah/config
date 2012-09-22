@@ -41,6 +41,7 @@ NeoBundle 'tpope/vim-haml'
 NeoBundle 'Shougo/neocomplcache-snippets-complete'
 NeoBundle 'groenewege/vim-less'
 NeoBundle 'taka84u9/unite-git'
+NeoBundle 'thinca/vim-scouter'
 filetype on
 filetype plugin on
 filetype indent on
@@ -291,22 +292,7 @@ augroup RubyChangeLogMap
         \ nnoremap <buffer> m <Leader>o
 augroup END
 "}}}
-
 "}}}
-
-"Scouter
-"http://d.hatena.ne.jp/thinca/20091031/1257001194
-function! Scouter(file, ...)
-  let pat = '^\s*$\|^\s*"'
-  let lines = readfile(a:file)
-  if !a:0 || !a:1
-    let lines = split(substitute(join(lines, "\n"), '\n\s*\\', '', 'g'), "\n")
-  endif
-  return len(filter(lines,'v:val !~ pat'))
-endfunction
-command! -bar -bang -nargs=? -complete=file Scouter
-      \        echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
-
 
 "neocomplcache settings
 let g:neocomplcache_enable_camel_case_completion = 1
@@ -436,9 +422,7 @@ nnoremap M k:<C-u>call append(expand('.'), '')<Cr>jj
 nnoremap - gg=G
 vnoremap - =
 
-" unite.vim
-"let g:unite_enable_split_vertically = 1
-
+" unite.vim {{{
 function! s:SorahFileRec()
   if match(system("git status"), "^fatal: Not a git repository") == 0
     execute 'Unite -start-insert file_rec'
@@ -451,6 +435,7 @@ nnoremap <C-d> :<C-u>tabe<Cr>:<C-u>call <SID>SorahFileRec()<Cr>
 nnoremap <C-z> :<C-u>call <SID>SorahFileRec()<Cr>
 nnoremap <C-x> :<C-u>Unite -start-insert outline<Cr>
 nnoremap <C-s> :<C-u>Unite -start-insert tab<Cr>
+
 " unite-neco {{{
 let s:unite_source = {'name': 'neco'}
 
@@ -475,8 +460,8 @@ endfunction
 "  return executable('locate') ? s:unite_source : []
 "endfunction
 call unite#define_source(s:unite_source)
-
 " }}}
+
 " unite-evalruby {{{
 let s:unite_source = {
       \ 'name': 'evalruby',
@@ -519,6 +504,7 @@ if has('mac')
   call unite#define_source(s:unite_source)
   nnoremap <C-f> :<C-u>Unite -start-insert app<Cr>
 endif
+" }}}
 " }}}
 
 "rb
