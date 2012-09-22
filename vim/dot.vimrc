@@ -1,47 +1,9 @@
 " sorah's vimrc
-" Licence: MIT Licence
-"   The MIT Licence {{{
-"     Permission is hereby granted, free of charge, to any person obtaining a copy
-"     of this software and associated documentation files (the "Software"), to deal
-"     in the Software without restriction, including without limitation the rights
-"     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-"     copies of the Software, and to permit persons to whom the Software is
-"     furnished to do so, subject to the following conditions:
-"     The above copyright notice and this permission notice shall be included in
-"     all copies or substantial portions of the Software.
-"     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-"     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-"     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-"     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-"     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-"     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-"     THE SOFTWARE.
-"   }}}
-
-
-" Basic {{{
+" License: Public Domain
 
 set nocompatible
 
-"Absorb vimrc/.vim different OSs {{{
-if has('win32') || has ('win64')
-  set shellslash
-  "let $VIMFILES = $VIM."/vimfiles"
-  let $VIMFILES = $USERPROFILE.'\git\config\vim\dot.vim'
-else
-  let $VIMFILES = $HOME."/.vim"
-endif
-"}}}
-
-"reset
-
-if has('vim_starting') && (has('win32') || has('win64'))
-  set runtimepath+=~/git/config/vim/dot.vim
-endif
-
-" mrkn256
-filetype off
-
+" Bundle {{{
 if has('vim_starting')
   set runtimepath+=$VIMFILES/neobundle.vim
   call neobundle#rc(expand('~/.bundle'))
@@ -81,6 +43,25 @@ NeoBundle 'taka84u9/unite-git'
 filetype on
 filetype plugin on
 filetype indent on
+" }}}
+
+
+" Basic {{{
+
+"Absorb vimrc/.vim in Windows {{{
+if has('win32') || has ('win64')
+  set shellslash
+  let $VIMFILES = $USERPROFILE.'\git\config\vim\dot.vim'
+else
+  let $VIMFILES = $HOME."/.vim"
+endif
+
+if has('vim_starting') && (has('win32') || has('win64'))
+  set runtimepath+=~/git/config/vim/dot.vim
+endif
+"}}}
+
+filetype off
 
 " ruby - developer {{{
 au FileType c setlocal ts=8 sw=4 noexpandtab
@@ -89,11 +70,10 @@ let g:changelog_timeformat="%a %b %e %T %Y"
 let g:changelog_username = "Shota Fukumori  <sorah@tubusu.net>"
 " }}}
 
-"delete all autocmds {{{
+"delete all autocmds
 autocmd!
-"}}}
 
-"view setting {{{
+" view setting {{{
 set number
 
 "- -> >>- --->
@@ -101,20 +81,21 @@ set list
 set listchars=tab:>-,trail:-,extends:>,precedes:<
 " }}}
 
-"encoding settings {{{
+" encoding settings {{{
 set enc=utf-8
 set fencs=utf-8,iso-2022-jp,euc-jp,cp932,ucs-bom,default,latin1
 set ambiwidth=double
-set fileformats=unix,dos,mac 
+set fileformats=unix,dos,mac
+lang en_US.UTF-8
 
 if !has('gui_running') && (&term == 'win32' || &term == 'win64')
   set termencoding=cp932
 endif
 "}}}
 
-"path setting {{{
-if !exists("s:complete_addpath_vimrc")
-  if (&term != 'win32' || &term != 'win64') && has('gui_running')
+" path setting {{{
+if !exists("g:sorah_vimrc_loaded")
+  if !has('win32') && !has('win64') && has('gui_running')
     let $PATH=$HOME."/.rbenv/shims:".$HOME."/.rbenv/bin:".$HOME."/local/bin:".$PATH
     let $RUBYLIB=system("ruby -e 'puts (Dir[File.expand_path(\"~/git/ruby/*/lib\")]-Dir[File.expand_path(\"~/git/ruby/{core,ruby}*/lib\")]).join(\":\")'")
   endif
@@ -122,8 +103,6 @@ if !exists("s:complete_addpath_vimrc")
   if has('win32') || has('win64')
     let $PATH="C:\Program Files (x86)\Microsoft Visual Studio 10.0\VSTSDB\Deploy;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\BIN;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\Tools;C:\Windows\Microsoft.NET\Framework\v4.0.30319;C:\Windows\Microsoft.NET\Framework\v3.5;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\VCPackages;C:\Program Files (x86)\HTML Help Workshop;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;".$PATH
   endif
-
-  let s:complete_addpath_vimrc=1
 endif
 "}}}
 
@@ -144,38 +123,32 @@ set smarttab
 set expandtab
 "}}}
 
-"show other file don't save. {{{
+" make hidden instead of unloading
 set hidden
-"}}}
 
 "command-line settings {{{
 set showcmd
 set cmdheight=2
 set laststatus=2
-"set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}
 set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%{getcwd()}\ [%l,%c]\ %p%%
 "}}}
 
-"split {{{
+"split
 set splitbelow
 set splitright
-"}}}
 
-"command Tab complement settings {{{
+" command completion
 set wildmenu
 set wildmode=list:longest
-"}}}
 
-"Japanese input etc settings {{{
+" for Japanese
 set noimdisable
 set noimcmdline
 set iminsert=1
 set imsearch=1
-"}}}
 
-" Other {{{
+" other
 set noruler
-"set nolist
 set showmatch
 set wrap
 set title
@@ -189,18 +162,13 @@ set nobackup
 set history=1000
 set mouse=a
 set noautochdir
-"}}}
 
-"enable filetype plugins {{{
+"enable filetype plugins
 filetype plugin on
 filetype plugin indent on
-"}}}
-
-"turn on the syntax-highlight {{{
 syntax enable
-" }}}
 
-" search {{{
+" search mappings {{{
 noremap n nzz
 noremap N Nzz
 noremap * *zz
@@ -209,30 +177,19 @@ noremap g* g*zz
 noremap g# g#zz
 " }}}
 
-"pumheight {{{
-set pumheight=6
-"}}}
-
-"clipboard {{{
+set pumheight=10
 set clipboard=unnamed
-"}}}
 
-"printing settings {{{
+" printing {{{
 set printoptions=wrap:y,number:y,header:0
 set printfont=Andale\ Mono:h12:cUTF8
 "}}}
 
-"fold settings {{{
+" folding {{{
 set foldenable
 set foldmethod=marker
 set foldcolumn=3
 "}}}
-
-"help settings {{{
-set helplang=es
-"}}}
-
-lang en_US.UTF-8
 
 "color settings {{{
 set t_AB=[48;5;%dm
@@ -244,7 +201,7 @@ colorscheme mrkn256
 "mouse setting {{{
 if !has('gui_running')
   set mouse=a
-  if exists('$WINDOW')
+  if exists('$WINDOW') || exists('$TMUX')
     set ttymouse=xterm2
   endif
 endif
@@ -572,15 +529,6 @@ if has('mac')
   let g:rb_vimrc_done=1
 endif
 
-"vimproc
-if has('mac')
-  "  let g:vimproc_dll_path=$VIMFILES."/bundle/vimproc/autoload/proc.bundle"
-endif
-if has('win32') || has('win64')
-  "let g:vimproc_dll_path=$VIMFILES."/autoload/proc.dll"
-endif
-
-" Disable bell.
 set visualbell
 set vb t_vb=
 
