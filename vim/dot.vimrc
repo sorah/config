@@ -4,6 +4,7 @@
 set nocompatible
 
 " Bundle {{{
+filetype off
 if has('vim_starting')
   set runtimepath+=$VIMFILES/neobundle.vim
   call neobundle#rc(expand('~/.bundle'))
@@ -61,7 +62,6 @@ if has('vim_starting') && (has('win32') || has('win64'))
 endif
 "}}}
 
-filetype off
 
 " ruby - developer {{{
 au FileType c setlocal ts=8 sw=4 noexpandtab
