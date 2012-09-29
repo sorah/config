@@ -39,7 +39,7 @@ alias stone9999="sudo stone localhost:4444 localhost:443"
 alias be="bundle exec"
 alias bi="bundle install"
 alias d="git diff"
-alias s="git status"
+alias s="git status -sb"
 alias g="git grep"
 
 eval "$(rbenv init -)"
