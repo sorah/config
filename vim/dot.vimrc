@@ -3,6 +3,20 @@
 
 set nocompatible
 
+"Absorb vimrc/.vim in Windows {{{
+if has('win32') || has ('win64')
+  set shellslash
+  let $VIMFILES = $USERPROFILE.'\git\config\vim\dot.vim'
+else
+  let $VIMFILES = $HOME."/.vim"
+endif
+
+if has('vim_starting') && (has('win32') || has('win64'))
+  set runtimepath+=~/git/config/vim/dot.vim
+endif
+"}}}
+
+
 " Bundle {{{
 filetype off
 if has('vim_starting')
@@ -42,6 +56,7 @@ NeoBundle 'Shougo/neocomplcache-snippets-complete'
 NeoBundle 'groenewege/vim-less'
 NeoBundle 'taka84u9/unite-git'
 NeoBundle 'thinca/vim-scouter'
+NeoBundle 'ujihisa/neco-ruby'
 filetype on
 filetype plugin on
 filetype indent on
@@ -50,18 +65,6 @@ filetype indent on
 
 " Basic {{{
 
-"Absorb vimrc/.vim in Windows {{{
-if has('win32') || has ('win64')
-  set shellslash
-  let $VIMFILES = $USERPROFILE.'\git\config\vim\dot.vim'
-else
-  let $VIMFILES = $HOME."/.vim"
-endif
-
-if has('vim_starting') && (has('win32') || has('win64'))
-  set runtimepath+=~/git/config/vim/dot.vim
-endif
-"}}}
 
 
 " ruby - developer {{{
