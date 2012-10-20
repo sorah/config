@@ -57,6 +57,7 @@ NeoBundle 'groenewege/vim-less'
 NeoBundle 'taka84u9/unite-git'
 NeoBundle 'thinca/vim-scouter'
 NeoBundle 'ujihisa/neco-ruby'
+NeoBundle 'altercation/vim-colors-solarized'
 filetype on
 filetype plugin on
 filetype indent on
@@ -156,12 +157,10 @@ set noruler
 set showmatch
 set wrap
 set title
-set backspace=2
+set backspace=indent,eol,start
 set scrolloff=5
 set formatoptions& formatoptions+=mM
 set tw=0
-let format_join_spaces = 4
-let format_allow_over_tw = 1
 set nobackup
 set history=1000
 set mouse=a
@@ -214,8 +213,9 @@ endif
 "gui {{{
 if has('gui_running')
   if has('mac')
-    set guifont=Inconsolata:h14
-    set guifontwide=Monaco:h12
+    " set guifont=Inconsolata:h14
+    set guifont=Source\ Code\ Pro:h12
+    set guifontwide=MigMix\ 1P:h12
     if !exists("g:sorah_vimrc_loaded")
       set columns=170
       set lines=44
@@ -409,8 +409,8 @@ nnoremap K <C-b>
 nnoremap U <C-r>
 
 ", <$
-nnoremap , <$
-nnoremap . >$
+nnoremap , <<
+nnoremap . >>
 
 "; dd
 nnoremap ; dd
@@ -428,9 +428,9 @@ vnoremap - =
 " unite.vim {{{
 function! s:SorahFileRec()
   if match(system("git status"), "^fatal: Not a git repository") == 0
-    execute 'Unite -start-insert file_rec'
+    Unite -start-insert file_rec
   else
-    execute 'Unite -start-insert git_cached'
+    Unite -start-insert git_cached
   endif
 endfunction
 
@@ -518,7 +518,6 @@ if has('mac')
   let g:rb_vimrc_done=1
 endif
 
-set visualbell
 set vb t_vb=
 
 "vimshell
