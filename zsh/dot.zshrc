@@ -30,12 +30,15 @@ export PATH=~/.rbenv/bin:$PATH
 export LANG=en_US.UTF-8
 export LESS='-R'
 
-#aliases
-alias privs="tmux new-window -n privs 'ssh -A privs.net'"
+# server aliases
+# alias privs="tmux new-window -n privs 'ssh -A privs.net'"
 alias menheler="tmux new-window -n menheler 'ssh -A menheler.pasra.tk'"
 alias mayfield="tmux new-window -n mayfield 'ssh -A mayfield.privs.net'"
-alias fairfield="tmux new-window -n fairfield 'ssh fairfield-l'" # have to set fairfield's ip on /etc/hosts
-alias stone9999="sudo stone localhost:4444 localhost:443"
+
+# don't forget to set IP addrs in /etc/hosts
+alias fairfield="tmux new-window -n fairfield 'ssh -A fairfield-l'"
+alias livermore="tmux new-window -n livermore 'ssh -A livermore-l'"
+
 alias be="bundle exec"
 alias bi="bundle install"
 alias d="git diff"
@@ -148,6 +151,9 @@ mds-off() {
 # irclog4tumblr
 alias i4t="perl -e 'while(<>){s/^...... //g;s/flans/akazora/g;print;}'"
 
+r() {
+  git config --local --get-regexp "^remote\..+\.url"|sed -e 's/^remote\.\(.\{1,\}\)\.url /\1 /'
+}
 
 
 agent="$HOME/.ssh-agent-`hostname`"
