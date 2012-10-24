@@ -37,7 +37,7 @@ alias mayfield="tmux new-window -n mayfield 'ssh -A mayfield.privs.net'"
 
 # don't forget to set IP addrs in /etc/hosts
 alias fairfield="tmux new-window -n fairfield 'ssh -A fairfield-l'"
-alias livermore="tmux new-window -n livermore 'ssh -A livermore-l'"
+alias livermore="tmux new-window -n livermore 'ssh -A h.sorah.jp'"
 
 alias be="bundle exec"
 alias bi="bundle install"
@@ -68,15 +68,32 @@ PROMPT2='%B%_%(?.%f.%S%F)%b %#%f%s '
 SPROMPT="%r is correct? [n,y,a,e]: "
 # RPROMPT="%B%{$fg[green]%}[%*]%{$reset_color%}%b"
 
-# Shokun watashi ha hokan ga sukida
 autoload -U compinit; compinit
 setopt auto_pushd
+setopt ALWAYS_TO_END
+setopt AUTO_LIST
+setopt COMPLETE_IN_WORD
+setopt CORRECT
+setopt EXTENDED_GLOB
+setopt EXTENDED_HISTORY
+setopt HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS
+setopt IGNORE_EOF
+setopt NO_LIST_BEEP
+setopt LIST_PACKED
+setopt LIST_TYPES
+setopt LONG_LIST_JOBS
+setopt MAGIC_EQUAL_SUBST
+setopt NOTIFY
+setopt NUMERIC_GLOB_SORT
+setopt PRINT_EIGHT_BIT
+setopt PROMPT_SUBST
 
 # history
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
-setopt hist_ignore_dups     # ignore duplication command history list
+#setopt hist_ignore_dups     # ignore duplication command history list
 setopt share_history        # share command history data
 
 
@@ -153,6 +170,11 @@ alias i4t="perl -e 'while(<>){s/^...... //g;s/flans/akazora/g;print;}'"
 
 r() {
   git config --local --get-regexp "^remote\..+\.url"|sed -e 's/^remote\.\(.\{1,\}\)\.url /\1 /'
+}
+
+covspec() {
+  # --save coverage.info ./spec/foo_spec.rb -- -fd -p
+  bundle exec ruby -rrubygems -rbundler/setup -rrspec/autorun -S rcov -Ispec:lib $*
 }
 
 
