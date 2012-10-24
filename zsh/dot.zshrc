@@ -63,7 +63,11 @@ colors
 
 setopt prompt_subst
 #PROMPT="%B%{$fg[green]%}%n@%m %~ %{$fg[cyan]%}$%b%f%s%{$reset_color%} "
-PROMPT="%B%{$fg[green]%}%m %~ %{$fg[cyan]%}ヾ(๑╹◡╹)ﾉ'%{$reset_color%}%b "
+if [ "$SSH_CLIENT" ]; then
+  PROMPT="%B%{$fg[green]%}%m %~ %{%(?.$fg[cyan].$fg[red])%}%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)%{$reset_color%}%b "
+else
+  PROMPT="%B%{$fg[green]%}%~ %{%(?.$fg[cyan].$fg[red])%}%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)%{$reset_color%}%b "
+fi
 PROMPT2='%B%_%(?.%f.%S%F)%b %#%f%s '
 SPROMPT="%r is correct? [n,y,a,e]: "
 # RPROMPT="%B%{$fg[green]%}[%*]%{$reset_color%}%b"
@@ -113,7 +117,6 @@ TMUX_WINDOW=`tmux display -p '#I'`
 change_window_title() { tmux rename-window -t $TMUX_WINDOW "$*" }
 
 precmd () {
-  PROMPT="%B%{$fg[green]%}%m %~ %{%(?.$fg[cyan].$fg[red])%}%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)%{$reset_color%}%b "
   # pwd & cmd @ screen
   if [ "$WINDOW" -o "$TMUX" ]; then
     change_window_title `$RUBY ~/git/config/script/cdd_title.rb`
