@@ -58,9 +58,14 @@ NeoBundle 'taka84u9/unite-git'
 NeoBundle 'thinca/vim-scouter'
 NeoBundle 'ujihisa/neco-ruby'
 NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'tyru/eskk.vim'
+NeoBundle 'tyru/skkdict.vim'
+NeoBundle 'kana/vim-textobj-user'
+NeoBundle 'nelstrom/vim-textobj-rubyblock'
 filetype on
 filetype plugin on
 filetype indent on
+runtime macros/matchit.vim
 " }}}
 
 
