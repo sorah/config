@@ -25,6 +25,7 @@ export PATH=~/rubies/bin:~/rubies/gem/bin:$PATH
 export PATH=./local/bin:$PATH
 export PATH=~/.gem/ruby/1.9.1/bin/:$PATH
 export PATH=~/.rbenv/bin:$PATH
+eval "$(rbenv init -)"
 
 # Other env-vars
 export LANG=en_US.UTF-8
@@ -44,8 +45,17 @@ alias bi="bundle install"
 alias d="git diff"
 alias s="git status -sb"
 alias g="git grep"
+alias b="git branch"
+alias br="git name-rev --name-only HEAD"
+alias ci="git commit"
+alias a="git add"
+alias m="git commit -m"
+alias am="git commit -a"
+alias amend="git commit --amend"
+alias amm="git commit --amend -m"
+alias ama="git commit --amend -a"
+alias ameam="git commit --amend -am"
 
-eval "$(rbenv init -)"
 
 export RUBY=`which ruby`
 

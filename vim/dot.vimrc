@@ -44,7 +44,11 @@ NeoBundle 'kana/vim-metarw'
 NeoBundle 'kana/vim-metarw-git'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'Shougo/vimfiler'
-NeoBundle 'Shougo/vimproc'
+NeoBundle 'Shougo/vimproc',
+        \ { 'build' : {
+        \     'mac ' : 'make -f make_mac.mak',
+        \     'unix' : 'make -f make_unix.mak'
+        \ }}
 NeoBundle 'Shougo/vimshell'
 NeoBundle 'ujihisa/vimshell-ssh'
 NeoBundle 'mattn/zencoding-vim'
@@ -52,7 +56,7 @@ NeoBundle 'godlygeek/csapprox'
 NeoBundle 'ujihisa/shadow.vim'
 NeoBundle 'cakebaker/scss-syntax.vim'
 NeoBundle 'tpope/vim-haml'
-NeoBundle 'Shougo/neocomplcache-snippets-complete'
+NeoBundle 'Shougo/neosnippet'
 NeoBundle 'groenewege/vim-less'
 NeoBundle 'taka84u9/unite-git'
 NeoBundle 'thinca/vim-scouter'
@@ -61,6 +65,7 @@ NeoBundle 'altercation/vim-colors-solarized'
 NeoBundle 'tyru/eskk.vim'
 NeoBundle 'tyru/skkdict.vim'
 NeoBundle 'kana/vim-textobj-user'
+NeoBundle 'kana/vim-smartword'
 NeoBundle 'nelstrom/vim-textobj-rubyblock'
 filetype on
 filetype plugin on
@@ -196,7 +201,7 @@ set printfont=Andale\ Mono:h12:cUTF8
 " folding {{{
 set foldenable
 set foldmethod=marker
-set foldcolumn=3
+set foldcolumn=1
 "}}}
 
 "color settings {{{
@@ -430,6 +435,12 @@ nnoremap M k:<C-u>call append(expand('.'), '')<Cr>jj
 nnoremap - gg=G
 vnoremap - =
 
+" smartword
+map w  <Plug>(smartword-w)
+map b  <Plug>(smartword-b)
+map e  <Plug>(smartword-e)
+map ge <Plug>(smartword-ge)
+
 " unite.vim {{{
 function! s:SorahFileRec()
   if match(system("git status"), "^fatal: Not a git repository") == 0
@@ -598,8 +609,11 @@ nnoremap <silent> <Space>cd :<C-u>CD!<CR>
 let g:rsenseHome = $HOME.'/local/opt/rsense'
 let g:rsenseUseOmniFunc = 1
 
-"snip
-imap <silent><C-a> <Plug>(neocomplcache_snippets_expand)
+" snippet
+imap <silent><C-a> <Plug>(neosnippet_expand_or_jump)
+smap <silent><C-a> <Plug>(neosnippet_expand_or_jump)
+imap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 "gist.vim
 if has('mac')
