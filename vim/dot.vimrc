@@ -67,6 +67,7 @@ NeoBundle 'tyru/skkdict.vim'
 NeoBundle 'kana/vim-textobj-user'
 NeoBundle 'kana/vim-smartword'
 NeoBundle 'nelstrom/vim-textobj-rubyblock'
+NeoBundle 'nathanaelkane/vim-indent-guides'
 filetype on
 filetype plugin on
 filetype indent on
@@ -230,11 +231,10 @@ if has('gui_running')
       set columns=170
       set lines=44
     endif
-    if exists("g:sorah_vimrc_loaded")
-      set transparency=10
-    endif
+    set transparency=15
     nnoremap <silent> F :<C-u>set fullscreen!<Cr>
   endif
+
   set guioptions=gmt
 endif
 "}}}
@@ -521,7 +521,6 @@ if has('mac')
           \ "action__command": printf("!open %s", shellescape(v:val))}')
   endfunction
   call unite#define_source(s:unite_source)
-  nnoremap <C-f> :<C-u>Unite -start-insert app<Cr>
 endif
 " }}}
 " }}}
@@ -710,6 +709,68 @@ augroup UjihisaRSpec
 augroup END
 
 nnoremap <Leader>q q:
+
+" one-line git blaming https://gist.github.com/4054621"{{{
+function! s:git_blame_info_dict(filename,line_num)
+  let lines = split(system(printf('git blame -w -L%d,%d --line-porcelain %s'
+    \ ,a:line_num,a:line_num,a:filename)),"\n")
+  if len(lines) == 13
+    let dict = {
+    \ 'hash' : split(lines[0],' '),
+    \ 'author' : matchstr(lines[1],'author \zs.*'),
+    \ 'author-mail' : matchstr(lines[2],'author-mail \zs.*'),
+    \ 'author-time' : matchstr(lines[3],'author-time \zs.*'),
+    \ 'author-tz' : matchstr(lines[4],'author-tz \zs.*'),
+    \ 'committer' : matchstr(lines[5],'committer \zs.*'),
+    \ 'committer-mail' : matchstr(lines[6],'committer-mail \zs.*'),
+    \ 'committer-time' : matchstr(lines[7],'committer-time \zs.*'),
+    \ 'committer-tz' : matchstr(lines[8],'committer-tz \zs.*'),
+    \ 'summary' : matchstr(lines[9],'summary \zs.*'),
+    \ 'previous' : split(matchstr(lines[10],'previous \zs.*'),' '),
+    \ 'filename' : matchstr(lines[11],'filename \zs.*'),
+    \ 'line' : lines[12],
+    \ }
+    let dict['author'] = dict['author'] ==# 'Not Committed Yet' ? '' : dict['author']
+    let dict['author-mail'] = dict['author-mail'] ==# '<not.committed.yet>' ? '' : dict['author-mail']
+    let dict['committer'] = dict['committer'] ==# 'Not Committed Yet' ? '' : dict['committer']
+    let dict['committer-mail'] = dict['committer-mail'] ==# '<not.committed.yet>' ? '' : dict['committer-mail']
+    return dict
+  else
+    return {}
+  endif
+endfunction
+function! s:git_blame_info(filename,line_num)
+  let ex_fname = fnamemodify(a:filename,':p')
+  let ex_fname_dir = fnamemodify(a:filename,':p:h')
+  let tmp_dir = getcwd()
+  execute 'cd ' . ex_fname_dir
+  let result = s:git_blame_info_dict(ex_fname,a:line_num)
+  execute 'cd ' . tmp_dir
+  if empty(result)
+    return 'null'
+  else
+    return printf('[%s][%s] %s',result.hash[0][:6],result.committer,result.summary)
+  endif
+endfunction
+
+function! s:git_blame_show(filename,line_num)
+  let ex_fname = fnamemodify(a:filename,':p')
+  let ex_fname_dir = fnamemodify(a:filename,':p:h')
+  let tmp_dir = getcwd()
+  execute 'cd ' . ex_fname_dir
+  let result = s:git_blame_info_dict(ex_fname,a:line_num)
+  execute 'cd ' . tmp_dir
+  if !empty(result)
+    vertical new
+    call append(0, split(system("git show " . shellescape(result.hash[0])), '\n'))
+    setf git
+    call setpos('.', getpos('g'))
+  endif
+endfunction
+
+nnoremap <C-g>  :echo <SID>git_blame_info(expand('%'),line('.'))<CR>
+nnoremap <silent><C-f>  :call <SID>git_blame_show(expand('%'),line('.'))<CR>
+"}}}
 
 
 " cf. http://github.com/ujihisa/config/blob/4cd4f32695917f95e9657feb07b73d0cafa6a60c/_vimrc#L310
