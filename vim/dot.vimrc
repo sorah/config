@@ -46,7 +46,7 @@ NeoBundle 'thinca/vim-ref'
 NeoBundle 'Shougo/vimfiler'
 NeoBundle 'Shougo/vimproc',
         \ { 'build' : {
-        \     'mac ' : 'make -f make_mac.mak',
+        \     'mac'  : 'make -f make_mac.mak',
         \     'unix' : 'make -f make_unix.mak'
         \ }}
 NeoBundle 'Shougo/vimshell'
@@ -68,6 +68,8 @@ NeoBundle 'kana/vim-textobj-user'
 NeoBundle 'kana/vim-smartword'
 NeoBundle 'nelstrom/vim-textobj-rubyblock'
 NeoBundle 'nathanaelkane/vim-indent-guides'
+NeoBundle 'kana/vim-smartchr'
+NeoBundle 'kana/vim-smartinput'
 filetype on
 filetype plugin on
 filetype indent on
@@ -247,13 +249,10 @@ set directory-=.
 
 
 " autocmd {{{
-"Rails etc autocmd {{{
-augroup Rails_etc
+" ruby autocmds {{{
+augroup SorahRuby
   autocmd!
-  autocmd BufNewFile,BufRead app/*/*.rhtml setlocal ft=mason fenc=utf-8
-  autocmd BufNewFile,BufRead app/**/*.rb setlocal ft=ruby fenc=utf-8
-  autocmd BufNewFile,BufRead app/**/*.yml setlocal ft=ruby fenc=utf-8
-  autocmd BufNewFile,BufRead *.mustache setlocal ft=html fenc=utf-8
+  autocmd Filetype ruby inoremap <buffer> <expr> { smartchr#loop('{','#{','{{')
 augroup END
 "}}}
 
@@ -613,6 +612,46 @@ imap <silent><C-a> <Plug>(neosnippet_expand_or_jump)
 smap <silent><C-a> <Plug>(neosnippet_expand_or_jump)
 imap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
 smap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+" smartinput
+call smartinput#clear_rules()
+call smartinput#define_default_rules()
+call smartinput#map_to_trigger('i', '<Bar>', '<Bar>', '<Bar>')
+call smartinput#map_to_trigger('i', '<Space>', '<Space>', '<Space>')
+call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
+                           \ 'at': '\<do\>\( |.*|\)\?\%#'.
+                           \ '\|'. '^\s*\(if\|unless\|class\|module\|def\) .*\%#$',
+                           \ 'char': "<Enter>", 'input': '<Enter>end<Esc>O'})
+call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
+                           \ 'at': '\(\<do\>\|{\)\%#',
+                           \ 'char': "<Bar>", 'input': ' <Bar><Bar><Esc>i'})
+call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
+                           \ 'at': '\(\<do\>\|{\) \%#',
+                           \ 'char': "<Bar>", 'input': '<Bar><Bar><Esc>i'})
+call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
+                           \ 'at': '\<do\> |.*\%#|',
+                           \ 'char': "<Enter>", 'input': '<Esc>oend<Esc>O'})
+call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
+                           \ 'at': '^\s*\(require\|load\|require_relative\)\%#$',
+                           \ 'char': "<Space>", 'input': " ''<Left>"})
+call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'], 'syntax': ['Constant'],
+                           \ 'at': '^\s*\(require\|load\|require_relative\) .\+\%#',
+                           \ 'char': "<Enter>", 'input': "<Esc>o"})
+call smartinput#define_rule({'filetype': ['ruby.rspec'],
+                           \ 'at': '^\s*\(describe\|context\)\%#$',
+                           \ 'char': "<Space>", 'input': ' "" do<Left><Left><Left><Left>'})
+call smartinput#define_rule({'filetype': ['ruby.rspec'],
+                           \ 'at': '^\s*\(describe\|context\) .*\%#.* do$',
+                           \ 'char': "<Enter>", 'input': "<Esc>A<Enter>end<Esc>O"})
+call smartinput#define_rule({'filetype': ['ruby.rspec'],
+                           \ 'at': '^\s*\(it\|specify\)\%#$',
+                           \ 'char': "<Space>", 'input': ' ""<Left>'})
+call smartinput#define_rule({'filetype': ['ruby.rspec'],
+                           \ 'at': '^\s*\(it\|specify\).*\%#.*"$',
+                           \ 'char': "<Enter>", 'input': '<Esc>A do<Enter>end<Esc>O'})
+call smartinput#define_rule({'filetype': ['ruby.rspec'],
+                           \ 'at': '^\s*\(it\|specify\).*do\r\?\n\s*\(it\|specify\)\%#$',
+                           \ 'char': "<Space>", 'input': '<Esc>k:<C-u>.s/ do$//<Cr>j<<jddkA ""<Left>'})
 
 "gist.vim
 if has('mac')
