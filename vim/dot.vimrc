@@ -618,6 +618,7 @@ call smartinput#clear_rules()
 call smartinput#define_default_rules()
 call smartinput#map_to_trigger('i', '<Bar>', '<Bar>', '<Bar>')
 call smartinput#map_to_trigger('i', '<Space>', '<Space>', '<Space>')
+call smartinput#map_to_trigger('i', '(', '(', '(')
 call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
                            \ 'at': '\<do\>\( |.*|\)\?\%#'.
                            \ '\|'. '^\s*\(if\|unless\|class\|module\|def\) .*\%#$',
@@ -650,8 +651,17 @@ call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*\(it\|specify\).*\%#.*"$',
                            \ 'char': "<Enter>", 'input': '<Esc>A do<Enter>end<Esc>O'})
 call smartinput#define_rule({'filetype': ['ruby.rspec'],
+                           \ 'at': '^\s*\(it\|specify\).*do\r\?\n\s*\(context\|describe\)\%#$',
+                           \ 'char': "<Space>", 'input': '<Esc>k:<C-u>.s/ do$//<Cr>j<<jddkA "" do<Left><Left><Left><Left>'})
+call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*\(it\|specify\).*do\r\?\n\s*\(it\|specify\)\%#$',
                            \ 'char': "<Space>", 'input': '<Esc>k:<C-u>.s/ do$//<Cr>j<<jddkA ""<Left>'})
+call smartinput#define_rule({'filetype': ['ruby.rspec'],
+                           \ 'at': '^\s*\(it\|specify\).*do\r\?\n\s*\(let\|before\|after\|subject\)\%#$',
+                           \ 'char': "<Space>", 'input': '<Esc>k:<C-u>.s/ do$//<Cr>j<<jddkA '})
+call smartinput#define_rule({'filetype': ['ruby.rspec'],
+                           \ 'at': '^\s*let\%#$',
+                           \ 'char': "(", 'input': '(:'})
 
 "gist.vim
 if has('mac')
