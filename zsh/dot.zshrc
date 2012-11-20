@@ -43,18 +43,26 @@ alias livermore="tmux new-window -n livermore 'ssh -A h.sorah.jp'"
 alias be="bundle exec"
 alias bi="bundle install"
 alias d="git diff"
+alias dc="git diff --cached"
 alias s="git status -sb"
 alias g="git grep"
 alias b="git branch"
 alias br="git name-rev --name-only HEAD"
 alias ci="git commit"
-alias a="git add"
-alias m="git commit -m"
-alias am="git commit -am"
+a() { git add $*; git status -s }
+m() { git commit -m "$*" }
+am() { git commit -am "$*" }
 alias amend="git commit --amend"
-alias amm="git commit --amend -m"
-alias ama="git commit --amend -a"
+alias amem="git commit --amend -m"
+alias amea="git commit --amend -a"
 alias ameam="git commit --amend -am"
+alias gr="git rebase"
+alias gri="git rebase -i"
+alias rcontinue="git rebase --continue"
+alias rabort="git rebase --abort"
+alias pick="git cherry-pick"
+alias pcontinue="git cherry-pick --continue"
+alias pabort="git cherry-pick --abort"
 
 
 export RUBY=`which ruby`
