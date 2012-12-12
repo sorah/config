@@ -9,8 +9,8 @@
 # いいまま壊壊壊壊壊壊んんててせせれれ、、、、、、丈丈丈大大夫夫夫すすでででででで
 
 
-def glitch(word, max_sequence=2, max_chunks=3)
-  word.chars.map do |x|
+def glitch(word, max_sequence=3, max_chunks=1)
+  word.chars.map.with_index do |x, i|
     [[x] * rand(max_sequence).succ] * rand(max_chunks).succ
   end.shuffle.flatten.join
 end
