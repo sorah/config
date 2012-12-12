@@ -24,6 +24,7 @@ export PATH=~/sandbox/ruby/utils:$PATH
 export PATH=~/rubies/bin:~/rubies/gem/bin:$PATH
 export PATH=./local/bin:$PATH
 export PATH=~/.gem/ruby/1.9.1/bin/:$PATH
+export PATH=/usr/local/share/npm/bin:$PATH
 export PATH=~/.rbenv/bin:$PATH
 eval "$(rbenv init -)"
 
@@ -110,6 +111,7 @@ setopt NOTIFY
 setopt NUMERIC_GLOB_SORT
 setopt PRINT_EIGHT_BIT
 setopt PROMPT_SUBST
+setopt transient_rprompt
 
 # history
 HISTFILE=~/.zsh_history

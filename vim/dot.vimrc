@@ -394,13 +394,9 @@ let g:Align_xstrlen=3
 "th :tabe ~/
 nnoremap th :<C-u>tabe ~/
 nnoremap ts :<C-u>tabe ~/sandbox/
-nnoremap tr :<C-u>tabe ~/git/ruby/ruby/
-nnoremap tt :<C-u>cd ~/git/ruby/ruby<Cr>:<C-u>Unite -start-insert file_rec<Cr>
 nnoremap tg :<C-u>tabe ~/git
-nnoremap eh :<C-u>e ~/
-nnoremap es :<C-u>e ~/sandbox/
-nnoremap er :<C-u>e ~/sandbox/ruby/
-nnoremap et :<C-u>e ~/git/ruby/termtter/
+nnoremap tr :<C-u>tabe ~/git/ruby/
+nnoremap er :<C-u>e ~/git/ruby/
 nnoremap eg :<C-u>e ~/git
 
 "q -> C-o
@@ -435,10 +431,10 @@ nnoremap - gg=G
 vnoremap - =
 
 " smartword
-map w  <Plug>(smartword-w)
-map b  <Plug>(smartword-b)
-map e  <Plug>(smartword-e)
-map ge <Plug>(smartword-ge)
+map ,w  <Plug>(smartword-w)
+map ,b  <Plug>(smartword-b)
+map ,e  <Plug>(smartword-e)
+map ,ge <Plug>(smartword-ge)
 
 " unite.vim {{{
 function! s:SorahFileRec()
@@ -572,6 +568,7 @@ cabbrev cdd Cdd
 
 "easy to save
 nnoremap W :<C-u>w<Cr>
+nnoremap <Space> :<C-u>w<Cr>
 nnoremap V :<C-u>vsp<Cr>
 nnoremap Q :<C-u>q<Cr>
 nnoremap E :<C-u>tabe<Space>
@@ -586,7 +583,8 @@ command! -nargs=1 Rename call g:MvEditingFile(<f-args>)
 
 "chdir to now dir
 "http://vim-users.jp/2009/09/hack69/
-command! -nargs=? -complete=dir -bang CD  call s:ChangeCurrentDir('<args>', '<bang>') 
+command! -nargs=? -complete=dir -bang CD  call s:ChangeCurrentDir('<args>', '<bang>')
+command! GitCd  call s:CdGitRoot()
 
 function! s:ChangeCurrentDir(directory, bang)
   if a:directory == ''
@@ -600,7 +598,18 @@ function! s:ChangeCurrentDir(directory, bang)
   endif
 endfunction
 
-nnoremap <silent> <Space>cd :<C-u>CD!<CR>
+function! s:CdGitRoot()
+  let orig_dir = getcwd()
+  execute 'lcd ' . fnamemodify(expand('%'),':p:h')
+  let l:dir = system("git rev-parse --show-toplevel")
+  execute 'lcd ' . orig_dir
+  if match(l:dir, "^fatal: Not a") == -1
+    execute 'lcd ' . l:dir
+  endif
+endfunction
+
+nnoremap <silent> <Leader>cd :<C-u>CD!<CR>
+nnoremap <silent> <Space>cd :<C-u>GitCd<CR>
 
 "rsense
 "http://vinarian.blogspot.com/2010/03/rsenseneocomplcache.html
@@ -616,13 +625,18 @@ smap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" 
 " smartinput
 call smartinput#clear_rules()
 call smartinput#define_default_rules()
+
 call smartinput#map_to_trigger('i', '<Bar>', '<Bar>', '<Bar>')
 call smartinput#map_to_trigger('i', '<Space>', '<Space>', '<Space>')
 call smartinput#map_to_trigger('i', '(', '(', '(')
+call smartinput#map_to_trigger('i', "'", "'", "'")
+
 call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
                            \ 'at': '\<do\>\( |.*|\)\?\%#'.
-                           \ '\|'. '^\s*\(if\|unless\|class\|module\|def\) .*\%#$',
-                           \ 'char': "<Enter>", 'input': '<Enter>end<Esc>O'})
+                           \ '\|'. '^\s*\(if\|unless\|class\|module\|def\) .*\%#$'.
+                           \ '\|'. '^\s*def .\+(.*\%#.*)$',
+                           \ 'char': "<Enter>", 'input': '<End><Enter>end<Esc>O'})
+
 call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
                            \ 'at': '\(\<do\>\|{\)\%#',
                            \ 'char': "<Bar>", 'input': ' <Bar><Bar><Esc>i'})
@@ -633,11 +647,24 @@ call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
                            \ 'at': '\<do\> |.*\%#|',
                            \ 'char': "<Enter>", 'input': '<Esc>oend<Esc>O'})
 call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
+                           \ 'at': '\(\<do\>\|{\) |.*\%#|',
+                           \ 'char': "<Bar>", 'input': '<Right><Space>'})
+
+
+
+call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
                            \ 'at': '^\s*\(require\|load\|require_relative\)\%#$',
                            \ 'char': "<Space>", 'input': " ''<Left>"})
+call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
+                           \ 'at': '^\s*\(require\|load\|require_relative\) ' . "'" . '\%#' . "'$",
+                           \ 'char': "<Space>", 'input': ""})
+call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
+                           \ 'at': '^\s*\(require\|load\|require_relative\) ' . "'" . '\%#' . "'$",
+                           \ 'char': "'", 'input': ""})
 call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'], 'syntax': ['Constant'],
                            \ 'at': '^\s*\(require\|load\|require_relative\) .\+\%#',
                            \ 'char': "<Enter>", 'input': "<Esc>o"})
+
 call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*\(describe\|context\)\%#$',
                            \ 'char': "<Space>", 'input': ' "" do<Left><Left><Left><Left>'})
@@ -648,7 +675,8 @@ call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*\(it\|specify\)\%#$',
                            \ 'char': "<Space>", 'input': ' ""<Left>'})
 call smartinput#define_rule({'filetype': ['ruby.rspec'],
-                           \ 'at': '^\s*\(it\|specify\).*\%#.*"$',
+                           \ 'at': '^\s*\(it\|specify\) ".*\%#.*"$'.
+                           \ '\|'. '^\s*\(it\|specify\) ".*"\%#$',
                            \ 'char': "<Enter>", 'input': '<Esc>A do<Enter>end<Esc>O'})
 call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*\(it\|specify\).*do\r\?\n\s*\(context\|describe\)\%#$',
@@ -657,11 +685,17 @@ call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*\(it\|specify\).*do\r\?\n\s*\(it\|specify\)\%#$',
                            \ 'char': "<Space>", 'input': '<Esc>k:<C-u>.s/ do$//<Cr>j<<jddkA ""<Left>'})
 call smartinput#define_rule({'filetype': ['ruby.rspec'],
-                           \ 'at': '^\s*\(it\|specify\).*do\r\?\n\s*\(let\|before\|after\|subject\)\%#$',
-                           \ 'char': "<Space>", 'input': '<Esc>k:<C-u>.s/ do$//<Cr>j<<jddkA '})
+                           \ 'at': '^\s*\(it\|specify\).*do\r\?\n\s*\(let\|before\|after\|around\|subject\)\%#$',
+                           \ 'char': "<Space>", 'input': '<esc>k:<c-u>.s/ do$//<cr>j<<jddka '})
 call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*let\%#$',
                            \ 'char': "(", 'input': '(:'})
+call smartinput#define_rule({'filetype': ['ruby.rspec'],
+                           \ 'at': '^\s*\(before\|after\|around\|subject\)\%#$',
+                           \ 'char': "<Enter>", 'input': ' do<Enter>end<Esc>O'})
+
+" eskk
+imap <C-j> <Plug>(eskk:toggle)
 
 "gist.vim
 if has('mac')
@@ -791,10 +825,10 @@ endfunction
 function! s:git_blame_info(filename,line_num)
   let ex_fname = fnamemodify(a:filename,':p')
   let ex_fname_dir = fnamemodify(a:filename,':p:h')
-  let tmp_dir = getcwd()
-  execute 'cd ' . ex_fname_dir
+  let orig_dir = getcwd()
+  execute 'lcd ' . ex_fname_dir
   let result = s:git_blame_info_dict(ex_fname,a:line_num)
-  execute 'cd ' . tmp_dir
+  execute 'lcd ' . orig_dir
   if empty(result)
     return 'null'
   else
