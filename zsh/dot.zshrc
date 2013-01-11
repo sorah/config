@@ -26,6 +26,7 @@ export PATH=./local/bin:$PATH
 export PATH=~/.gem/ruby/1.9.1/bin/:$PATH
 export PATH=/usr/local/share/npm/bin:$PATH
 export PATH=~/.rbenv/bin:$PATH
+export PATH=~/local/opt/heroku/bin:$PATH
 eval "$(rbenv init -)"
 
 # Other env-vars
@@ -49,7 +50,7 @@ alias s="git status -sb"
 alias g="git grep"
 alias b="git branch"
 alias br="git name-rev --name-only HEAD"
-alias ci="git commit"
+alias ci="git commit -v"
 a() { git add $*; git status -s }
 m() { git commit -m "$*" }
 am() { git commit -am "$*" }
