@@ -70,6 +70,7 @@ NeoBundle 'nelstrom/vim-textobj-rubyblock'
 NeoBundle 'nathanaelkane/vim-indent-guides'
 NeoBundle 'kana/vim-smartchr'
 NeoBundle 'kana/vim-smartinput'
+NeoBundle 'sgur/unite-git_grep'
 filetype on
 filetype plugin on
 filetype indent on
@@ -148,7 +149,7 @@ set hidden
 set showcmd
 set cmdheight=2
 set laststatus=2
-set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%{getcwd()}\ [%l,%c]\ %p%%
+set statusline=%f\ %m%r%h%w%{(&fenc!='utf-8'?'['.&fenc.']':'')}%=%<%{substitute(fnamemodify(getcwd(),\ ':~'),\ '^\\~/Dropbox/Codes/',\ '-/',\ '')}\ [%l,%c]\ %p%%
 "}}}
 
 "split
@@ -672,7 +673,7 @@ call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*\(describe\|context\) .*\%#.* do$',
                            \ 'char': "<Enter>", 'input': "<Esc>A<Enter>end<Esc>O"})
 call smartinput#define_rule({'filetype': ['ruby.rspec'],
-                           \ 'at': '^\s*\(it\|specify\)\%#$',
+                           \ 'at': '^\s*it\%#$',
                            \ 'char': "<Space>", 'input': ' ""<Left>'})
 call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*\(it\|specify\) ".*\%#.*"$'.
