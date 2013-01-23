@@ -226,7 +226,7 @@ if [ ! "$TMUX" -a ! "$WINDOW" -a ! "$VIMSHELL" ]; then
 fi
 
 if [ "$WINDOW" -o "$TMUX" ]; then
-  export TERM=xterm-256color
+  export TERM=screen-256color
 fi
 
 
