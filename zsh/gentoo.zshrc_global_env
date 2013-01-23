@@ -1,1 +1,2 @@
 unset RUBYOPT
+export EDITOR=/usr/bin/vim
