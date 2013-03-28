@@ -70,6 +70,7 @@ export LESS='-R'
 # alias privs="tmux new-window -n privs 'ssh -A privs.net'"
 alias menheler="tmux new-window -n menheler 'ssh -A menheler.pasra.tk'"
 alias mayfield="tmux new-window -n mayfield 'ssh -A mayfield.privs.net'"
+alias linndale="tmux new-window -n linndale 'ssh -A linndale.privs.net'"
 
 # don't forget to set IP addrs in /etc/hosts
 alias fairfield="tmux new-window -n fairfield 'ssh -A fairfield-l'"
