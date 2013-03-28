@@ -633,6 +633,7 @@ call smartinput#define_default_rules()
 call smartinput#map_to_trigger('i', '<Bar>', '<Bar>', '<Bar>')
 call smartinput#map_to_trigger('i', '<Space>', '<Space>', '<Space>')
 call smartinput#map_to_trigger('i', '(', '(', '(')
+call smartinput#map_to_trigger('i', '{', '{', '{')
 call smartinput#map_to_trigger('i', "'", "'", "'")
 
 call smartinput#define_rule({'filetype': ['ruby', 'ruby.rspec'],
@@ -678,6 +679,9 @@ call smartinput#define_rule({'filetype': ['ruby.rspec'],
 call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*it\%#$',
                            \ 'char': "<Space>", 'input': ' ""<Left>'})
+call smartinput#define_rule({'filetype': ['ruby.rspec'],
+                           \ 'at': '^\s*\(it\|specify\) "\%#"',
+                           \ 'char': "{", 'input': '<Esc>A<BS><BS>{  }<Left><Left>'})
 call smartinput#define_rule({'filetype': ['ruby.rspec'],
                            \ 'at': '^\s*\(it\|specify\) ".*\%#.*"$'.
                            \ '\|'. '^\s*\(it\|specify\) ".*"\%#$',
