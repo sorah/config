@@ -247,6 +247,8 @@ endif
 set directory-=.
 "}}}
 
+set autoread
+
 " }}}
 
 
