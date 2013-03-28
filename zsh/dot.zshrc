@@ -65,6 +65,7 @@ eval "$(rbenv init -)"
 
 # Other env-vars
 export LANG=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
 export LESS='-R'
 
 # server aliases
