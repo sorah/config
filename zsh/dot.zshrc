@@ -101,7 +101,6 @@ alias pcontinue="git cherry-pick --continue"
 alias pabort="git cherry-pick --abort"
 
 
-export RUBY=`which ruby`
 
 # Load other zshrc
 if [[ -e ~/.zshrc_global_env ]]; then;
@@ -110,6 +109,8 @@ fi
 if [[ -e ~/.zshrc_env ]]; then;
   source ~/.zshrc_env # Optimized to environments
 fi
+
+export RUBY=`which ruby`
 
 # Prompt
 autoload -U colors
