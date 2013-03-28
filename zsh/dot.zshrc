@@ -1,6 +1,39 @@
 # sorah's zshrc
 # この書類のエンコーディングはUTF-8
 
+# Dive into tmux
+agent="$HOME/.ssh-agent-`hostname`"
+if [ -S "$agent" ]; then
+  export SSH_AUTH_SOCK=$agent
+elif [ ! -S "$SSH_AUTH_SOCK" ]; then
+  export SSH_AUTH_SOCK=$agent
+elif [ ! -L "$SSH_AUTH_SOCK" ]; then
+  ln -snf "$SSH_AUTH_SOCK" $agent && export SSH_AUTH_SOCK=$agent
+fi
+
+if [ ! "$TMUX" -a ! "$WINDOW" -a ! "$VIMSHELL" ]; then
+  export PATH=~/brew/bin:$PATH
+  export PATH=~/git/config/bin:$PATH
+  export PATH=~/.rbenv/bin:$PATH
+  export PATH=~/.rbenv/shims:$PATH
+
+  if [ "$SSH_CLIENT" ]; then
+    echo "set -g prefix ^X" > ~/.tmux.prefix
+  else
+    echo "set -g prefix ^Z" > ~/.tmux.prefix
+  fi
+
+  if tmux has-session; then
+    exec tmux -2 attach
+  else
+    exec tmux -2
+  fi
+fi
+
+if [ "$WINDOW" -o "$TMUX" ]; then
+  export TERM=screen-256color
+fi
+
 # Set path in ~/git
 for f in ~/git/*/*/bin
   export PATH=$f:$PATH
@@ -202,40 +235,11 @@ covspec() {
 }
 
 
-agent="$HOME/.ssh-agent-`hostname`"
-if [ -S "$agent" ]; then
-  export SSH_AUTH_SOCK=$agent
-elif [ ! -S "$SSH_AUTH_SOCK" ]; then
-  export SSH_AUTH_SOCK=$agent
-elif [ ! -L "$SSH_AUTH_SOCK" ]; then
-  ln -snf "$SSH_AUTH_SOCK" $agent && export SSH_AUTH_SOCK=$agent
-fi
-
-if [ ! "$TMUX" -a ! "$WINDOW" -a ! "$VIMSHELL" ]; then
-  if [ "$SSH_CLIENT" ]; then
-    echo "set -g prefix ^X" > ~/.tmux.prefix
-  else
-    echo "set -g prefix ^Z" > ~/.tmux.prefix
-  fi
-
-  if tmux has-session; then
-    exec tmux -2 attach
-  else
-    exec tmux -2
-  fi
-fi
-
-if [ "$WINDOW" -o "$TMUX" ]; then
-  export TERM=screen-256color
-fi
-
 
 #if [[ -s ~/.rvm/scripts/rvm ]] ; then source ~/.rvm/scripts/rvm ; fi
 #export GEM_HOME=~/rubies/gem
 
-
-
 #====================
-# powerup your emacs 
+# powerup your emacs
 #====================
 alias emacs='vim'
