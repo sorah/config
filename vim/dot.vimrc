@@ -786,10 +786,12 @@ let g:metarw_simplenote_email = "sorah@tubusu.net"
 
 " RSpec
 function! s:QuickRunRSpecWithoutLine()
-  let g:quickrun_config['ruby.rspec'] = {'command': 'rspec'}
+  let g:quickrun_config['ruby.rspec'] = {'command': 'rspec',
+                                    \    'exec': '%c %o -fd %s'}
 endfunction
 function! s:QuickRunRSpecWithLine()
-  let g:quickrun_config['ruby.rspec'] = {'command': "rspec -l {line('.')}"}
+  let g:quickrun_config['ruby.rspec'] = {'command': 'rspec -l {line(".")}',
+                                    \    'exec': '%c %o -fd %s'}
 endfunction
 call s:QuickRunRSpecWithoutLine()
 command! QuickRSpecWithLine call s:QuickRunRSpecWithLine()
