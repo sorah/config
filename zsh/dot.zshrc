@@ -70,13 +70,13 @@ export LESS='-R'
 
 # server aliases
 # alias privs="tmux new-window -n privs 'ssh -A privs.net'"
-alias menheler="tmux new-window -n menheler 'ssh -A menheler.pasra.tk'"
-alias mayfield="tmux new-window -n mayfield 'ssh -A mayfield.privs.net'"
-alias linndale="tmux new-window -n linndale 'ssh -A linndale.privs.net'"
+alias menheler="tmux new-window -n menheler 'ssh menheler.pasra.tk'"
+alias mayfield="tmux new-window -n mayfield 'ssh mayfield.privs.net'"
+alias linndale="tmux new-window -n linndale 'ssh linndale.privs.net'"
 
 # don't forget to set IP addrs in /etc/hosts
-alias fairfield="tmux new-window -n fairfield 'ssh -A fairfield-l'"
-alias livermore="tmux new-window -n livermore 'ssh -A h.sorah.jp'"
+alias fairfield="tmux new-window -n fairfield 'ssh fairfield-l'"
+alias livermore="tmux new-window -n livermore 'ssh h.sorah.jp'"
 
 alias be="bundle exec"
 alias bi="bundle install"
