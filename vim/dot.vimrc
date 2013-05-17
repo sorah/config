@@ -442,7 +442,7 @@ map ,ge <Plug>(smartword-ge)
 
 " unite.vim {{{
 function! s:SorahFileRec()
-  if match(system("git status"), "^fatal: Not a git repository") == 0
+  if match(system("git show-ref HEAD"), "^fatal: Not a git repository") == 0
     Unite -start-insert file_rec
   else
     Unite -start-insert git_cached
