@@ -43,6 +43,7 @@ NeoBundle 'kchmck/vim-coffee-script'
 NeoBundle 'kana/vim-metarw'
 NeoBundle 'kana/vim-metarw-git'
 NeoBundle 'thinca/vim-ref'
+NeoBundle 'taka84u9/vim-ref-ri'
 NeoBundle 'Shougo/vimfiler'
 NeoBundle 'Shougo/vimproc',
         \ { 'build' : {
@@ -525,11 +526,10 @@ endif
 " }}}
 
 "rb
-if has('mac')
-  if !exists('g:rb_vimrc_done')
-    let $PATH=$HOME."/rubies/bin:".$PATH
-  endif
-  let g:rb_vimrc_done=1
+if has('mac') && !exists('g:sorah_vimrc_loaded')
+  let $PATH=$HOME."/.rbenv/shims:".$PATH
+  let $PATH=$HOME."/.rbenv/bin:".$PATH
+  let $PATH=$HOME."/rubies/bin:".$PATH
 endif
 
 set vb t_vb=
