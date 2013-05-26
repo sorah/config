@@ -1,6 +1,9 @@
 # sorah's zshrc
 # この書類のエンコーディングはUTF-8
 
+export LANG=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
+
 # Dive into tmux
 agent="$HOME/.ssh-agent-`hostname`"
 if [ -S "$agent" ]; then
@@ -64,8 +67,6 @@ export PATH=~/.rbenv/shims:$PATH
 eval "$(rbenv init -)"
 
 # Other env-vars
-export LANG=en_US.UTF-8
-export LC_CTYPE=en_US.UTF-8
 export LESS='-R'
 
 # server aliases
