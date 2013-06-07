@@ -76,7 +76,7 @@ alias mayfield="tmux new-window -n mayfield 'ssh mayfield.privs.net'"
 alias linndale="tmux new-window -n linndale 'ssh linndale.privs.net'"
 
 # don't forget to set IP addrs in /etc/hosts
-alias fairfield="tmux new-window -n fairfield 'ssh fairfield-l'"
+alias fairfield="tmux new-window -n fairfield 'ssh fairfield.h.sorah.jp'"
 alias livermore="tmux new-window -n livermore 'ssh h.sorah.jp'"
 
 alias be="bundle exec"
