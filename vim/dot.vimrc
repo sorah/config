@@ -346,6 +346,11 @@ if filereadable("/Users/sorah/local/bin/markdown.pl")
   let g:markdownPathToMarkdown = "/Users/sorah/local/bin/markdown.pl"
 endif
 
+augroup MKDUnFold
+  autocmd!
+  autocmd FileType mkd setl nofoldenable
+augroup END
+
 nnoremap <C-h> :<C-u>vertical help<Space>
 
 "replace shortcut
