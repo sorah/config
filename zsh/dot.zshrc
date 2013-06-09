@@ -121,11 +121,18 @@ colors
 
 setopt prompt_subst
 #PROMPT="%B%{$fg[green]%}%n@%m %~ %{$fg[cyan]%}$%b%f%s%{$reset_color%} "
-if [ "$SSH_CLIENT" ]; then
-  PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%m %~ %{%(?.$fg[cyan].$fg[red])%}%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)%{$reset_color%}%b "
-else
-  PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%~ %{%(?.$fg[cyan].$fg[red])%}%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)%{$reset_color%}%b "
-fi
+
+set_prompt() {
+  local face
+  face=$1
+  if [ "$SSH_CLIENT" ]; then
+    PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%m %~ %{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
+  else
+    PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%~ %{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
+  fi
+}
+set_prompt "%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)"
+
 PROMPT2='%B%_%(?.%f.%S%F)%b %#%f%s '
 SPROMPT="%r is correct? [n,y,a,e]: "
 # RPROMPT="%B%{$fg[green]%}[%*]%{$reset_color%}%b"
@@ -175,7 +182,25 @@ fi
 TMUX_WINDOW=`tmux display -p '#I'`
 change_window_title() { tmux rename-window -t $TMUX_WINDOW "$*" }
 
-precmd () {
+OKO_COUNT=0
+
+precmd() {
+  if [ $? = "0" ];then
+    OKO_COUNT=0
+  else
+    let OKO_COUNT+=1
+  fi
+
+  if [ 5 -le "$OKO_COUNT" ]; then
+    set_prompt '٩(๑\`^´๑)۶'
+  elif [ 3 -le "$OKO_COUNT" ]; then
+    set_prompt "゜。(p>∧<q)。゜゜"
+  elif [ 1 -le "$OKO_COUNT" ]; then
+    set_prompt "ヾ(｡>﹏<｡)ﾉﾞ"
+  elif [ 0 -le "$OKO_COUNT" ]; then
+    set_prompt "(▰╹◡╹)"
+  fi
+
   # pwd & cmd @ screen
   if [ "$WINDOW" -o "$TMUX" ]; then
     change_window_title `$RUBY ~/git/config/script/cdd_title.rb`
