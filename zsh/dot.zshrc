@@ -74,6 +74,7 @@ export LESS='-R'
 alias menheler="tmux new-window -n menheler 'ssh menheler.pasra.tk'"
 alias mayfield="tmux new-window -n mayfield 'ssh mayfield.privs.net'"
 alias linndale="tmux new-window -n linndale 'ssh linndale.privs.net'"
+alias lakewood="tmux new-window -n lakewood 'ssh lakewood.privs.net'"
 
 # don't forget to set IP addrs in /etc/hosts
 alias fairfield="tmux new-window -n fairfield 'ssh fairfield.h.sorah.jp'"
@@ -158,6 +159,8 @@ setopt NUMERIC_GLOB_SORT
 setopt PRINT_EIGHT_BIT
 setopt PROMPT_SUBST
 setopt transient_rprompt
+
+set -o emacs
 
 # history
 HISTFILE=~/.zsh_history
