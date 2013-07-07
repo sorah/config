@@ -7,5 +7,5 @@
 - http://rubygems.org
 :update_sources: true
 :verbose: true
-install: --no-ri --no-rdoc
-update: --no-ri --no-rdoc
+#install: --no-ri --no-rdoc
+#update: --no-ri --no-rdoc
