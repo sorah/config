@@ -70,15 +70,16 @@ eval "$(rbenv init -)"
 export LESS='-R'
 
 # server aliases
-# alias privs="tmux new-window -n privs 'ssh -A privs.net'"
 alias menheler="tmux new-window -n menheler 'ssh menheler.pasra.tk'"
+
 alias mayfield="tmux new-window -n mayfield 'ssh mayfield.privs.net'"
 alias linndale="tmux new-window -n linndale 'ssh linndale.privs.net'"
 alias lakewood="tmux new-window -n lakewood 'ssh lakewood.privs.net'"
+alias boston="tmux new-window -n boston 'ssh boston.privs.net'"
 
-# don't forget to set IP addrs in /etc/hosts
-alias fairfield="tmux new-window -n fairfield 'ssh fairfield.h.sorah.jp'"
-alias livermore="tmux new-window -n livermore 'ssh h.sorah.jp'"
+alias fairfield="tmux new-window -n fairfield 'ssh fairfield.sorah.me'"
+alias livermore="tmux new-window -n livermore 'ssh livermore.sorah.me'"
+alias hilliard="tmux new-window -n hilliard 'ssh hilliard.sorah.me'"
 
 alias be="bundle exec"
 alias bi="bundle install"
