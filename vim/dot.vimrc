@@ -74,6 +74,7 @@ NeoBundle 'kana/vim-smartinput'
 NeoBundle 'sgur/unite-git_grep'
 NeoBundle 'sorah/puppet.vim'
 NeoBundle 'elixir-lang/vim-elixir'
+NeoBundle 'noprompt/vim-yardoc'
 filetype on
 filetype plugin on
 filetype indent on
