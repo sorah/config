@@ -75,6 +75,9 @@ NeoBundle 'sgur/unite-git_grep'
 NeoBundle 'sorah/puppet.vim'
 NeoBundle 'elixir-lang/vim-elixir'
 NeoBundle 'noprompt/vim-yardoc'
+NeoBundle 'nanotech/jellybeans.vim'
+NeoBundle 'Lokaltog/vim-distinguished'
+NeoBundle 'tomasr/molokai'
 filetype on
 filetype plugin on
 filetype indent on
