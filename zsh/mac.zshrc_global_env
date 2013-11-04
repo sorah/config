@@ -14,6 +14,8 @@ alias -g Vim='/Applications/MacVim.app/Contents/MacOS/Vim'
 alias ls='ls -G'
 alias app="open -a"
 
+alias ios='open /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone\ Simulator.app'
+
 # homebrew
 export LDFLAGS="-L/Users/sorah/brew/lib $CFLAGS"
 export CPPFLAGS="-isystem /Users/sorah/brew/include $CPPFLAGS"
