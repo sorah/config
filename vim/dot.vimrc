@@ -93,7 +93,7 @@ runtime macros/matchit.vim
 au FileType c setlocal ts=8 sw=4 noexpandtab
 au FileType ruby setlocal nowrap tabstop=8 tw=0 sw=2 expandtab
 let g:changelog_timeformat="%a %b %e %T %Y"
-let g:changelog_username = "Shota Fukumori  <sorah@tubusu.net>"
+let g:changelog_username = "Shota Fukumori  <her@sorah.jp>"
 " }}}
 
 "delete all autocmds
