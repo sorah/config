@@ -85,6 +85,7 @@ alias fairfield="tmux new-window -n fairfield 'ssh fairfield.sorah.me'"
 alias livermore="tmux new-window -n livermore 'ssh livermore.sorah.me'"
 alias hilliard="tmux new-window -n hilliard 'ssh hilliard.sorah.me'"
 alias celina="tmux new-window -n celina 'ssh celina.sorah.jp'"
+new-ssh() { tmux new-window -n $1 "ssh $*" }
 
 alias be="bundle exec"
 alias bi="bundle install"
