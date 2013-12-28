@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [[ ! -L ${RBENV_ROOT:-~/.rbenv}/versions/trunk ]]; then
+  ln -s /usr/local/opt/ruby-trunk ${RBENV_ROOT:-~/.rbenv}/versions/trunk
+fi
+
+[[ ! -d /tmp/update-ruby-trunk ]] && mkdir /tmp/update-ruby-trunk
+
+cd /tmp/update-ruby-trunk
+
+curl -o archive.zip 'http://ci.sorah.jp/job/ruby-trunk/label_exp=osx/lastSuccessfulBuild/artifact/*zip*/archive.zip'
+unzip archive.zip
+
+rsync -a archive/build/dest/usr/local/opt/ruby-trunk/ /usr/local/opt/ruby-trunk 
+
+rm -rf /tmp/update-ruby-trunk
