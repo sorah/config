@@ -17,8 +17,11 @@ alias app="open -a"
 alias ios='open /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone\ Simulator.app'
 
 # homebrew
-export LDFLAGS="-L/Users/sorah/brew/lib $CFLAGS"
+export LDFLAGS="-L/Users/sorah/brew/lib $LDFLAGS"
+export LIBS="-L/Users/sorah/brew/lib $LIBS"
+export SOLIBS="-L/Users/sorah/brew/lib $SOLIBS"
 export CPPFLAGS="-isystem /Users/sorah/brew/include $CPPFLAGS"
+export CFLAGS="-isystem /Users/sorah/brew/include $CFLAGS"
 export NODE_PATH=/Users/sorah/brew/lib/node_modules
 export PATH=~/brew/bin:$HOME/brew/share/npm/bin:$PATH
 
