@@ -61,10 +61,14 @@ export PATH=~/rubies/bin:~/rubies/gem/bin:$PATH
 export PATH=./local/bin:$PATH
 export PATH=~/.gem/ruby/1.9.1/bin/:$PATH
 export PATH=/usr/local/share/npm/bin:$PATH
-export PATH=~/local/opt/heroku/bin:$PATH
+
 export PATH=~/.rbenv/bin:$PATH
 export PATH=~/.rbenv/shims:$PATH
 eval "$(rbenv init -)"
+
+export PATH=~/local/opt/heroku/bin:$PATH
+export PATH="/usr/local/heroku/bin:$PATH"
+
 
 # Other env-vars
 export LESS='-R'
