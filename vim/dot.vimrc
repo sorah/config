@@ -78,6 +78,8 @@ NeoBundle 'noprompt/vim-yardoc'
 NeoBundle 'nanotech/jellybeans.vim'
 NeoBundle 'Lokaltog/vim-distinguished'
 NeoBundle 'tomasr/molokai'
+NeoBundle 'jonathanfilip/vim-lucius'
+NeoBundle 'w0ng/vim-hybrid'
 filetype on
 filetype plugin on
 filetype indent on
