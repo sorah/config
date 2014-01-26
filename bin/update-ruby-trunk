@@ -13,4 +13,5 @@ unzip archive.zip
 
 rsync -a archive/build/dest/usr/local/opt/ruby-trunk/ /usr/local/opt/ruby-trunk 
 
+cd ..
 rm -rf /tmp/update-ruby-trunk
