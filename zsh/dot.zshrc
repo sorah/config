@@ -219,10 +219,7 @@ precmd() {
 
 function preexec() {
   if [ "$WINDOW" -o "$TMUX" ]; then
-    change_window_title `$RUBY ~/git/config/script/cdd_title.rb`:`$RUBY -e"
-    print (<<-EOF.split(' ')[0])
-    $1
-    EOF"`
+    change_window_title `$RUBY ~/git/config/script/cdd_title.rb`:`echo "$1"|cut -d' ' -f 1`
   fi
 }
 
