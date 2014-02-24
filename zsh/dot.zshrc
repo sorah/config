@@ -66,6 +66,11 @@ export PATH=~/.rbenv/bin:$PATH
 export PATH=~/.rbenv/shims:$PATH
 eval "$(rbenv init -)"
 
+if [ -f ~/.perl5/perlbrew/etc/bashrc ]; then
+  export PERLBREW_ROOT=$HOME/.perl5/perlbrew
+  source ~/.perl5/perlbrew/etc/bashrc
+fi
+
 export PATH=~/local/opt/heroku/bin:$PATH
 export PATH="/usr/local/heroku/bin:$PATH"
 
