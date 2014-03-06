@@ -237,8 +237,8 @@ endif
 if has('gui_running')
   if has('mac')
     " set guifont=Inconsolata:h14
-    set guifont=Source\ Code\ Pro:h12
-    set guifontwide=MigMix\ 1P:h12
+    set guifont=Source\ Code\ Pro:h14
+    set guifontwide=MigMix\ 1P:h14
     if !exists("g:sorah_vimrc_loaded")
       set columns=170
       set lines=44
