@@ -221,7 +221,7 @@ set foldcolumn=1
 set t_AB=[48;5;%dm
 set t_AF=[38;5;%dm
 set t_Co=256
-colorscheme mrkn256
+colorscheme hybrid
 "}}}
 
 "mouse setting {{{
