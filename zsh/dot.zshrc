@@ -116,6 +116,19 @@ alias pick="git cherry-pick"
 alias pcontinue="git cherry-pick --continue"
 alias pabort="git cherry-pick --abort"
 
+brm() {
+  local origin br
+  if git remote -v|grep -q '^sorah'; then
+    origin=sorah
+  else
+    origin=origin
+  fi
+  for br in $@; do
+    git branch -D $br
+    git push --delete $origin $br
+  done
+}
+
 
 
 # Load other zshrc
