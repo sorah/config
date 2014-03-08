@@ -954,6 +954,12 @@ function! s:CompetitiveSetup()
 endfunction
 command! QuickComp call s:CompetitiveSetup()
 
+
+" Show syntax higroup on cursor
+map <C-i> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
 "read other vimrc files
 if filereadable($VIMFILES."/other/private.vim")
   source $VIMFILES/other/private.vim
