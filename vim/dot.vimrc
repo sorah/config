@@ -638,10 +638,10 @@ let g:rsenseHome = $HOME.'/local/opt/rsense'
 let g:rsenseUseOmniFunc = 1
 
 " snippet
-imap <silent><C-a> <Plug>(neosnippet_expand_or_jump)
-smap <silent><C-a> <Plug>(neosnippet_expand_or_jump)
-imap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+" imap <silent><C-a> <Plug>(neosnippet_expand_or_jump)
+" smap <silent><C-a> <Plug>(neosnippet_expand_or_jump)
+" imap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+" smap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 " smartinput
 call smartinput#clear_rules()
