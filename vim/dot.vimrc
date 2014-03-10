@@ -952,6 +952,8 @@ augroup END
 
 let g:yakiudon_root  = "http://d.ajunk.org/"
 
+let g:rails_no_syntax = '1'
+
 "quickrun customize for competitive programming
 function! s:CompetitiveSetup()
   let b:input_tmp = tempname()
