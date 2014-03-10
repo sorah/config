@@ -81,6 +81,7 @@ NeoBundle 'Lokaltog/vim-distinguished'
 NeoBundle 'tomasr/molokai'
 NeoBundle 'jonathanfilip/vim-lucius'
 NeoBundle 'w0ng/vim-hybrid'
+NeoBundle 'tokorom/clang_complete-getopts-ios'
 filetype on
 filetype plugin on
 filetype indent on
