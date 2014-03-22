@@ -10,6 +10,7 @@ vim() {
   [ "$a[2]" != "" ] && /Applications/MacVim.app/Contents/MacOS/Vim -g --remote-expr 'setpos(".", [0, '$a[2]', 1, 1])' 2>/dev/null >/dev/null
 }
 alias -g Vim='/Applications/MacVim.app/Contents/MacOS/Vim'
+alias -g view='/Applications/MacVim.app/Contents/MacOS/Vim -R'
 
 alias ls='ls -G'
 alias app="open -a"
