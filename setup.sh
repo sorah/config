@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 if [ "$1" = "" ]; then
   arch=mac
 else
@@ -14,6 +14,9 @@ ln -s `pwd`/tmux/tmux.conf ~/.tmux.conf
 ln -s `pwd`/misc/dot.irbrc ~/.irbrc
 ln -s `pwd`/misc/dot.gemrc ~/.gemrc
 if [ "$arch" = "mac" ]; then
+  cd tmux/osx-pasteboard
+  make
+  cd ..
   ln -s `pwd`/tmux/osx-pasteboard/reattach-to-user-namespace ~/.tmux.reattacher
 else
   cat <<'EOF' > ~/.tmux.reattacher
