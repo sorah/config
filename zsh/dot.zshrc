@@ -41,17 +41,17 @@ if [ "$WINDOW" -o "$TMUX" ]; then
 fi
 
 # Set path in ~/git
-for f in ~/git/*/*/bin
-  export PATH=$f:$PATH
+# for f in ~/git/*/*/bin
+#   export PATH=$f:$PATH
 
 # Set RUBYLIB in ~/git/ruby
-for f in ~/git/ruby/*/lib
-do
-  [[ "$HOME/git/ruby/core18/lib" = "$f" ]] && continue
-  [[ "$HOME/git/ruby/ruby/lib" = "$f" ]] && continue
-  [[ "$HOME/git/ruby/core2/lib" = "$f" ]] && continue
-  export RUBYLIB=$RUBYLIB:$f
-done
+# for f in ~/git/ruby/*/lib
+# do
+#   [[ "$HOME/git/ruby/core18/lib" = "$f" ]] && continue
+#   [[ "$HOME/git/ruby/ruby/lib" = "$f" ]] && continue
+#   [[ "$HOME/git/ruby/core2/lib" = "$f" ]] && continue
+#   export RUBYLIB=$RUBYLIB:$f
+# done
 
 export HOSTNAME=`hostname`
 
