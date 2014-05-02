@@ -53,6 +53,9 @@ fi
 #   export RUBYLIB=$RUBYLIB:$f
 # done
 
+[ ! -d ~/.goroot ] && mkdir ~/.gopath
+export GOPATH=$HOME/.gopath
+
 export HOSTNAME=`hostname`
 
 # Basic path
@@ -68,6 +71,8 @@ export PATH=/usr/local/share/npm/bin:$PATH
 export PATH=~/.rbenv/bin:$PATH
 export PATH=~/.rbenv/shims:$PATH
 eval "$(rbenv init -)"
+
+export PATH=~/.gopath/bin:$PATH
 
 if [ -f ~/.perl5/perlbrew/etc/bashrc ]; then
   export PERLBREW_ROOT=$HOME/.perl5/perlbrew

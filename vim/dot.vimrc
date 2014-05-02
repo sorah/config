@@ -83,6 +83,7 @@ NeoBundle 'jonathanfilip/vim-lucius'
 NeoBundle 'w0ng/vim-hybrid'
 NeoBundle 'tokorom/clang_complete-getopts-ios'
 NeoBundle 'jeroenbourgois/vim-actionscript'
+NeoBundle 'jnwhiteh/vim-golang'
 filetype on
 filetype plugin on
 filetype indent on
@@ -129,6 +130,9 @@ if !exists("g:sorah_vimrc_loaded")
   if !has('win32') && !has('win64') && has('gui_running')
     let $PATH=$HOME."/.rbenv/shims:".$HOME."/.rbenv/bin:".$HOME."/local/bin:".$PATH
     let $RUBYLIB=system("ruby -e 'puts (Dir[File.expand_path(\"~/git/ruby/*/lib\")]-Dir[File.expand_path(\"~/git/ruby/{core,ruby}*/lib\")]).join(\":\")'")
+
+    let $GOPATH=$HOME."/.gopath"
+    let $PATH="/usr/local/opt/go/libexec:".$PATH
   endif
 
   if has('win32') || has('win64')

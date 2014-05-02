@@ -17,6 +17,10 @@ alias app="open -a"
 
 alias ios='open /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone\ Simulator.app'
 
+goprefix="$(brew --prefix go)"
+
+[ -n "$goprefix" ] && export PATH=${goprefix}/libexec/bin:$PATH
+
 # homebrew
 export LDFLAGS="-L/Users/sorah/brew/lib $LDFLAGS"
 export LIBS="-L/Users/sorah/brew/lib $LIBS"
