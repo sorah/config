@@ -948,6 +948,7 @@ augroup CRuby
   autocmd!
   autocmd BufWinEnter,BufNewFile ~/git/ruby/ruby/*.[chy] call s:CRuby_setup()
   autocmd BufWinEnter,BufNewFile ~/Dropbox/Codes/git/ruby/ruby/*.[chy] call s:CRuby_setup()
+  autocmd BufWinEnter,BufNewFile ~/work/ruby/*.[chy] call s:CRuby_setup()
   autocmd BufWinEnter,BufNewFile *.{c,cc,cpp,h,hh,hpp} call s:CRuby_ext_setup()
 augroup END
 
