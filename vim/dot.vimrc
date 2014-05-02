@@ -397,6 +397,7 @@ nnoremap sL <C-w>L
 nnoremap sH <C-w>H
 nnoremap sJ <C-w>J
 nnoremap sK <C-w>K
+nnoremap ss <C-w>=
 
 "auto adjust a split window width
 "http://vim-users.jp/2009/07/hack42/
