@@ -89,10 +89,10 @@ export LESS='-R'
 # server aliases
 alias menheler="tmux new-window -n menheler 'ssh menheler.pasra.tk'"
 
-alias mayfield="tmux new-window -n mayfield 'ssh mayfield.privs.net'"
-alias linndale="tmux new-window -n linndale 'ssh linndale.privs.net'"
-alias lakewood="tmux new-window -n lakewood 'ssh lakewood.privs.net'"
-alias boston="tmux new-window -n boston 'ssh boston.privs.net'"
+alias mayfield="tmux new-window -n mayfield 'ssh mayfield.sorah.jp'"
+alias linndale="tmux new-window -n linndale 'ssh linndale.sorah.jp'"
+alias lakewood="tmux new-window -n lakewood 'ssh lakewood.sorah.jp'"
+alias boston="tmux new-window -n boston 'ssh boston.sorah.jp'"
 
 alias fairfield="tmux new-window -n fairfield 'ssh fairfield.sorah.me'"
 alias livermore="tmux new-window -n livermore 'ssh livermore.sorah.me'"
