@@ -53,7 +53,7 @@ fi
 #   export RUBYLIB=$RUBYLIB:$f
 # done
 
-[ ! -d ~/.goroot ] && mkdir ~/.gopath
+[ ! -d ~/.gopath ] && mkdir ~/.gopath
 export GOPATH=$HOME/.gopath
 
 export HOSTNAME=`hostname`
