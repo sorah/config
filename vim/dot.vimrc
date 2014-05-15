@@ -470,11 +470,11 @@ function! s:SorahFileRec()
   if match(system("git show-ref HEAD"), "^fatal: Not a git repository") == 0
     Unite -start-insert file_rec
   else
-    Unite -start-insert git_cached
+    Unite -start-insert file_rec/git
   endif
 endfunction
 
-nnoremap <C-d> :<C-u>tabe<Cr>:<C-u>call <SID>SorahFileRec()<Cr>
+nnoremap <C-d> :<C-u>call <SID>SorahFileRec()<Cr>
 nnoremap <C-z> :<C-u>call <SID>SorahFileRec()<Cr>
 nnoremap <C-x> :<C-u>Unite -start-insert outline<Cr>
 nnoremap <C-s> :<C-u>Unite -start-insert tab<Cr>
