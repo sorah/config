@@ -5,14 +5,16 @@ else
   arch=$1
 fi
 
-ln -s `pwd`/vim/dot.vim ~/.vim
-ln -s `pwd`/vim/dot.vimrc ~/.vimrc
-ln -s `pwd`/zsh/dot.zshrc ~/.zshrc
-ln -s `pwd`/zsh/${arch}.zshrc_global_env ~/.zshrc_global_env
-ln -s `pwd`/screen/dot.screenrc ~/.screenrc
-ln -s `pwd`/tmux/tmux.conf ~/.tmux.conf
-ln -s `pwd`/misc/dot.irbrc ~/.irbrc
-ln -s `pwd`/misc/dot.gemrc ~/.gemrc
+set -x
+
+ln -sf `pwd`/vim/dot.vim ~/.vim
+ln -sf `pwd`/vim/dot.vimrc ~/.vimrc
+ln -sf `pwd`/zsh/dot.zshrc ~/.zshrc
+ln -sf `pwd`/zsh/${arch}.zshrc_global_env ~/.zshrc_global_env
+ln -sf `pwd`/screen/dot.screenrc ~/.screenrc
+ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf
+ln -sf `pwd`/misc/dot.irbrc ~/.irbrc
+ln -sf `pwd`/misc/dot.gemrc ~/.gemrc
 if [ "$arch" = "mac" ]; then
   cd tmux/osx-pasteboard
   make
