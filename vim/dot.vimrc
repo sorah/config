@@ -52,7 +52,6 @@ NeoBundle 'Shougo/vimproc',
         \ }}
 NeoBundle 'Shougo/vimshell'
 NeoBundle 'ujihisa/vimshell-ssh'
-NeoBundle 'mattn/zencoding-vim'
 NeoBundle 'godlygeek/csapprox'
 NeoBundle 'ujihisa/shadow.vim'
 NeoBundle 'cakebaker/scss-syntax.vim'
