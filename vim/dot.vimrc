@@ -164,7 +164,7 @@ set hidden
 set showcmd
 set cmdheight=2
 set laststatus=2
-set statusline=%f\ %m%r%h%w%{(&fenc!='utf-8'?'['.&fenc.']':'')}%=%<%{substitute(fnamemodify(getcwd(),\ ':~'),\ '^\\~/Dropbox/Codes/',\ '-/',\ '')}\ [%l,%c]\ %p%%
+set statusline=%f\ %m%r%h%w%{(&fenc!='utf-8'?'['.&fenc.']':'')}%=%<%{substitute(fnamemodify(getcwd(),\ ':~'),\ '^\\~/Dropbox/\\(git\\\\|sandbox\\)',\ '-\\1',\ '')}\ [%l,%c]\ %p%%
 "}}}
 
 "split
