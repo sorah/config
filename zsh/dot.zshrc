@@ -74,6 +74,8 @@ export PATH=~/.rbenv/bin:$PATH
 export PATH=~/.rbenv/shims:$PATH
 eval "$(rbenv init -)"
 
+if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
+
 export PATH=~/.gopath/bin:$PATH
 
 if [ -f ~/.perl5/perlbrew/etc/bashrc ]; then
