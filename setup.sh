@@ -27,7 +27,7 @@ exec $*
 EOF
   chmod +x ~/.tmux.reattacher
 fi
-mkdir -p ~/git/ruby/foo/{bin,lib}
+#mkdir -p ~/git/ruby/foo/{bin,lib}
 
 if [ "$arch" = "mac" ]; then
   if ! which go 2>/dev/null; then
