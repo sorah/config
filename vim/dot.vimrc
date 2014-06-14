@@ -322,7 +322,7 @@ augroup END
 "Ruby changelog mapping {{{
 augroup RubyChangeLogMap
   autocmd!
-  autocmd BufWinEnter,BufNewFile ~/git/ruby/ruby/ChangeLog
+  autocmd BufWinEnter,BufNewFile ~/git/github.com/ruby/ruby/ChangeLog
         \ nnoremap <buffer> m <Leader>o
 augroup END
 "}}}
@@ -945,8 +945,8 @@ endfunction
 
 augroup CRuby
   autocmd!
-  autocmd BufWinEnter,BufNewFile ~/git/ruby/ruby/*.[chy] call s:CRuby_setup()
-  autocmd BufWinEnter,BufNewFile ~/Dropbox/Codes/git/ruby/ruby/*.[chy] call s:CRuby_setup()
+  autocmd BufWinEnter,BufNewFile ~/git/github.com/ruby/ruby/*.[chy] call s:CRuby_setup()
+  autocmd BufWinEnter,BufNewFile ~/Dropbox/git/github.com/ruby/ruby/*.[chy] call s:CRuby_setup()
   autocmd BufWinEnter,BufNewFile ~/work/ruby/*.[chy] call s:CRuby_setup()
   autocmd BufWinEnter,BufNewFile *.{c,cc,cpp,h,hh,hpp} call s:CRuby_ext_setup()
 augroup END
