@@ -3,10 +3,6 @@
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
-
-export LANG=en_US.UTF-8
-export LC_CTYPE=en_US.UTF-8
-
 # Dive into tmux
 agent="$HOME/.ssh-agent-`hostname`"
 if [ -S "$agent" ]; then
@@ -39,20 +35,6 @@ fi
 if [ "$WINDOW" -o "$TMUX" ]; then
   export TERM=screen-256color
 fi
-
-# Set path in ~/git
-# for f in ~/git/*/*/bin
-#   export PATH=$f:$PATH
-
-# Set RUBYLIB in ~/git/ruby
-# for f in ~/git/ruby/*/lib
-# do
-#   [[ "$HOME/git/ruby/core18/lib" = "$f" ]] && continue
-#   [[ "$HOME/git/ruby/ruby/lib" = "$f" ]] && continue
-#   [[ "$HOME/git/ruby/core2/lib" = "$f" ]] && continue
-#   export RUBYLIB=$RUBYLIB:$f
-# done
-
 [ ! -d ~/.gopath ] && mkdir ~/.gopath
 [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
 export GOPATH=$HOME/.gopath
