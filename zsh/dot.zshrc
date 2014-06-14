@@ -145,16 +145,6 @@ brm() {
   done
 }
 
-
-
-# Load other zshrc
-if [[ -e ~/.zshrc_global_env ]]; then;
-  source ~/.zshrc_global_env # Optimized to platform
-fi
-if [[ -e ~/.zshrc_env ]]; then;
-  source ~/.zshrc_env # Optimized to environments
-fi
-
 export RUBY=`which ruby`
 
 # Prompt
@@ -297,3 +287,13 @@ covspec() {
 # powerup your emacs
 #====================
 alias emacs='vim'
+
+# Load other zshrc
+if [[ -e ~/.zshrc_global_env ]]; then;
+  source ~/.zshrc_global_env # Optimized to platform
+fi
+if [[ -e ~/.zshrc_env ]]; then;
+  source ~/.zshrc_env # Optimized to environments
+fi
+
+
