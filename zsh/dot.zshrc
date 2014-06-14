@@ -248,9 +248,6 @@ function preexec() {
   fi
 }
 
-# Load rbtt
-if [[ -s ~/git/ruby/ruby-tapper/util/zsh ]] ; then source ~/git/ruby/ruby-tapper/util/zsh ; fi
-
 # assistme for sony cybershot
 assistme() {
   mkdir -p $1/PRIVATE/SONY/GPS && wget http://control.d-imaging.sony.co.jp/GPS/assistme.dat -O $1/PRIVATE/SONY/GPS/assistme.dat
@@ -272,11 +269,6 @@ mds-off() {
 # irclog4tumblr
 alias i4t="perl -e 'while(<>){s/^...... //g;s/flans/akazora/g;print;}'"
 
-covspec() {
-  # --save coverage.info ./spec/foo_spec.rb -- -fd -p
-  bundle exec ruby -rrubygems -rbundler/setup -rrspec/autorun -S rcov -Ispec:lib $*
-}
-
 ##
 # $ gcd     -> launch percol for `ghq list` then cd to selection
 # $ gcd x/x -> chdir to ~/git/x/x or ~/git/github.com/x/x
@@ -290,9 +282,6 @@ gcd() {
   fi
 }
 
-
-#if [[ -s ~/.rvm/scripts/rvm ]] ; then source ~/.rvm/scripts/rvm ; fi
-#export GEM_HOME=~/rubies/gem
 
 #====================
 # powerup your emacs
