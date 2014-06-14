@@ -263,20 +263,6 @@ assistme() {
   mkdir -p $1/PRIVATE/SONY/GPS && wget http://control.d-imaging.sony.co.jp/GPS/assistme.dat -O $1/PRIVATE/SONY/GPS/assistme.dat
 }
 
-# notes
-n() {
-  vim  ~/sandbox/document/notes/"$*".mkd
-}
-
-nls() {
-  ls -c ~/sandbox/document/notes | grep "$*"
-}
-
-# termtter on gdb!
-termtter_gdb() {
-  cd ~/local/src/ruby_trunk && gdb --directory=~/local/src/ruby_trunk --args ~/rubies/trunk/bin/ruby ~/git/ruby/termtter/bin/termtter 
-}
-
 # gnupg send keys
 gpg-send() {
  gpg --keyserver pgp.mit.edu --send-keys 73E3B6AC
