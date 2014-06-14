@@ -54,6 +54,7 @@ fi
 # done
 
 [ ! -d ~/.gopath ] && mkdir ~/.gopath
+[ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
 export GOPATH=$HOME/.gopath
 
 export HOSTNAME=`hostname`
