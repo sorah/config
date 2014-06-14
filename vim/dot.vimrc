@@ -880,6 +880,16 @@ nnoremap <C-g>  :echo <SID>git_blame_info(expand('%'),line('.'))<CR>
 nnoremap <silent><C-f>  :call <SID>git_blame_show(expand('%'),line('.'))<CR>
 "}}}
 
+" project specific {{{
+
+function! s:sorah_go_setup()
+  setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
+endfunction
+
+augroup HerGoSetup
+  autocmd!
+  autocmd BufWinEnter,BufNewFile *.go call s:sorah_go_setup()
+augroup END
 
 " cf. http://github.com/ujihisa/config/blob/4cd4f32695917f95e9657feb07b73d0cafa6a60c/_vimrc#L310
 function! s:CRuby_setup()
@@ -942,6 +952,11 @@ augroup CRuby
   autocmd BufWinEnter,BufNewFile ~/work/ruby/*.[chy] call s:CRuby_setup()
   autocmd BufWinEnter,BufNewFile *.{c,cc,cpp,h,hh,hpp} call s:CRuby_ext_setup()
 augroup END
+
+
+
+
+"}}}
 
 augroup MyObjC
   autocmd!
