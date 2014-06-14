@@ -29,6 +29,8 @@ EOF
 fi
 #mkdir -p ~/git/ruby/foo/{bin,lib}
 
+git config --global ghq.root $HOME/git
+
 if [ "$arch" = "mac" ]; then
   if ! which go 2>/dev/null; then
     brew install go
