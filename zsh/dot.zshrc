@@ -272,12 +272,23 @@ mds-off() {
 # irclog4tumblr
 alias i4t="perl -e 'while(<>){s/^...... //g;s/flans/akazora/g;print;}'"
 
-
 covspec() {
   # --save coverage.info ./spec/foo_spec.rb -- -fd -p
   bundle exec ruby -rrubygems -rbundler/setup -rrspec/autorun -S rcov -Ispec:lib $*
 }
 
+##
+# $ gcd     -> launch percol for `ghq list` then cd to selection
+# $ gcd x/x -> chdir to ~/git/x/x or ~/git/github.com/x/x
+gcd() {
+  if [[ -n "$1" ]]; then
+    candidate=~/git/$1
+    [[ ! -d "$candidate" ]] && candidate=~/git/github.com/$1
+    cd $candidate
+  else
+    cd ~/git/$(ghq list | percol)
+  fi
+}
 
 
 #if [[ -s ~/.rvm/scripts/rvm ]] ; then source ~/.rvm/scripts/rvm ; fi
