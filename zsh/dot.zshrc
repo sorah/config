@@ -232,11 +232,12 @@ precmd() {
     let OKO_COUNT+=1
   fi
 
-  if [ 5 -le "$OKO_COUNT" ]; then
-    set_prompt '٩(๑\`^´๑)۶'
-  elif [ 3 -le "$OKO_COUNT" ]; then
-    set_prompt "゜。(p>∧<q)。゜゜"
-  elif [ 1 -le "$OKO_COUNT" ]; then
+  #if [ 5 -le "$OKO_COUNT" ]; then
+  #  set_prompt '٩(๑\`^´๑)۶'
+  #elif [ 3 -le "$OKO_COUNT" ]; then
+  #  set_prompt "゜。(p>∧<q)。゜゜"
+  #elif [ 1 -le "$OKO_COUNT" ]; then
+  if [ 1 -le "$OKO_COUNT" ]; then
     set_prompt "ヾ(｡>﹏<｡)ﾉﾞ"
   elif [ 0 -le "$OKO_COUNT" ]; then
     set_prompt "(▰╹◡╹)"
