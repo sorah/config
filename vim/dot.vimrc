@@ -419,14 +419,6 @@ nnoremap <silent> te :tabe<Cr>
 "align.vim
 let g:Align_xstrlen=3
 
-"th :tabe ~/
-nnoremap th :<C-u>tabe ~/
-nnoremap ts :<C-u>tabe ~/sandbox/
-nnoremap tg :<C-u>tabe ~/git
-nnoremap tr :<C-u>tabe ~/git/ruby/
-nnoremap er :<C-u>e ~/git/ruby/
-nnoremap eg :<C-u>e ~/git
-
 "q -> C-o
 nnoremap q <C-o>
 nnoremap } <C-]>
@@ -955,8 +947,6 @@ augroup MyObjC
   autocmd!
   autocmd FileType objc setl tags+=$VIMFILES/tag/objc.tags
 augroup END
-
-let g:yakiudon_root  = "http://d.ajunk.org/"
 
 let g:rails_no_syntax = '1'
 
