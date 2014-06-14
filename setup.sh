@@ -32,5 +32,31 @@ fi
 if [ "$arch" = "mac" ]; then
   if ! which go 2>/dev/null; then
     brew install go
+    [ ! -d ~/.gopath ] && mkdir ~/.gopath
+    [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
+  fi
+
+  export GOPATH=$HOME/.gopath
+
+  if ! which ghq; then
+    go get github.com/motemen/ghq
+  fi
+
+  if ! which pyenv 2>/dev/null; then
+    brew install pyenv
+    pyenv install 2.7.6
+    pyenv global 2.7.6
+  fi
+
+  eval "$(pyenv init -)"
+
+  if ! which percol; then
+    pip install percol
+    pyenv rehash
+  fi
+
+  if ! which aws; then
+    pip install awscli
+    pyenv rehash
   fi
 fi
