@@ -128,6 +128,9 @@ alias rabort="git rebase --abort"
 alias pick="git cherry-pick"
 alias pcontinue="git cherry-pick --continue"
 alias pabort="git cherry-pick --abort"
+r() {
+  git config --local --get-regexp "^remote\..+\.url"|sed -e 's/^remote\.\(.\{1,\}\)\.url /\1 /'
+}
 
 brm() {
   local origin br
@@ -276,13 +279,9 @@ mds-off() {
   sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
 }
 
-
 # irclog4tumblr
 alias i4t="perl -e 'while(<>){s/^...... //g;s/flans/akazora/g;print;}'"
 
-r() {
-  git config --local --get-regexp "^remote\..+\.url"|sed -e 's/^remote\.\(.\{1,\}\)\.url /\1 /'
-}
 
 covspec() {
   # --save coverage.info ./spec/foo_spec.rb -- -fd -p
