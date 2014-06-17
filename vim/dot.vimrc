@@ -83,6 +83,7 @@ NeoBundle 'w0ng/vim-hybrid'
 NeoBundle 'tokorom/clang_complete-getopts-ios'
 NeoBundle 'jeroenbourgois/vim-actionscript'
 NeoBundle 'jnwhiteh/vim-golang'
+NeoBundle 'sorah/unite-ghq'
 filetype on
 filetype plugin on
 filetype indent on
@@ -132,6 +133,7 @@ if !exists("g:sorah_vimrc_loaded")
 
     let $GOPATH=$HOME."/.gopath"
     let $PATH="/usr/local/opt/go/libexec:".$PATH
+    let $PATH=$HOME."/.gopath/bin:".$PATH
   endif
 
   if has('win32') || has('win64')
@@ -469,6 +471,8 @@ nnoremap <C-d> :<C-u>call <SID>SorahFileRec()<Cr>
 nnoremap <C-z> :<C-u>call <SID>SorahFileRec()<Cr>
 nnoremap <C-x> :<C-u>Unite -start-insert outline<Cr>
 nnoremap <C-s> :<C-u>Unite -start-insert tab<Cr>
+nnoremap <C-c> :<C-u>Unite -start-insert ghq<Cr>
+command! Gcd Unite -start-insert ghq
 
 " unite-neco {{{
 let s:unite_source = {'name': 'neco'}
