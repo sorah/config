@@ -84,6 +84,7 @@ NeoBundle 'tokorom/clang_complete-getopts-ios'
 NeoBundle 'jeroenbourgois/vim-actionscript'
 NeoBundle 'jnwhiteh/vim-golang'
 NeoBundle 'sorah/unite-ghq'
+NeoBundle 'dotcloud/docker', {'rtp': 'contrib/syntax/vim'}
 filetype on
 filetype plugin on
 filetype indent on
