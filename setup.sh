@@ -15,11 +15,12 @@ ln -sf `pwd`/screen/dot.screenrc ~/.screenrc
 ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf
 ln -sf `pwd`/misc/dot.irbrc ~/.irbrc
 ln -sf `pwd`/misc/dot.gemrc ~/.gemrc
-if [ "$arch" = "mac" ]; then
-  cd tmux/osx-pasteboard
-  make
-  cd ..
-  ln -s `pwd`/tmux/osx-pasteboard/reattach-to-user-namespace ~/.tmux.reattacher
+if [ "_$arch" = "_mac" ]; then
+  if ! which reattach-to-user-namespace; then
+    brew install reattach-to-user-namespace
+  fi
+
+  ln -sf $(brew --prefix reattach-to-user-namespace)/bin/reattach-to-user-namespace ~/.tmux.reattacher
 else
   cat <<'EOF' > ~/.tmux.reattacher
 #!/bin/sh
