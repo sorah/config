@@ -5,7 +5,15 @@ else
   arch=$1
 fi
 
+if [ "_$arch" = "_mac" ]; then
+  if ! which brew; then
+    echo "Install homebrew first" 1>&2
+    exit 1
+  fi
+fi
+
 set -x
+
 
 ln -sf `pwd`/vim/dot.vim ~/.vim
 ln -sf `pwd`/vim/dot.vimrc ~/.vimrc
