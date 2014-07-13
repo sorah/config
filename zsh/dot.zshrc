@@ -244,9 +244,6 @@ mds-off() {
   sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
 }
 
-# irclog4tumblr
-alias i4t="perl -e 'while(<>){s/^...... //g;s/flans/akazora/g;print;}'"
-
 ##
 # $ gcd     -> launch percol for `ghq list` then cd to selection
 # $ gcd x/x -> chdir to ~/git/x/x or ~/git/github.com/x/x
