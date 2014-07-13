@@ -41,6 +41,7 @@ fi
 git config --global ghq.root $HOME/git
 
 if [ "$arch" = "mac" ]; then
+
   if ! which go 2>/dev/null; then
     brew install go
     [ ! -d ~/.gopath ] && mkdir ~/.gopath

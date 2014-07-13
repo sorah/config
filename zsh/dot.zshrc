@@ -67,6 +67,7 @@ if [ -f ~/.perl5/perlbrew/etc/bashrc ]; then
 fi
 
 export PATH=~/local/opt/heroku/bin:$PATH
+export PATH=~/local/opt/google-cloud-sdk/bin:$PATH
 export PATH="/usr/local/heroku/bin:$PATH"
 
 
@@ -207,11 +208,6 @@ precmd() {
     let OKO_COUNT+=1
   fi
 
-  #if [ 5 -le "$OKO_COUNT" ]; then
-  #  set_prompt '٩(๑\`^´๑)۶'
-  #elif [ 3 -le "$OKO_COUNT" ]; then
-  #  set_prompt "゜。(p>∧<q)。゜゜"
-  #elif [ 1 -le "$OKO_COUNT" ]; then
   if [ 1 -le "$OKO_COUNT" ]; then
     set_prompt "ヾ(｡>﹏<｡)ﾉﾞ"
   elif [ 0 -le "$OKO_COUNT" ]; then
