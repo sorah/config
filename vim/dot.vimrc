@@ -82,7 +82,7 @@ NeoBundle 'jonathanfilip/vim-lucius'
 NeoBundle 'w0ng/vim-hybrid'
 NeoBundle 'tokorom/clang_complete-getopts-ios'
 NeoBundle 'jeroenbourgois/vim-actionscript'
-NeoBundle 'jnwhiteh/vim-golang'
+NeoBundle 'fatih/vim-go'
 NeoBundle 'sorah/unite-ghq'
 NeoBundle 'dotcloud/docker', {'rtp': 'contrib/syntax/vim'}
 filetype on
@@ -886,6 +886,8 @@ nnoremap <silent><C-f>  :call <SID>git_blame_show(expand('%'),line('.'))<CR>
 "}}}
 
 " project specific {{{
+
+let g:go_fmt_autosave = 0
 
 function! s:sorah_go_setup()
   setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
