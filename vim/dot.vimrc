@@ -85,6 +85,7 @@ NeoBundle 'jeroenbourgois/vim-actionscript'
 NeoBundle 'fatih/vim-go'
 NeoBundle 'sorah/unite-ghq'
 NeoBundle 'dotcloud/docker', {'rtp': 'contrib/syntax/vim'}
+NeoBundle 'eagletmt/vim-ruby_namespace'
 filetype on
 filetype plugin on
 filetype indent on
