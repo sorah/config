@@ -636,6 +636,10 @@ endfunction
 nnoremap <silent> <Leader>cd :<C-u>CD!<CR>
 nnoremap <silent> <Space>cd :<C-u>GitCd<CR>
 
+
+" http://vim-users.jp/2009/11/hack104/
+vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v,'\/'),"\n",'\\n','g')<CR><CR>
+
 "rsense
 "http://vinarian.blogspot.com/2010/03/rsenseneocomplcache.html
 let g:rsenseHome = $HOME.'/local/opt/rsense'
