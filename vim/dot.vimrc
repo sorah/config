@@ -205,12 +205,12 @@ filetype plugin indent on
 syntax enable
 
 " search mappings {{{
-noremap n nzz
-noremap N Nzz
-noremap * *zz
-noremap # #zz
-noremap g* g*zz
-noremap g# g#zz
+noremap n nzzzv
+noremap N Nzzzv
+noremap * *zzzv
+noremap # #zzzv
+noremap g* g*zzzv
+noremap g# g#zzzv
 " }}}
 
 set pumheight=10
