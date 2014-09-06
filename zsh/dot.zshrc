@@ -57,6 +57,8 @@ export PATH=~/.rbenv/bin:$PATH
 export PATH=~/.rbenv/shims:$PATH
 eval "$(rbenv init -)"
 
+export GEMSRC_USE_GHQ=1
+
 if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
 
 export PATH=~/.gopath/bin:$PATH
