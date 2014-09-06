@@ -84,6 +84,7 @@ NeoBundle 'tokorom/clang_complete-getopts-ios'
 NeoBundle 'jeroenbourgois/vim-actionscript'
 NeoBundle 'fatih/vim-go'
 NeoBundle 'sorah/unite-ghq'
+NeoBundle 'sorah/unite-bundler'
 NeoBundle 'dotcloud/docker', {'rtp': 'contrib/syntax/vim'}
 NeoBundle 'eagletmt/vim-ruby_namespace'
 filetype on
