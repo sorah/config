@@ -70,6 +70,7 @@ fi
 
 export PATH=~/local/opt/heroku/bin:$PATH
 export PATH=~/local/opt/google-cloud-sdk/bin:$PATH
+export PATH=~/local/opt/packer:$PATH
 export PATH="/usr/local/heroku/bin:$PATH"
 
 
