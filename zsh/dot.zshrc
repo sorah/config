@@ -148,6 +148,9 @@ set_prompt() {
   else
     PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%~ %{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
   fi
+  if [ "_$SORAH_COMPACT" = "_1" ]; then
+    PROMPT="%{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
+  fi
 }
 set_prompt "%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)"
 
