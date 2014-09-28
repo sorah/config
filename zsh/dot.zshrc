@@ -232,11 +232,6 @@ function preexec() {
   fi
 }
 
-# assistme for sony cybershot
-assistme() {
-  mkdir -p $1/PRIVATE/SONY/GPS && wget http://control.d-imaging.sony.co.jp/GPS/assistme.dat -O $1/PRIVATE/SONY/GPS/assistme.dat
-}
-
 # gnupg send keys
 gpg-send() {
  gpg --keyserver pgp.mit.edu --send-keys 73E3B6AC
