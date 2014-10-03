@@ -1,5 +1,6 @@
 # sorah's zshrc
 # この書類のエンコーディングはUTF-8
+# vim: ft=zsh
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
