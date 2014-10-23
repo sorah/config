@@ -87,6 +87,7 @@ NeoBundle 'sorah/unite-ghq'
 NeoBundle 'sorah/unite-bundler'
 NeoBundle 'dotcloud/docker', {'rtp': 'contrib/syntax/vim'}
 NeoBundle 'eagletmt/vim-ruby_namespace'
+NeoBundle 'sorah/unite-outline-piculet'
 filetype on
 filetype plugin on
 filetype indent on
