@@ -85,6 +85,7 @@ alias mayfield="tmux new-window -n mayfield 'ssh mayfield.sorah.jp'"
 alias linndale="tmux new-window -n linndale 'ssh linndale.sorah.jp'"
 alias lakewood="tmux new-window -n lakewood 'ssh lakewood.sorah.jp'"
 alias boston="tmux new-window -n boston 'ssh boston.sorah.jp'"
+alias ashley="tmux new-window -n ashley 'ssh ashley.sorah.me'"
 
 alias livermore="tmux new-window -n livermore 'ssh livermore.sorah.me'"
 alias hilliard="tmux new-window -n hilliard 'ssh hilliard.sorah.me'"
