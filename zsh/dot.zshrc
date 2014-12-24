@@ -93,6 +93,26 @@ alias oakland="tmux new-window -n oakland 'ssh oakland.sorah.me'"
 
 alias fairfield="tmux new-window -n fairfield 'ssh fairfield.sorah.me'"
 alias celina="tmux new-window -n celina 'ssh celina.sorah.jp'"
+myssh() {
+  name=$1
+  shift
+  tmux new-window -n $name "ssh $* ${name}.sorah.me"
+}
+mysshr() {
+  name=$1
+  shift
+  tmux new-window -n $name "ssh -t $* ${name}.sorah.me env TMUX=1 zsh"
+}
+mysshi() {
+  name=$1
+  shift
+  ssh -t $* ${name}.sorah.me env TMUX=1 zsh
+}
+mysshb() {
+  name=$1
+  shift
+  tmux new-window -n $name "ssh -t $* ${name}.sorah.me bash"
+}
 new-ssh() { tmux new-window -n $1 "ssh $*" }
 
 alias be="bundle exec"
