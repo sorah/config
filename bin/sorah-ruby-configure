@@ -1,0 +1,21 @@
+#!/bin/bash
+set -x
+
+export optflags="-O0 -g"
+export debugflags="-g"
+export CXXFLAGS="${optflags} ${debugflags}"
+export CFLAGS="${optflags} ${debugflags}"
+
+conf=$1
+shift
+
+$conf --enable-shared \
+      --with-gcc=clang CXX=clang++ \
+      --with-arch=x86_64 \
+      --with-out-ext=tk,tk/* \
+      --with-valgrind \
+      --with-readline-dir=$(brew --prefix readline) \
+      --with-openssl-dir=$(brew --prefix openssl) \
+      $* \
+      optflags="${optflags}" \
+      debugflags="${debugflags}"
