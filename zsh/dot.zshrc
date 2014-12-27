@@ -58,16 +58,16 @@ export PATH=~/.rbenv/bin:$PATH
 export PATH=~/.rbenv/shims:$PATH
 eval "$(rbenv init -)"
 
+export PATH=~/.plenv/bin:$PATH
+if command -v plenv >/dev/null 2>&1; then
+  eval "$(plenv init -)"
+fi
+
 export GEMSRC_USE_GHQ=1
 
 if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
 
 export PATH=~/.gopath/bin:$PATH
-
-if [ -f ~/.perl5/perlbrew/etc/bashrc ]; then
-  export PERLBREW_ROOT=$HOME/.perl5/perlbrew
-  source ~/.perl5/perlbrew/etc/bashrc
-fi
 
 export PATH=~/local/opt/heroku/bin:$PATH
 export PATH=~/local/opt/google-cloud-sdk/bin:$PATH
