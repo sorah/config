@@ -43,7 +43,8 @@ export GOPATH=$HOME/.gopath
 export HOSTNAME=`hostname`
 
 # Basic path
-export PATH=~/local/bin:$PATH
+export PATH=$HOME/local/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
 export PATH=~/git/config/bin:$PATH
 export PATH=/usr/local/bin:$PATH
 export PATH=~/sandbox/ruby/utils:$PATH
