@@ -14,7 +14,6 @@ export RUBY_CONFIGURE_OPTS=" \
   --with-openssl-dir=$(brew --prefix openssl)"
 
 export optflags="-O0 -g"
-export debugflags="-g"
 export RUBY_CFLAGS="${optflags} ${debugflags}"
 export CXXFLAGS="${optflags} ${debugflags}"
 export MAKE_OPTS="-j4"
