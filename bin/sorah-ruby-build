@@ -4,20 +4,34 @@ set -x
 
 eval "$(rbenv init -)"
 
-export RUBY_CONFIGURE_OPTS=" \
-  --enable-shared \
-  --with-gcc=clang CXX=clang++ \
-  --with-arch=x86_64 \
-  --with-out-ext=tk,tk/* \
-  --with-valgrind \
-  --with-readline-dir=$(brew --prefix readline) \
-  --with-openssl-dir=$(brew --prefix openssl)"
+if [ "$(uname)" = "Darwin" ]; then
+  export RUBY_CONFIGURE_OPTS=" \
+    --enable-shared \
+    --with-gcc=clang CXX=clang++ \
+    --with-arch=x86_64 \
+    --with-out-ext=tk,tk/* \
+    --with-valgrind \
+    --with-readline-dir=$(brew --prefix readline) \
+    --with-openssl-dir=$(brew --prefix openssl)"
 
-export optflags="-O0 -g"
-export RUBY_CFLAGS="${optflags} ${debugflags}"
-export CXXFLAGS="${optflags} ${debugflags}"
-export MAKE_OPTS="-j4"
-unset CC CXX
+  export optflags="-O0 -g"
+  export RUBY_CFLAGS="${optflags} ${debugflags}"
+  export CXXFLAGS="${optflags} ${debugflags}"
+  export MAKE_OPTS="-j4"
+  unset CC CXX
+else
+  export RUBY_CONFIGURE_OPTS=" \
+    --enable-shared \
+    --with-out-ext=tk,tk/* \
+    --with-valgrind \
+    --disable-install-capi \
+    --disable-install-doc"
+
+  export optflags="-O0 -g"
+  export RUBY_CFLAGS="${optflags} ${debugflags}"
+  export CXXFLAGS="${optflags} ${debugflags}"
+  export MAKE_OPTS="-j4"
+fi
 
 for TARGET_VERSION in $@; do
   rbenv install --keep $TARGET_VERSION
