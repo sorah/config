@@ -83,6 +83,8 @@ NeoBundle 'w0ng/vim-hybrid'
 NeoBundle 'tokorom/clang_complete-getopts-ios'
 NeoBundle 'jeroenbourgois/vim-actionscript'
 NeoBundle 'fatih/vim-go'
+NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
+NeoBundle 'dgryski/vim-godef'
 NeoBundle 'sorah/unite-ghq'
 NeoBundle 'sorah/unite-bundler'
 NeoBundle 'dotcloud/docker', {'rtp': 'contrib/syntax/vim'}
@@ -341,6 +343,13 @@ let g:NeoComplCache_enable_info = 1
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_manual_completion_start_length = 2
 let g:neocomplcache_enable_at_startup = 1 
+
+" Enable heavy omni completion.
+if !exists('g:neocomplcache_force_omni_patterns')
+ let g:neocomplcache_force_omni_patterns = {}
+endif
+let g:neocomplcache_force_omni_patterns.go = '\h\w*\.\?'
+
 nnoremap <silent> <C-s> :NeoComplCacheToggle<Return>
 
 if !exists('g:neocomplcache_include_paths')
@@ -895,6 +904,7 @@ nnoremap <silent><C-f>  :call <SID>git_blame_show(expand('%'),line('.'))<CR>
 " project specific {{{
 
 let g:go_fmt_autosave = 0
+let g:godef_split = 0
 
 function! s:sorah_go_setup()
   setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
