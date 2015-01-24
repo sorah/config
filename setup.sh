@@ -46,14 +46,6 @@ if [ "_$arch" = "_mac" ]; then
 
   if ! which go 2>/dev/null; then
     brew install go
-    [ ! -d ~/.gopath ] && mkdir ~/.gopath
-    [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
-  fi
-
-  export GOPATH=$HOME/.gopath
-
-  if ! which ghq; then
-    go get github.com/motemen/ghq
   fi
 
   if ! which pyenv 2>/dev/null; then
@@ -72,5 +64,24 @@ if [ "_$arch" = "_mac" ]; then
   if ! which aws; then
     pip install awscli
     pyenv rehash
+  fi
+fi
+
+if which go 2>/dev/null >/dev/null; then
+  [ ! -d ~/.gopath ] && mkdir ~/.gopath
+  [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
+
+  export GOPATH=$HOME/.gopath
+
+  if ! which ghq; then
+    go get github.com/motemen/ghq
+  fi
+
+  if ! which gocode; then
+    go get github.com/nsf/gocode
+  fi
+
+  if ! which godef; then
+    go get code.google.com/p/rog-go/exp/cmd/godef
   fi
 fi
