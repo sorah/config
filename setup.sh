@@ -39,6 +39,8 @@ fi
 #mkdir -p ~/git/ruby/foo/{bin,lib}
 
 git config --global ghq.root $HOME/git
+git config --global ui.color auto
+git config --global push.default simple
 
 if [ "$arch" = "mac" ]; then
 
