@@ -42,7 +42,7 @@ git config --global ghq.root $HOME/git
 git config --global ui.color auto
 git config --global push.default simple
 
-if [ "$arch" = "mac" ]; then
+if [ "_$arch" = "_mac" ]; then
 
   if ! which go 2>/dev/null; then
     brew install go
