@@ -111,6 +111,11 @@ mysshr() {
 mysshi() {
   name=$1
   shift
+  ssh -t $* ${name}.sorah.me
+}
+mysshri() {
+  name=$1
+  shift
   ssh -t $* ${name}.sorah.me env TMUX=1 zsh
 }
 mysshb() {
