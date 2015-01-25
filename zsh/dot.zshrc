@@ -263,8 +263,14 @@ function preexec() {
 
 # gnupg send keys
 gpg-send() {
- gpg --keyserver pgp.mit.edu --send-keys 73E3B6AC
- gpg --keyserver pgp.nic.ad.jp --send-keys 73E3B6AC
+  gpg --keyserver pgp.mit.edu --send-keys 73E3B6AC
+  gpg --keyserver pgp.nic.ad.jp --send-keys 73E3B6AC
+
+  gpg --keyserver pgp.mit.edu --send-keys 31604EB9
+  gpg --keyserver pgp.nic.ad.jp --send-keys 31604EB9
+
+  gpg --keyserver pgp.mit.edu --send-keys F4C0895C
+  gpg --keyserver pgp.nic.ad.jp --send-keys F4C0895C
 }
 
 mds-on() {
