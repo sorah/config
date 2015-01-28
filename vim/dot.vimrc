@@ -903,7 +903,8 @@ nnoremap <silent><C-f>  :call <SID>git_blame_show(expand('%'),line('.'))<CR>
 
 " project specific {{{
 
-let g:go_fmt_autosave = 0
+let g:go_fmt_autosave = 1
+let g:go_doc_keywordprg_enabled = 0
 let g:godef_split = 0
 
 function! s:sorah_go_setup()
@@ -997,11 +998,11 @@ function! s:CompetitiveSetup()
 endfunction
 command! QuickComp call s:CompetitiveSetup()
 
-
 " Show syntax higroup on cursor
 map <C-o> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
 
 "read other vimrc files
 if filereadable($VIMFILES."/other/private.vim")
