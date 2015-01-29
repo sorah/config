@@ -9,3 +9,4 @@
 #install: --no-ri --no-rdoc
 #update: --no-ri --no-rdoc
 :gemsrc_use_ghq: true
+:verbose: true
