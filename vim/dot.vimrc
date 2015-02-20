@@ -334,6 +334,26 @@ augroup RubyChangeLogMap
         \ nnoremap <buffer> m <Leader>o
 augroup END
 "}}}
+
+"http://codenize.tools/
+
+augroup CodenizeToolsFt
+  autocmd!
+
+  autocmd BufWinEnter,BufNewFile ELBFile setf ruby
+  autocmd BufWinEnter,BufNewFile ELBfile setf ruby
+  autocmd BufWinEnter,BufNewFile *.elb setf ruby
+
+  autocmd BufWinEnter,BufNewFile IAMFile setf ruby
+  autocmd BufWinEnter,BufNewFile IAMfile setf ruby
+  autocmd BufWinEnter,BufNewFile *.iam setf ruby
+
+  autocmd BufWinEnter,BufNewFile Groupfile setf ruby
+  autocmd BufWinEnter,BufNewFile *.group setf ruby
+
+  autocmd BufWinEnter,BufNewFile EIPfile setf ruby
+  autocmd BufWinEnter,BufNewFile EIPFile setf ruby
+augroup END
 "}}}
 
 "neocomplcache settings
