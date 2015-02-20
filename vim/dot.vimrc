@@ -1028,5 +1028,9 @@ map <C-o> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
 if filereadable($VIMFILES."/other/private.vim")
   source $VIMFILES/other/private.vim
 endif
+if filereadable($HOME."/.vimrc.local")
+  source $HOME/.vimrc.local
+endif
+
 
 let g:sorah_vimrc_loaded = 1
