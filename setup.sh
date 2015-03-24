@@ -23,6 +23,7 @@ ln -sf `pwd`/screen/dot.screenrc ~/.screenrc
 ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf
 ln -sf `pwd`/misc/dot.irbrc ~/.irbrc
 ln -sf `pwd`/misc/dot.gemrc ~/.gemrc
+
 if [ "_$arch" = "_mac" ]; then
   if ! which reattach-to-user-namespace; then
     brew install reattach-to-user-namespace
@@ -65,6 +66,20 @@ if [ "_$arch" = "_mac" ]; then
     pip install awscli
     pyenv rehash
   fi
+
+  if ! which circusd; then
+    pip install circus
+    pyenv rehash
+  fi
+
+  ln -sf `pwd`/circus/circus.ini ~/.circus.ini
+  if [ ! -d ~/.circus ]; then
+    mkdir ~/.circus
+  fi
+  for x in `pwd`/circus/*.ini; do
+    [ "${x##*/}" = "circus.ini" ] && continue
+    ln -sf $x ~/.circus/
+  done
 fi
 
 if which go 2>/dev/null >/dev/null; then
