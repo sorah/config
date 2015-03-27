@@ -35,3 +35,6 @@ update_terminal_cwd() {
     printf '\e]7;%s\a' "$PWD_URL"
 }
 
+start-circusd() {
+  circusd --daemon --pidfile ~/.circus/circusd.pid --log-output ~/.circus/circusd.log ~/.circus.ini
+}
