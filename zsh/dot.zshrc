@@ -123,6 +123,11 @@ mysshb() {
   shift
   tmux new-window -n $name "ssh -t $* ${name}.sorah.me bash"
 }
+mysshrs() {
+  name=$1
+  shift
+  tmux split-window "ssh -t $* ${name}.sorah.me env TMUX=1 zsh"
+}
 new-ssh() { tmux new-window -n $1 "ssh $*" }
 
 alias be="bundle exec"
