@@ -1,3 +1,4 @@
+# vim: ft=zsh
 export PATHTOVIM=/Applications/MacVim.app/Contents/MacOS/Vim
 export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
 
@@ -38,3 +39,5 @@ update_terminal_cwd() {
 start-circusd() {
   circusd --daemon --pidfile ~/.circus/circusd.pid --log-output ~/.circus/circusd.log ~/.circus.ini
 }
+
+export CIRCUSCTL_ENDPOINT=tcp://localhost:3830
