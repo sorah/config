@@ -84,6 +84,7 @@ NeoBundle 'tokorom/clang_complete-getopts-ios'
 NeoBundle 'jeroenbourgois/vim-actionscript'
 NeoBundle 'fatih/vim-go'
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
+NeoBundle 'nginx/nginx', {'rtp': 'contrib/vim/'}
 NeoBundle 'dgryski/vim-godef'
 NeoBundle 'sorah/unite-ghq'
 NeoBundle 'sorah/unite-bundler'
