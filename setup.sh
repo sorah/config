@@ -72,6 +72,33 @@ if [ "_$arch" = "_mac" ]; then
     pyenv rehash
   fi
 
+  if [ ! -d ~/.nginx ]; then
+    mkdir ~/.nginx
+  fi
+
+  if ! which nginx; then
+    brew tap homebrew/nginx
+    brew install --dev nginx-full --with-auth-req --with-dav-ext-module --with-extended-status-module --with-geoip --with-gunzip --with-gzip-static --with-headers-more-module --with-lua-module --with-mp4 --with-mp4-h264-module --with-pcre-jit --with-push-stream-module --with-realip --with-rtmp-module --with-spdy --with-status --with-sub --with-webdav
+  fi
+
+  reload_launchd_nginx=0
+  if [[ ! -e /etc/nginx.conf ]] || [[ nginx/local.80.conf -nt /etc/nginx ]]; then
+    sudo cp nginx/local.80.conf /etc/nginx.conf
+    sudo chown root:wheel /etc/nginx.conf
+    sudo chmod 644 /etc/nginx.conf
+    reload_launchd_nginx=1
+  fi
+  if [[ ! -e /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist ]] || [[ nginx/jp.sorah.launchagent.nginx.plist -nt /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist ]]; then
+    sudo cp nginx/jp.sorah.launchagent.nginx.plist /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist
+    sudo chown root:wheel /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist
+    sudo chmod 644 /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist
+    reload_launchd_nginx=1
+  fi
+  if [ "_${reload_launchd_nginx}" = "_1" ]; then
+    sudo launchctl unload -w /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist || :
+    sudo launchctl load -w /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist
+  fi
+
   ln -sf `pwd`/circus/circus.ini ~/.circus.ini
   if [ ! -d ~/.circus ]; then
     mkdir ~/.circus
