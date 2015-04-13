@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'shellwords'
+
+def or_die
+  exit $?.exitstatus || 128 if $? && !$?.success?
+end
+
+options = {
+  name: nil,
+  ssh: 'ssh',
+}
+parser = OptionParser.new do |opt|
+  opt.on('-n NAME', '--name NAME', 'window name') do |name|
+    options[:name] = name
+  end
+
+  opt.on('--ssh-option OPTION', '-s OPTION', 'give ssh option') do |opt|
+    options[:ssh_options] << opt
+  end
+
+  opt.on('--ssh-options OPTIONS', '-S OPTIONS', 'give ssh options') do |opt|
+    options[:ssh_options].concat opt.split(/\s+/)
+  end
+end
+hosts = parser.parse(ARGV)
+options[:name] ||= 'cssh'
+
+commands = hosts.map do |host|
+  [options[:ssh], *options[:ssh_options], host].shelljoin
+end
+
+first_command = commands.shift
+
+new_window_cmd = [*%w(tmux new-window -d -P -n), options[:name], first_command]
+puts "$ #{new_window_cmd.join(' ')}"
+target = IO.popen(new_window_cmd, &:read).chomp
+or_die
+target.gsub!(/\..*$/,'')
+
+commands.each do |ssh_cmd|
+  cmd = [*%w(tmux split-window -d -t), target, ssh_cmd, ';', *%w(select-layout -t), target, 'tiled']
+  puts "$ #{cmd.join(' ')}"
+  system *cmd
+  or_die
+end
+
+sleep 2
+
+cmd = [*%w(tmux set-window-option -t), target, *%w(synchronize-panes on)]
+puts "$ #{cmd.join(' ')}"
+system *cmd
+or_die
+
+cmd = [*%w(tmux select-window -t), target]
+puts "$ #{cmd.join(' ')}"
+system *cmd
+or_die
