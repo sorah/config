@@ -191,7 +191,17 @@ set_prompt() {
     PROMPT="%{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
   fi
 }
-set_prompt "%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)"
+sorah-prompt-face-a() {
+  set_prompt "%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)"
+}
+sorah-prompt-face-b() {
+  set_prompt '%(?.(▰╹◡╹%).(▰╹o╹%))'
+}
+
+sorah-prompt-face-a
+if [ -n "$SSH_CLIENT" ]; then
+  sorah-prompt-face-b
+fi
 
 PROMPT2='%B%_%(?.%f.%S%F)%b %#%f%s '
 SPROMPT="%r is correct? [n,y,a,e]: "
@@ -253,11 +263,11 @@ precmd() {
     let OKO_COUNT+=1
   fi
 
-  if [ 1 -le "$OKO_COUNT" ]; then
-    set_prompt "ヾ(｡>﹏<｡)ﾉﾞ"
-  elif [ 0 -le "$OKO_COUNT" ]; then
-    set_prompt "(▰╹◡╹)"
-  fi
+  #if [ 1 -le "$OKO_COUNT" ]; then
+  #  set_prompt "ヾ(｡>﹏<｡)ﾉﾞ"
+  #elif [ 0 -le "$OKO_COUNT" ]; then
+  #  set_prompt "(▰╹◡╹)"
+  #fi
 
   # pwd & cmd @ screen
   if [ "$WINDOW" -o "$TMUX" ]; then
