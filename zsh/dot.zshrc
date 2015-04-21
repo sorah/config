@@ -207,6 +207,14 @@ PROMPT2='%B%_%(?.%f.%S%F)%b %#%f%s '
 SPROMPT="%r is correct? [n,y,a,e]: "
 # RPROMPT="%B%{$fg[green]%}[%*]%{$reset_color%}%b"
 
+sorah-compact-on() {
+  SORAH_COMPACT=1
+}
+
+sorah-compact-off() {
+  SORAH_COMPACT=0
+}
+
 autoload -U compinit; compinit
 setopt auto_pushd
 setopt ALWAYS_TO_END
