@@ -9,6 +9,7 @@ end
 options = {
   name: nil,
   ssh: 'ssh',
+  ssh_options: [],
 }
 parser = OptionParser.new do |opt|
   opt.on('-n NAME', '--name NAME', 'window name') do |name|
