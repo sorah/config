@@ -10,6 +10,7 @@ options = {
   name: nil,
   ssh: 'ssh',
   ssh_options: [],
+  command: nil,
 }
 parser = OptionParser.new do |opt|
   opt.on('-n NAME', '--name NAME', 'window name') do |name|
@@ -23,12 +24,20 @@ parser = OptionParser.new do |opt|
   opt.on('--ssh-options OPTIONS', '-S OPTIONS', 'give ssh options') do |opt|
     options[:ssh_options].concat opt.split(/\s+/)
   end
+
+  opt.on('--command CMD', '-c CMD', 'remote command to execute') do |opt|
+    options[:command] = opt
+  end
 end
 hosts = parser.parse(ARGV)
 options[:name] ||= 'cssh'
 
 commands = hosts.map do |host|
-  [options[:ssh], *options[:ssh_options], host].shelljoin
+  cmd = [options[:ssh], *options[:ssh_options], host]
+  if options[:command]
+    cmd << options[:command]
+  end
+  cmd.shelljoin
 end
 
 first_command = commands.shift
