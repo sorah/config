@@ -321,6 +321,14 @@ gcd() {
   fi
 }
 
+alias cssh="tmux-nested-cssh"
+mycssh() {
+  tmux-nested-cssh -n my-cssh --ssh-option=-t -c 'env TMUX=1 zsh' \
+    oakland.her livermore.her hilliard.her \
+    boston.her ashley.her linndale.her \
+    lakewood.her
+}
+
 
 #====================
 # powerup your emacs
