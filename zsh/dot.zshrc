@@ -329,6 +329,22 @@ mycssh() {
     lakewood.her
 }
 
+new-repo() {
+  repo=${NEW_REPO_PREFIX:-github.com/sorah}/$1
+  mkdir -p $repo
+  gcd $repo
+  git init
+}
+
+new-gem() {
+  gcd ${NEW_REPO_PREFIX:-github.com/sorah}
+  bundle gem $1
+  cd $1
+}
+
+set-git-author-private() {
+  git config user.email 'her@sorah.jp'
+}
 
 #====================
 # powerup your emacs
