@@ -346,6 +346,45 @@ set-git-author-private() {
   git config user.email 'her@sorah.jp'
 }
 
+### aws
+
+if [ "$(uname)" = "Darwin" ]; then
+  aws_wrapper="envchain aws"
+fi
+
+aws-instances-by-name() {
+  local iname
+  iname=$1
+  shift
+  ${=aws_wrapper} aws ec2 describe-instances "$@" --filters "Name=tag:Name,Values=$iname"
+}
+
+aws-instance-ids-by-name() {
+  aws-instances-by-name "$@" --output json | jq -r '.Reservations[] | .Instances[] | .InstanceId'
+}
+
+aws-public-dns-names-by-ids() {
+  ${=aws_wrapper} aws ec2 describe-instances --output json --instance-ids "$@" | awsi_filter-public-dns-name
+}
+
+aws-public-dns-names-by-names() {
+  aws-instances-by-name "$@" | awsi_filter-public-dns-name
+}
+
+aws-ssh-public-dns-by-name() {
+  local iname dnsname
+  iname=$1
+  shift
+  dnsname="$(aws-public-dns-names-by-names $iname | head -n1)"
+  echo $dnsname
+  ssh "$@" $dnsname
+}
+
+awsi_filter-public-dns-name() {
+  jq -r '.Reservations[] | .Instances[] | .PublicDnsName'
+}
+
+
 #====================
 # powerup your emacs
 #====================
