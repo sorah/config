@@ -127,3 +127,8 @@ if which go 2>/dev/null >/dev/null; then
     go get code.google.com/p/rog-go/exp/cmd/godef
   fi
 fi
+
+mkdir -p $HOME/.docker-compose
+for x in `pwd`/docker-compose/*; do
+  ln -sf "${x}" ~/.docker-compose/
+done

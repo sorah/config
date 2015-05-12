@@ -1,0 +1,44 @@
+#!/bin/bash
+set -x
+set -e
+shopt -s nullglob
+
+mkdir -p ~/.docker-compose-transient
+
+umask 0077
+cd ~
+
+fig-up() {
+  local base
+  base="${x##*/}"
+  transient=~/.docker-compose-transient/${base%.yml}.yml
+  x=$1
+
+  if [ -d $x ]; then
+    if [ -L $x ]; then
+      x=$(readlink $x)
+    fi
+    cd $x
+
+    figfile="${x}/docker-compose.yml"
+  else
+    figfile="${x}"
+  fi
+
+  wrapper="$(grep '^# wrap: ' "${figfile}"|cut -d ' ' -f 3-)"
+
+  if [ -d $x ]; then
+    if [ -x ./pre.sh ]; then
+      $wrapper ./pre.sh
+    fi
+  fi
+
+  $wrapper ruby -rerb -e 'ERB.new(ARGF.read, nil, "-").run' $figfile > $transient
+  docker-compose -f $transient -p ${base%.yml} up -d
+  rm $transient
+  cd ~
+}
+
+for x in ${@:-$HOME/.docker-compose/*}; do
+  fig-up $x
+done
