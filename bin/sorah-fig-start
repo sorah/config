@@ -9,7 +9,7 @@ umask 0077
 cd ~
 
 fig-up() {
-  local base
+  local base transient x figfile wrapper
   base="${x##*/}"
   transient=~/.docker-compose-transient/${base%.yml}.yml
   x=$1
@@ -35,10 +35,20 @@ fig-up() {
 
   $wrapper ruby -rerb -e 'ERB.new(ARGF.read, nil, "-").run' $figfile > $transient
   docker-compose -f $transient -p ${base%.yml} up -d
+
+  if [ -d $x ]; then
+    if [ -x ./post.sh ]; then
+      $wrapper ./post.sh
+    fi
+  fi
+
   rm $transient
   cd ~
 }
 
 for x in ${@:-$HOME/.docker-compose/*}; do
+  if [ ! -e $x ]; then
+    x="${HOME}/.docker-compose/${x}"
+  fi
   fig-up $x
 done
