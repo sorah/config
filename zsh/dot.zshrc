@@ -86,48 +86,38 @@ export LESS='-R'
 # server aliases
 alias menheler="tmux new-window -n menheler 'ssh menheler.pasra.tk'"
 
-alias mayfield="tmux new-window -n mayfield 'ssh mayfield.sorah.jp'"
-alias linndale="tmux new-window -n linndale 'ssh linndale.sorah.jp'"
-alias lakewood="tmux new-window -n lakewood 'ssh lakewood.sorah.jp'"
-alias boston="tmux new-window -n boston 'ssh boston.sorah.jp'"
-alias ashley="tmux new-window -n ashley 'ssh ashley.sorah.me'"
+mssh() {
+  name=$1
+  shift
+  tmux new-window -n $name "ssh $* ${name}.her"
+}
+msshr() {
+  name=$1
+  shift
+  tmux new-window -n $name "ssh -t $* ${name}.her env TMUX=1 zsh"
+}
+msshi() {
+  name=$1
+  shift
+  ssh -t $* ${name}.her
+}
+msshri() {
+  name=$1
+  shift
+  ssh -t $* ${name}.her env TMUX=1 zsh
+}
+msshb() {
+  name=$1
+  shift
+  tmux new-window -n $name "ssh -t $* ${name}.her bash"
+}
+msshbi() {
+  name=$1
+  shift
+  ssh -t $* ${name}.her bash
+}
+alias ms="mssh"
 
-alias livermore="tmux new-window -n livermore 'ssh livermore.sorah.me'"
-alias hilliard="tmux new-window -n hilliard 'ssh hilliard.sorah.me'"
-alias oakland="tmux new-window -n oakland 'ssh oakland.sorah.me'"
-
-alias fairfield="tmux new-window -n fairfield 'ssh fairfield.sorah.me'"
-alias celina="tmux new-window -n celina 'ssh celina.sorah.jp'"
-myssh() {
-  name=$1
-  shift
-  tmux new-window -n $name "ssh $* ${name}.sorah.me"
-}
-mysshr() {
-  name=$1
-  shift
-  tmux new-window -n $name "ssh -t $* ${name}.sorah.me env TMUX=1 zsh"
-}
-mysshi() {
-  name=$1
-  shift
-  ssh -t $* ${name}.sorah.me
-}
-mysshri() {
-  name=$1
-  shift
-  ssh -t $* ${name}.sorah.me env TMUX=1 zsh
-}
-mysshb() {
-  name=$1
-  shift
-  tmux new-window -n $name "ssh -t $* ${name}.sorah.me bash"
-}
-mysshrs() {
-  name=$1
-  shift
-  tmux split-window "ssh -t $* ${name}.sorah.me env TMUX=1 zsh"
-}
 new-ssh() { tmux new-window -n $1 "ssh $*" }
 
 alias be="bundle exec"
