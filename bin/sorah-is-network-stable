@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+unless RUBY_PLATFORM =~ /darwin/
+  exit 0
+end
+
+stable_wifi_aps = %w(sorah soraher)
+if File.exist?(File.expand_path('~/.sorah_stable_aps'))
+  stable_wifi_aps.concat File.read(File.expand_path('~/.sorah_stable_aps')).each_line.map(&:chomp)
+end
+
+list = `networksetup -listallhardwareports`
+
+active_iface_raw = `route get default`.match(/^\s*interface:\s*(.+)$/)[0]
+
+iface_to_name = Hash[list.scan(/Hardware Port: (.+)\nDevice: (.+)\n/).map { |(name,iface)| [iface, name] }]
+aliases = Hash[list.scan(/Parent Device: (.+)\nDevice (?:\(.+\))?: (.+)\n/).map { |(parent,iface)| [iface, parent] }]
+
+active_iface = aliases[active_iface_raw] || active_iface_raw
+
+wifi_ap = begin
+  match = IO.popen(['networksetup', '-getairportnetwork', active_iface], 'r', &:read).
+    match(/^Current Wi-Fi Network: (.+)$/)
+  match && match[1]
+end
+
+if wifi_ap
+  exit stable_wifi_aps.include?(wifi_ap) ? 0 : 1
+else
+  exit 0
+end

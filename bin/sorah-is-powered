@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ "$(uname)" = "Darwin" ];then
+  ioreg -rc "AppleSmartBattery" |grep ExternalConnected|awk '{print $3}' | grep -q '^Yes$'
+else
+  exit 0
+fi
