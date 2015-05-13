@@ -9,13 +9,22 @@ export CFLAGS="${optflags} ${debugflags}"
 conf=$1
 shift
 
-$conf --enable-shared \
-      --with-gcc=clang CXX=clang++ \
-      --with-arch=x86_64 \
-      --with-out-ext=tk,tk/* \
-      --with-valgrind \
-      --with-readline-dir=$(brew --prefix readline) \
-      --with-openssl-dir=$(brew --prefix openssl) \
-      $* \
-      optflags="${optflags}" \
-      debugflags="${debugflags}"
+if [ "$(uname)" = "Darwin" ]; then
+  $conf --enable-shared \
+        --with-gcc=clang CXX=clang++ \
+        --with-arch=x86_64 \
+        --with-out-ext=tk,tk/* \
+        --with-valgrind \
+        --with-readline-dir=$(brew --prefix readline) \
+        --with-openssl-dir=$(brew --prefix openssl) \
+        "$@" \
+        optflags="${optflags}" \
+        debugflags="${debugflags}"
+else
+  $conf --enable-shared \
+        --with-out-ext=tk,tk/* \
+        --with-valgrind \
+        "$@" \
+        optflags="${optflags}" \
+        debugflags="${debugflags}"
+fi

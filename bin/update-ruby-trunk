@@ -1,17 +1,27 @@
 #!/bin/bash
+set -e
+set -x
 
-if [[ ! -L ${RBENV_ROOT:-~/.rbenv}/versions/trunk ]]; then
-  ln -s /usr/local/opt/ruby-trunk ${RBENV_ROOT:-~/.rbenv}/versions/trunk
+RBENV_ROOT=${RBENV_ROOT:-~/.rbenv}
+
+mkdir -p ${RBENV_ROOT}/sources/trunk
+
+if [ -d ${RBENV_ROOT}/sources/trunk/ruby ]; then
+  cd ${RBENV_ROOT}/sources/trunk/ruby 
+  git pull --rebase
+else
+  git clone https://github.com/ruby/ruby ${RBENV_ROOT}/sources/trunk/ruby
+  cd ${RBENV_ROOT}/sources/trunk/ruby
+  autoconf
 fi
 
-[[ ! -d /tmp/update-ruby-trunk ]] && mkdir /tmp/update-ruby-trunk
+mkdir -p ${RBENV_ROOT}/sources/trunk/build
+cd ${RBENV_ROOT}/sources/trunk/build
 
-cd /tmp/update-ruby-trunk
+sorah-ruby-configure ../ruby/configure --prefix=${RBENV_ROOT}/versions/trunk
+make -j4
+make install
 
-curl -o archive.zip 'http://ci.sorah.jp/job/ruby-trunk/label_exp=osx/lastSuccessfulBuild/artifact/*zip*/archive.zip'
-unzip archive.zip
-
-rsync -a archive/build/dest/usr/local/opt/ruby-trunk/ /usr/local/opt/ruby-trunk 
-
-cd ..
-rm -rf /tmp/update-ruby-trunk
+if [ ! -x ${RBENV_ROOT}/versions/trunk/bin/bundle ]; then
+  ${RBENV_ROOT}/versions/trunk/bin/gem install bundler
+fi
