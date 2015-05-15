@@ -44,6 +44,9 @@ git config --global ui.color auto
 git config --global push.default simple
 
 if [ "_$arch" = "_mac" ]; then
+  if ! which jq 2>/dev/null; then
+    brew install jq
+  fi
 
   if ! which go 2>/dev/null; then
     brew install go
