@@ -13,6 +13,7 @@ if [ "_$arch" = "_mac" ]; then
 fi
 
 set -x
+shopt -s nullglob
 
 
 ln -sf `pwd`/vim/dot.vim ~/.vim
