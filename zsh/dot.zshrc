@@ -197,6 +197,8 @@ PROMPT2='%B%_%(?.%f.%S%F)%b %#%f%s '
 SPROMPT="%r is correct? [n,y,a,e]: "
 # RPROMPT="%B%{$fg[green]%}[%*]%{$reset_color%}%b"
 
+RPROMPT='%{$fg[black]%}$(rbenv version | grep -v "set by ${RBENV_ROOT}/version" | sed -e "s/(set by RBENV_VERSION.*$/shell/" -e "s/(set by.*$/local/" | sed -e "s/^/[rb /" -e "s/$/]/" )%{$reset_color%}'
+
 sorah-compact-on() {
   SORAH_COMPACT=1
 }
