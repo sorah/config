@@ -330,7 +330,7 @@ new-repo() {
 
 new-gem() {
   gcd ${NEW_REPO_PREFIX:-github.com/sorah}
-  bundle gem $1
+  bundle gem --mit --no-coc $1
   cd $1
 }
 
