@@ -171,14 +171,15 @@ setopt prompt_subst
 
 set_prompt() {
   local face
-  face=$1
+  face=${1:-$current_face}
+  current_face=${face}
   if [ "$SSH_CLIENT" ]; then
     PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%m %~ %{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
   else
     PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%~ %{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
   fi
   if [ "_$SORAH_COMPACT" = "_1" ]; then
-    PROMPT="%{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
+    PROMPT="%B%{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
   fi
 }
 sorah-prompt-face-a() {
@@ -268,6 +269,7 @@ precmd() {
   #elif [ 0 -le "$OKO_COUNT" ]; then
   #  set_prompt "(▰╹◡╹)"
   #fi
+  set_prompt
 
   # pwd & cmd @ screen
   if [ "$WINDOW" -o "$TMUX" ]; then
