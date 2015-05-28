@@ -11,7 +11,7 @@ end
 
 list = `networksetup -listallhardwareports`
 
-active_iface_raw = `route get default`.match(/^\s*interface:\s*(.+)$/)[0]
+active_iface_raw = `route get default`.match(/^\s*interface:\s*(.+)$/)[1]
 
 iface_to_name = Hash[list.scan(/Hardware Port: (.+)\nDevice: (.+)\n/).map { |(name,iface)| [iface, name] }]
 aliases = Hash[list.scan(/Parent Device: (.+)\nDevice (?:\(.+\))?: (.+)\n/).map { |(parent,iface)| [iface, parent] }]
