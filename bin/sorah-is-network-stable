@@ -27,5 +27,12 @@ end
 if wifi_ap
   exit stable_wifi_aps.include?(wifi_ap) ? 0 : 1
 else
+  case iface_to_name[active_iface]
+  when /Bluetooth/i
+    exit 1
+  when /iPhone|iPad/i
+    exit 1
+  end
+
   exit 0
 end
