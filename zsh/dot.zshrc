@@ -392,4 +392,4 @@ if [[ -e ~/.zshrc_env ]]; then;
   source ~/.zshrc_env # Optimized to environments
 fi
 
-
+export RBENV_ROOT=${RBENV_ROOT:-$HOME/.rbenv}
