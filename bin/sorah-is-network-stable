@@ -18,6 +18,10 @@ aliases = Hash[list.scan(/Parent Device: (.+)\nDevice (?:\(.+\))?: (.+)\n/).map 
 
 active_iface = aliases[active_iface_raw] || active_iface_raw
 
+if active_iface.start_with?('ppp') # VPN
+  exit 1
+end
+
 wifi_ap = begin
   match = IO.popen(['networksetup', '-getairportnetwork', active_iface], 'r', &:read).
     match(/^Current Wi-Fi Network: (.+)$/)
