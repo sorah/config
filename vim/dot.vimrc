@@ -93,6 +93,7 @@ NeoBundle 'eagletmt/vim-ruby_namespace'
 NeoBundle 'sorah/unite-outline-piculet'
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'mxw/vim-jsx'
+NeoBundle 'vim-scripts/rfc-syntax'
 filetype on
 filetype plugin on
 filetype indent on
