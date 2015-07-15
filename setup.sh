@@ -57,6 +57,14 @@ if [ "_$arch" = "_mac" ]; then
     brew install go
   fi
 
+  if ! which tmux 2>/dev/null; then
+    brew install tmux
+  fi
+
+  if ! which autossh 2>/dev/null; then
+    brew install autossh
+  fi
+
   if ! which pyenv 2>/dev/null; then
     brew install pyenv
     pyenv install 2.7.10
@@ -133,6 +141,10 @@ if which go 2>/dev/null >/dev/null; then
 
   if ! which godef; then
     go get code.google.com/p/rog-go/exp/cmd/godef
+  fi
+
+  if ! which peco; then
+    go get github.com/peco/peco/cmd/peco
   fi
 fi
 
