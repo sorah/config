@@ -45,6 +45,10 @@ git config --global ui.color auto
 git config --global push.default simple
 
 if [ "_$arch" = "_mac" ]; then
+  if ! which hg 2>/dev/null; then
+    brew install mercurial
+  fi
+
   if ! which jq 2>/dev/null; then
     brew install jq
   fi
