@@ -1,0 +1,6 @@
+{
+    "Prompt": ">",
+    "Keymap":  {
+      "C-f": "peco.ToggleSelection"
+    }
+}

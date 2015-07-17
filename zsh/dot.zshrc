@@ -303,7 +303,7 @@ mds-off() {
 }
 
 ##
-# $ gcd     -> launch percol for `ghq list` then cd to selection
+# $ gcd     -> launch peco for `ghq list` then cd to selection
 # $ gcd x/x -> chdir to ~/git/x/x or ~/git/github.com/x/x
 gcd() {
   if [[ -n "$1" ]]; then
@@ -311,7 +311,7 @@ gcd() {
     [[ ! -d "$candidate" ]] && candidate=~/git/github.com/$1
     cd $candidate
   else
-    cd ~/git/$(ghq list | percol)
+    cd ~/git/$(ghq list | peco)
   fi
 }
 

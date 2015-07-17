@@ -24,6 +24,7 @@ ln -sf `pwd`/screen/dot.screenrc ~/.screenrc
 ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf
 ln -sf `pwd`/misc/dot.irbrc ~/.irbrc
 ln -sf `pwd`/misc/dot.gemrc ~/.gemrc
+ln -sf `pwd`/peco ~/.peco
 
 if [ "_$arch" = "_mac" ]; then
   if ! which reattach-to-user-namespace; then
