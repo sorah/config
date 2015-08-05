@@ -46,6 +46,10 @@ git config --global ui.color auto
 git config --global push.default simple
 
 if [ "_$arch" = "_mac" ]; then
+  if ! which gsed 2>/dev/null; then
+    brew install gnu-sed
+  fi
+
   if ! which hg 2>/dev/null; then
     brew install mercurial
   fi
