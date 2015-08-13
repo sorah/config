@@ -236,9 +236,11 @@ set foldcolumn=1
 "}}}
 
 "color settings {{{
-set t_AB=[48;5;%dm
-set t_AF=[38;5;%dm
-set t_Co=256
+if !has('gui_running')
+  set t_AB=[48;5;%dm
+  set t_AF=[38;5;%dm
+  set t_Co=256
+endif
 
 colorscheme hybrid
 " Darker bg
