@@ -103,7 +103,7 @@ if [ "_$arch" = "_mac" ]; then
   fi
 
   reload_launchd_nginx=0
-  if [[ ! -e /etc/nginx.conf ]] || [[ nginx/local.80.conf -nt /etc/nginx ]]; then
+  if [[ ! -e /etc/nginx.conf ]] || [[ nginx/local.80.conf -nt /etc/nginx.conf ]]; then
     sudo cp nginx/local.80.conf /etc/nginx.conf
     sudo chown root:wheel /etc/nginx.conf
     sudo chmod 644 /etc/nginx.conf
