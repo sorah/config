@@ -311,7 +311,9 @@ gcd() {
     [[ ! -d "$candidate" ]] && candidate=~/git/github.com/$1
     cd $candidate
   else
-    cd ~/git/$(ghq list | peco)
+    candidate=$(ghq list | peco)
+    [[ -z "${candidate}" ]] && return 1
+    cd ~/git/${candidate}
   fi
 }
 
