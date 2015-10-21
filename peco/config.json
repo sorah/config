@@ -1,6 +1,7 @@
 {
     "Prompt": ">",
-    "Keymap":  {
-      "C-f": "peco.ToggleSelection"
+    "Keymap": {
+      "C-f": "peco.ToggleSelection",
+      "C-a": "peco.SelectVisible"
     }
 }
