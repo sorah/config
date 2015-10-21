@@ -10,7 +10,7 @@
     <false/>
     <key>ProgramArguments</key>
     <array>
-      <string>/usr/local/opt/nginx/bin/nginx</string>
+      <string>/usr/local/opt/nginx-full/bin/nginx</string>
       <string>-c</string>
       <string>/etc/nginx.conf</string>
       <string>-g</string>
