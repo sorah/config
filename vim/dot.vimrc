@@ -360,6 +360,13 @@ augroup CodenizeToolsFt
   autocmd BufWinEnter,BufNewFile EIPfile setf ruby
   autocmd BufWinEnter,BufNewFile EIPFile setf ruby
 augroup END
+
+" vagrant
+augroup VagrantFt
+  autocmd!
+
+  autocmd BufWinEnter,BufNewFile Vagrantfile setf ruby
+augroup END
 "}}}
 
 "neocomplcache settings
