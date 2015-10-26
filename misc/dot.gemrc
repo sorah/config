@@ -9,3 +9,4 @@
 #update: --no-ri --no-rdoc
 :gemsrc_use_ghq: true
 :verbose: :really
+:backtrace: true
