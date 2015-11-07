@@ -20,11 +20,14 @@ SQS_QUEUE_NAME = 'sorah-wakeup'
 LOGS_LOG_GROUP = 'sorah-wakeup'
 LOGS_LOG_STREAM = 'log'
 
-def tweet(text)
+def tweet(*texts)
   Thread.new do
     begin
-      puts "TWEET: #{text}"
-      Fluent::Logger::FluentLogger.new('twitter', host: 'boston.her', port: 19248).post('sorah-wakeup', message: text)
+      logger = Fluent::Logger::FluentLogger.new('twitter', host: 'boston.her', port: 19248)
+      texts.each do |text|
+        puts "TWEET: #{text}"
+        logger.post('sorah-wakeup', message: text)
+      end
     rescue Exception => e
       warn "Error while tweeting: #{e.inspect}\n\t#{e.backtrace.join("\n\t")}"
     end
@@ -122,7 +125,7 @@ def wakeup!
   puts "Woke up, playing: #{cur}"
   update_current_track(cur)
 
-  tweet "test #{Time.now.to_i}"
+  tweet "@sorahers #sorah_wakeup #{Time.now.to_i}", "@sora_h #sorah_wakeup #{Time.now.to_i}"
 
   cur
 end
