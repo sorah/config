@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd ~/git/config/script/wakeup
+
+bundle check || bundle install --jobs 30 --retry 3
+bundle exec ruby wakeup.rb

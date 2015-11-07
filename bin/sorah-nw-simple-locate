@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if dig +nonssearch +noall +comments boston.her|grep -q NOERROR; then
+  if dig +short livermore.sorah.me | grep -q '^10\.'; then
+    echo "home"
+  else
+    echo "internal"
+  fi
+else
+  echo "unknown"
+fi
