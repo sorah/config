@@ -367,6 +367,12 @@ augroup VagrantFt
 
   autocmd BufWinEnter,BufNewFile Vagrantfile setf ruby
 augroup END
+
+augroup EssixFt
+  autocmd!
+
+  autocmd BufWinEnter,BufNewFile *.es6 setf javascript
+augroup END
 "}}}
 
 "neocomplcache settings
