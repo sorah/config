@@ -21,13 +21,15 @@ goprefix="$(brew --prefix go)"
 [ -n "$goprefix" ] && export PATH=${goprefix}/libexec/bin:$PATH
 
 # homebrew
-export LDFLAGS="-L/Users/sorah/brew/lib $LDFLAGS"
-export LIBS="-L/Users/sorah/brew/lib $LIBS"
-export SOLIBS="-L/Users/sorah/brew/lib $SOLIBS"
-export CPPFLAGS="-isystem /Users/sorah/brew/include $CPPFLAGS"
-export CFLAGS="-isystem /Users/sorah/brew/include $CFLAGS"
-export NODE_PATH=/Users/sorah/brew/lib/node_modules
-export PATH=~/brew/bin:$HOME/brew/share/npm/bin:$PATH
+sorah_brew_prefix="$(brew --prefix)"
+if [ "_$sorah_brew_prefix" != "_/usr/local" ]; then
+  export CPPFLAGS="-isystem${sorah_brew_prefix}/include $CPPFLAGS"
+  export CFLAGS="-isystem${sorah_brew_prefix}/include $CFLAGS"
+  export LDFLAGS="-L${sorah_brew_prefix}/lib $LDFLAGS"
+  export PKG_CONFIG_LIBDIR="${sorah_brew_prefix}/lib/pkgconfig:/usr/lib/pkgconfig"
+  export NODE_PATH=${sorah_brew_prefix}/lib/node_modules
+  export PATH=${sorah_brew_prefix}/share/npm/bin:$PATH
+fi
 
 update_terminal_cwd() {
     local SEARCH=' '

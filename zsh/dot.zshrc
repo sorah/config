@@ -15,7 +15,7 @@ elif [ ! -L "$SSH_AUTH_SOCK" ]; then
 fi
 
 if [ ! "$TMUX" -a ! "$WINDOW" -a ! "$VIMSHELL" ]; then
-  export PATH=~/brew/bin:$PATH
+  export PATH=$HOME/brew/bin:$HOME/brew/sbin:/opt/brew/bin:/opt/brew/sbin:$PATH
   export PATH=~/git/config/bin:$PATH
   export PATH=~/.rbenv/bin:$PATH
   export PATH=~/.rbenv/shims:$PATH
