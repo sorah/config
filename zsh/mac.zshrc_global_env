@@ -2,7 +2,6 @@
 export PATHTOVIM=/Applications/MacVim.app/Contents/MacOS/Vim
 export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
 
-alias vmrun="/Library/Application\ Support/VMware\ Fusion/vmrun"
 vim() {
   local a
   a=(${(s.:.)1})
@@ -13,9 +12,6 @@ alias -g Vim='/Applications/MacVim.app/Contents/MacOS/Vim'
 alias -g view='/Applications/MacVim.app/Contents/MacOS/Vim -R'
 
 alias ls='ls -G'
-alias app="open -a"
-
-alias ios='open /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone\ Simulator.app'
 
 goprefix="$(brew --prefix go)"
 [ -n "$goprefix" ] && export PATH=${goprefix}/libexec/bin:$PATH
