@@ -136,7 +136,7 @@ end
 
 unless %w(americano americano.home.her americano.local).include?(Socket.gethostname)
   puts "This host (#{Socket.gethostname}) is not expected to run"
-  exit
+  loop { sleep 3600 }
 end
 
 profile = Aws::SharedCredentials.new(profile_name: AWS_PROFILE)
