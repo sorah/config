@@ -3,3 +3,4 @@ vim/dot.vim/autoload/*.so
 .DS_Store
 vim/dot.vim/.netrwhist
 vim/dot.vim/other/private.vim
+.bundle/
