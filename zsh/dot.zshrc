@@ -64,8 +64,8 @@ if command -v plenv >/dev/null 2>&1; then
   eval "$(plenv init -)"
 fi
 
-if command -v boot2docker >/dev/null 2>&1; then
-  eval "$(boot2docker shellinit 2>/dev/null)"
+if command -v docker-machine >/dev/null 2>&1; then
+  eval "$(docker-machine env default 2>/dev/null)"
 fi
 
 export GEMSRC_USE_GHQ=1
