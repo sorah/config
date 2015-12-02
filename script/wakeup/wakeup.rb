@@ -5,6 +5,8 @@ require 'json'
 require 'aws-sdk'
 require 'fluent-logger'
 
+@noop = ENV['NOOP'] == '1'
+
 $stdout.sync = true
 
 AWS_REGION = 'ap-northeast-1'
@@ -78,6 +80,10 @@ def nw_locate
 end
 
 def current_track
+  if @noop
+    return 32.times.map { ('a'..'z').to_a.sample }.join
+  end
+
   scpt = <<-EOS
   var track = Application("iTunes").currentTrack()
   var res = "Nothing playing"
@@ -96,6 +102,7 @@ def current_track
 end
 
 def wakeup!
+  return if @noop
   scpt = <<-EOS
   var it = Application("iTunes");
   var state = it.playerState()
