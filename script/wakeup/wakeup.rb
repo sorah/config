@@ -85,10 +85,11 @@ def current_track
   end
 
   scpt = <<-EOS
-  var track = Application("iTunes").currentTrack()
-  var res = "Nothing playing"
-  if (track) {
-    res = track.name() + " - " + track.artist() + " (vol=" + Application("iTunes").soundVolume() + ")"
+  var it = Application("iTunes");
+  var track = it.currentTrack();
+  var res = "Nothing playing";
+  if (track && it.playerState() == "playing") {
+    res = track.name() + " - " + track.artist() + " (vol=" + Application("iTunes").soundVolume() + ")";
   }
 
   res
