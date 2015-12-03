@@ -101,7 +101,7 @@ def current_track
   end
 end
 
-def wakeup!
+def alarm!
   return if @noop
   scpt = <<-EOS
   var it = Application("iTunes");
@@ -127,12 +127,16 @@ def wakeup!
     io.close_write
     io.read
   end
+end
+
+def wakeup!(run_id: Time.now.to_s)
+  alarm!
 
   cur = current_track
   puts "Woke up, playing: #{cur}"
   update_current_track(cur)
 
-  tweet "@sorahers #sorah_wakeup #{Time.now.to_i}", "@sora_h #sorah_wakeup #{Time.now.to_i}"
+  tweet "@sorahers #sorah_wakeup #{run_id}", "@sora_h #sorah_wakeup #{run_id}"
 
   cur
 end
@@ -164,7 +168,7 @@ Thread.new do
     begin
       if nw_locate == 'home'
         puts "Waking up..."
-        track = wakeup!
+        track = wakeup!(run_id: msg.message_id)
         publish_log(msg.message_id, {kind: 'ack', message_id: msg.message_id, track: track})
       else
         puts "Not in home, skipping"
