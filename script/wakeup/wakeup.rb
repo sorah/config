@@ -143,7 +143,15 @@ def wakeup!(run_id: Time.now.to_s)
 end
 
 def update_current_track(cur = current_track)
-  @s3.put_object(bucket: CURRENT_TXT_S3_BUCKET, key: CURRENT_TXT_S3_KEY, body: "#{cur}\n", content_type: 'text/plain')
+  if !@last_current_track_remote || @last_current_track_remote != cur || (@last_current_track_time && (Time.now - @last_current_track_time) > 120)
+    resp = @s3.put_object(bucket: CURRENT_TXT_S3_BUCKET, key: CURRENT_TXT_S3_KEY, body: "#{cur}\n", content_type: 'text/plain')
+    @last_current_track_time = Time.now
+    @last_current_track_remote = cur
+    puts "CURRENT PUT: #{cur}"
+    resp
+  else
+    nil
+  end
 end
 
 unless %w(americano americano.home.her americano.local).include?(Socket.gethostname)
@@ -154,7 +162,10 @@ end
 profile = Aws::SharedCredentials.new(profile_name: AWS_PROFILE)
 
 @sqs = Aws::SQS::Client.new(credentials: profile, region: AWS_REGION)
+
 @s3 = Aws::S3::Client.new(credentials: profile, region: AWS_REGION)
+@last_current_track_remote = nil
+@last_current_track_time = nil
 
 @logs_lock = Mutex.new
 @logs = Aws::CloudWatchLogs::Client.new(credentials: profile, region: AWS_REGION)
