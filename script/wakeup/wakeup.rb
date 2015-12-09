@@ -108,7 +108,7 @@ def alarm!
   var it = Application("iTunes");
   var state = it.playerState()
 
-  var shouldChangePlaylist = it.currentPlaylist().name() != "Music" && it.currentPlaylist().name() != "__Smart";
+  var shouldChangePlaylist = state != "playing" || (it.currentPlaylist().name() != "Music" && it.currentPlaylist().name() != "__Smart");
 
   if (shouldChangePlaylist) {
     it.playlists["Music"].play();
