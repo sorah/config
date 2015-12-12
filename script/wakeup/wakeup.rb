@@ -198,7 +198,7 @@ loop do
   begin
     update_current_track
     sleep 60
-  rescue Interrupt
+  rescue Interrupt, SignalException
     break
   rescue Exception => e
     warn "oops: #{e.inspect}"
