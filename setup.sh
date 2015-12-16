@@ -88,6 +88,11 @@ if [ "_$arch" = "_mac" ]; then
     pyenv rehash
   fi
 
+  if ! which aws-shell; then
+    pip install aws-shell
+    pyenv rehash
+  fi
+
   if ! which circusd; then
     pip install circus
     pyenv rehash
