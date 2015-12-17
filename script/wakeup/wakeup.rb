@@ -191,6 +191,7 @@ Thread.new do
       publish_log(msg.message_id, {kind: 'error', message_id: msg.message_id, error: e.class.inspect})
       raise
     end
+    puts "====="
   end
 end.abort_on_exception = true
 
