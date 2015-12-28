@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+require 'aws-sdk'
+require 'optparse'
+
+region = ENV['AWS_DEFAULT_REGION']
+
+parser = OptionParser.new do |_|
+  _.on('-r REGION', '--region REGION') { |reg| region = reg }
+end
+
+args = parser.parse(ARGV)
+
+ec2s = Hash.new { |h, k| h[k] = Aws::EC2::Resource.new(region: k) }
+
+
+args.each do |arg|
+  values = arg.split(?:, 2)
+  if values.size == 2
+    ami_region, ami_id = values
+  else
+    ami_region, ami_id = region, values.first
+  end
+
+  ec2 = ec2s[ami_region] 
+
+  puts "=> #{ami_id} @ #{ami_region}"
+
+  image = ec2.image(ami_id)
+  snapshot_ids = image.block_device_mappings.map do |mapping|
+    mapping.ebs && mapping.ebs.snapshot_id
+  end.compact
+
+  puts " * Deregister #{ami_id} (#{image.name})"
+  image.deregister
+  snapshot_ids.each do |snapshot_id|
+    puts " * Delete snapshot #{snapshot_id}"
+    ec2.client.delete_snapshot(snapshot_id: snapshot_id)
+  end
+end
