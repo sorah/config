@@ -108,6 +108,13 @@ if [ "_$arch" = "_mac" ]; then
   fi
 
   reload_launchd_nginx=0
+  if [[ ! -d /etc/nginx ]]; then
+    sudo mkdir /etc/nginx
+  fi
+  if [[ ! -e /etc/nginx/mime.types ]]; then
+    sudo cp $(brew --prefix)/etc/nginx/mime.types /etc/nginx/mime.types
+    reload_launchd_nginx=1
+  fi
   if [[ ! -e /etc/nginx.conf ]] || [[ nginx/local.80.conf -nt /etc/nginx.conf ]]; then
     sudo cp nginx/local.80.conf /etc/nginx.conf
     sudo chown root:wheel /etc/nginx.conf

@@ -17,6 +17,6 @@
       <string>daemon off;</string>
     </array>
     <key>WorkingDirectory</key>
-    <string>/usr/local</string>
+    <string>/</string>
   </dict>
 </plist>
