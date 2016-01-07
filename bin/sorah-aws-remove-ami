@@ -3,15 +3,18 @@ require 'aws-sdk'
 require 'optparse'
 
 region = ENV['AWS_DEFAULT_REGION']
+name = nil
 
 parser = OptionParser.new do |_|
   _.on('-r REGION', '--region REGION') { |reg| region = reg }
+  _.on('-n NAME', '--name NAME') { |n| name = n }
 end
 
 args = parser.parse(ARGV)
 
 ec2s = Hash.new { |h, k| h[k] = Aws::EC2::Resource.new(region: k) }
 
+targets = {}
 
 args.each do |arg|
   values = arg.split(?:, 2)
@@ -21,19 +24,38 @@ args.each do |arg|
     ami_region, ami_id = region, values.first
   end
 
+  (targets[ami_region] ||= []) << ami_id
+end
+
+if name
+  REGIONS = Aws::EC2::Client.new(region: region || 'ap-northeast-1').describe_regions.regions.map(&:region_name)
+
+  REGIONS.each do |target_region|
+    puts "=> Finding AMI from #{target_region}"
+    ec2s[target_region].images(filters: [name: 'name', values: [name]]).each do |image|
+      puts " * #{image.image_id}"
+      (targets[target_region] ||= []) << image
+    end
+  end
+  puts
+end
+
+targets.each do |ami_region, images|
   ec2 = ec2s[ami_region] 
 
-  puts "=> #{ami_id} @ #{ami_region}"
+  images.each do |image|
+    image = Aws::EC2::Image ? image : ec2.image(image)
 
-  image = ec2.image(ami_id)
-  snapshot_ids = image.block_device_mappings.map do |mapping|
-    mapping.ebs && mapping.ebs.snapshot_id
-  end.compact
+    puts "=> #{image.image_id} @ #{ami_region}"
+    snapshot_ids = image.block_device_mappings.map do |mapping|
+      mapping.ebs && mapping.ebs.snapshot_id
+    end.compact
 
-  puts " * Deregister #{ami_id} (#{image.name})"
-  image.deregister
-  snapshot_ids.each do |snapshot_id|
-    puts " * Delete snapshot #{snapshot_id}"
-    ec2.client.delete_snapshot(snapshot_id: snapshot_id)
+    puts " * Deregister #{image.image_id} (#{image.name})"
+    image.deregister
+    snapshot_ids.each do |snapshot_id|
+      puts " * Delete snapshot #{snapshot_id}"
+      ec2.client.delete_snapshot(snapshot_id: snapshot_id)
+    end
   end
 end
