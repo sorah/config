@@ -154,7 +154,7 @@ def update_current_track(cur = current_track)
   end
 end
 
-unless %w(americano americano.home.her americano.local).include?(Socket.gethostname)
+unless %w(americano americano-wlan.home.her americano.home.her americano.local).include?(Socket.gethostname)
   puts "This host (#{Socket.gethostname}) is not expected to run"
   loop { sleep 3600 }
 end
