@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'open-uri'
+require 'tempfile'
+require 'aws-sdk'
+require 'json'
+require 'yaml'
+require 'logger'
+
+Aws.config[:logger] = Logger.new($stderr)
+
+def regions
+  @regions ||= Aws::EC2::Client.new(region: ENV['AWS_DEFAULT_REGION'] || 'ap-northeast-1').describe_regions.regions.map(&:region_name)
+end
+
+instances = regions.map do |region|
+  Thread.new do
+    ec2 = Aws::EC2::Resource.new(region: region)
+    ec2.instances(filters: [name: 'instance-state-name', values: %w(running)]).map do |instance|
+      name = instance.tags.find { |_| _.key == 'Name' }&.value
+      [instance.instance_id, name, instance.instance_type, region, instance.public_dns_name].join(?\t)
+    end
+  end
+end.flat_map(&:value)
+
+puts instances
