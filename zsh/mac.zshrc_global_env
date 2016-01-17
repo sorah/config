@@ -13,10 +13,18 @@ alias -g view='/Applications/MacVim.app/Contents/MacOS/Vim -R'
 
 alias ls='ls -G'
 
-goprefix="$(brew --prefix go)"
+if [[ -n "${TMUX}" ]]; then
+  goprefix="${SORAH_GOPREFIX}"
+fi
+if [[ -z "${goprefix}" ]]; then
+  goprefix="$(brew --prefix go)"
+  if [[ -n "${TMUX}" ]]; then tmux setenv SORAH_GOPREFIX "${goprefix}"; fi
+fi
+
 [ -n "$goprefix" ] && export PATH=${goprefix}/libexec/bin:$PATH
 
 # homebrew
+
 sorah_brew_prefix="$(brew --prefix)"
 if [ "_$sorah_brew_prefix" != "_/usr/local" ]; then
   export CPPFLAGS="-isystem${sorah_brew_prefix}/include $CPPFLAGS"

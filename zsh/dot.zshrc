@@ -57,7 +57,7 @@ alias ne='PATH=$(npm bin):$PATH'
 
 export PATH=~/.rbenv/bin:$PATH
 export PATH=~/.rbenv/shims:$PATH
-eval "$(rbenv init -)"
+eval "$(rbenv init --no-rehash -)"
 
 export PATH=~/.plenv/bin:$PATH
 if command -v plenv >/dev/null 2>&1; then
@@ -70,7 +70,7 @@ fi
 
 export GEMSRC_USE_GHQ=1
 
-if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
+if which pyenv > /dev/null; then eval "$(pyenv init --no-rehash -)"; fi
 
 export PATH=~/.gopath/bin:$PATH
 
@@ -258,7 +258,7 @@ change_window_title() { tmux rename-window -t $TMUX_WINDOW "$*" }
 OKO_COUNT=0
 
 precmd() {
-  if [ $? = "0" ];then
+  if [[ $? = "0" ]];then
     OKO_COUNT=0
   else
     let OKO_COUNT+=1
@@ -272,14 +272,16 @@ precmd() {
   set_prompt
 
   # pwd & cmd @ screen
-  if [ "$WINDOW" -o "$TMUX" ]; then
+  if [[ -n "$WINDOW" || -n "$TMUX" ]]; then
     change_window_title `$RUBY ~/git/config/script/cdd_title.rb`
   fi
 }
 
 function preexec() {
-  if [ "$WINDOW" -o "$TMUX" ]; then
-    change_window_title `$RUBY ~/git/config/script/cdd_title.rb`:`echo "$1"|cut -d' ' -f 1`
+  if [[ "${SORAH_ZSHRC_LOADED}" = "_1" ]]; then
+    if [[ -n "$WINDOW" || -n "$TMUX" ]]; then
+      change_window_title `$RUBY ~/git/config/script/cdd_title.rb`:`echo "$1"|cut -d' ' -f 1`
+    fi
   fi
 }
 
@@ -395,3 +397,4 @@ if [[ -e ~/.zshrc_env ]]; then;
 fi
 
 export RBENV_ROOT=${RBENV_ROOT:-$HOME/.rbenv}
+SORAH_ZSHRC_LOADED=1
