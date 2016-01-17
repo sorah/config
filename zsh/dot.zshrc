@@ -173,12 +173,12 @@ set_prompt() {
   local face
   face=${1:-$current_face}
   current_face=${face}
-  if [ "$SSH_CLIENT" ]; then
+  if [[ -n "$SSH_CLIENT" ]]; then
     PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%m %~ %{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
   else
     PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%~ %{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
   fi
-  if [ "_$SORAH_COMPACT" = "_1" ]; then
+  if [[ "_$SORAH_COMPACT" = "_1" ]]; then
     PROMPT="%B%{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
   fi
 }
@@ -258,29 +258,31 @@ change_window_title() { tmux rename-window -t $TMUX_WINDOW "$*" }
 OKO_COUNT=0
 
 precmd() {
-  if [[ $? = "0" ]];then
-    OKO_COUNT=0
-  else
-    let OKO_COUNT+=1
-  fi
+  if [[ "_${SORAH_ZSHRC_LOADED}" = "_1" ]]; then
+    if [[ $? = "0" ]];then
+      OKO_COUNT=0
+    else
+      let OKO_COUNT+=1
+    fi
 
-  #if [ 1 -le "$OKO_COUNT" ]; then
-  #  set_prompt "ヾ(｡>﹏<｡)ﾉﾞ"
-  #elif [ 0 -le "$OKO_COUNT" ]; then
-  #  set_prompt "(▰╹◡╹)"
-  #fi
-  set_prompt
+    #if [ 1 -le "$OKO_COUNT" ]; then
+    #  set_prompt "ヾ(｡>﹏<｡)ﾉﾞ"
+    #elif [ 0 -le "$OKO_COUNT" ]; then
+    #  set_prompt "(▰╹◡╹)"
+    #fi
+    set_prompt
 
-  # pwd & cmd @ screen
-  if [[ -n "$WINDOW" || -n "$TMUX" ]]; then
-    change_window_title `$RUBY ~/git/config/script/cdd_title.rb`
+    # pwd & cmd @ screen
+    if [[ -n "$WINDOW" || -n "$TMUX" ]]; then
+      change_window_title `$RUBY --disable-gems ~/git/config/script/cdd_title.rb`
+    fi
   fi
 }
 
 function preexec() {
-  if [[ "${SORAH_ZSHRC_LOADED}" = "_1" ]]; then
+  if [[ "_${SORAH_ZSHRC_LOADED}" = "_1" ]]; then
     if [[ -n "$WINDOW" || -n "$TMUX" ]]; then
-      change_window_title `$RUBY ~/git/config/script/cdd_title.rb`:`echo "$1"|cut -d' ' -f 1`
+      change_window_title `$RUBY --disable-gems ~/git/config/script/cdd_title.rb`:`echo "$1"|cut -d' ' -f 1`
     fi
   fi
 }
