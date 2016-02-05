@@ -14,7 +14,7 @@ if [ "$(uname)" = "Darwin" ]; then
     --with-readline-dir=$(brew --prefix readline) \
     --with-openssl-dir=$(brew --prefix openssl)"
 
-  export optflags="-O0 -g"
+  export optflags="-O0 -ggdb3"
   export RUBY_CFLAGS="${optflags} ${debugflags}"
   export CXXFLAGS="${optflags} ${debugflags}"
   export MAKE_OPTS="-j4"
@@ -27,7 +27,7 @@ else
     --disable-install-capi \
     --disable-install-doc"
 
-  export optflags="-O0 -g"
+  export optflags="-O0 -ggdb3"
   export RUBY_CFLAGS="${optflags} ${debugflags}"
   export CXXFLAGS="${optflags} ${debugflags}"
   export MAKE_OPTS="-j4"
