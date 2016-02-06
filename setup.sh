@@ -104,7 +104,7 @@ if [ "_$arch" = "_mac" ]; then
 
   if ! which nginx; then
     brew tap homebrew/nginx
-    brew install --dev nginx-full --with-auth-req --with-dav-ext-module --with-extended-status-module --with-geoip --with-gunzip --with-gzip-static --with-headers-more-module --with-lua-module --with-mp4 --with-mp4-h264-module --with-pcre-jit --with-push-stream-module --with-realip --with-rtmp-module --with-spdy --with-status --with-sub --with-webdav
+    brew install --devel nginx-full --with-auth-req --with-dav-ext-module --with-geoip --with-gunzip --with-gzip-static --with-headers-more-module --with-lua-module --with-mp4 --with-mp4-h264-module --with-pcre-jit --with-push-stream-module --with-realip --with-rtmp-module --with-spdy --with-status --with-sub --with-webdav
   fi
 
   reload_launchd_nginx=0
