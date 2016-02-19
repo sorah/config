@@ -70,6 +70,10 @@ if [ "_$arch" = "_mac" ]; then
     brew install autossh
   fi
 
+  if ! which wget 2>/dev/null; then
+    brew install wget
+  fi
+
   if ! which pyenv 2>/dev/null; then
     brew install pyenv
     pyenv install 2.7.10
