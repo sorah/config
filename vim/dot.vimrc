@@ -94,6 +94,7 @@ NeoBundle 'sorah/unite-outline-piculet'
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'mxw/vim-jsx'
 NeoBundle 'vim-scripts/rfc-syntax'
+NeoBundle 'smerrill/vcl-vim-plugin'
 filetype on
 filetype plugin on
 filetype indent on
