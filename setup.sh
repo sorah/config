@@ -76,8 +76,8 @@ if [ "_$arch" = "_mac" ]; then
 
   if ! which pyenv 2>/dev/null; then
     brew install pyenv
-    pyenv install 2.7.10
-    pyenv global 2.7.10
+    pyenv install 2.7.11
+    pyenv global 2.7.11
   fi
 
   eval "$(pyenv init -)"
