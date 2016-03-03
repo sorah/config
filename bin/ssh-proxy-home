@@ -5,18 +5,7 @@ if [ -z "${sorah_ssh_port}" ]; then
   exit 1
 fi
 
-if dig +nonssearch +noall +comments her|grep -q NOERROR; then
-  if dig +short livermore.sorah.me | grep -q '^10\.'; then
-    # home
-    nw=home
-  else
-    # vpn
-    nw=vpn
-  fi
-else
-  # external
-  nw=external
-fi
+nw="$(sorah-nw-simple-locate)"
 
 if [ -n "$1" -a -n "$2" ]; then
   host="$1"
