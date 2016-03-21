@@ -29,7 +29,7 @@ vpn)
 
   exec nc "${host}" "${port}"
   ;;
-external)
+external|unknown)
   if [ -z "${host}" ]; then
     exec nc boston.sorah.me ${sorah_ssh_port}
   else
