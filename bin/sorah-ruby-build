@@ -2,6 +2,14 @@
 set -e
 set -x
 
+newver=$1
+newabi=$2
+headof=$3
+
+if [[ ( -z "$1" ) || ( -z "$2" ) ]]; then
+  echo "Usage: $0 newver newabi [headof]"
+fi
+
 eval "$(rbenv init -)"
 
 if [ "$(uname)" = "Darwin" ]; then
@@ -33,16 +41,16 @@ else
   export MAKE_OPTS="-j4"
 fi
 
-for TARGET_VERSION in $@; do
-  rbenv install --keep $TARGET_VERSION
+rbenv install --keep $newver
+export RBENV_VERSION=$newver
 
-  export RBENV_VERSION=$TARGET_VERSION
+gem pristine --extensions
 
-  gem install bundler
-#  gem install rails -v '~> 3.2.18'
-#  gem install rails -v '~> 4.0.5'
-#  gem install rails -v '~> 4.1.1'
-#  gem install rails -v '~> 4.2.0'
+gem i bundler --no-rdoc --no-ri
+gem i foreman --no-rdoc --no-ri
 
-  rbenv rehash
-done
+rbenv rehash
+
+if [[ ( ! -z $headof ) ]]; then
+  ln -sfT $newver $RBENV_ROOT/versions/$headof
+fi
