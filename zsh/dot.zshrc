@@ -1,6 +1,7 @@
 # sorah's zshrc
 # この書類のエンコーディングはUTF-8
 # vim: ft=zsh
+
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
@@ -14,7 +15,13 @@ elif [ ! -L "$SSH_AUTH_SOCK" ]; then
   ln -snf "$SSH_AUTH_SOCK" $agent && export SSH_AUTH_SOCK=$agent
 fi
 
-if [ ! "$TMUX" -a ! "$WINDOW" -a ! "$VIMSHELL" ]; then
+run_tmux=1
+[ -n "$TMUX" ] && run_tmux=0
+[ -n "$WINDOW" ] && run_tmux=0
+[ -n "$VIMSHELL" ] && run_tmux=0
+[ "_$TERM" = "_linux" ] && run_tmux=0
+
+if [ "_$run_tmux" = "_1" ]; then
   export PATH=$HOME/brew/bin:$HOME/brew/sbin:/opt/brew/bin:/opt/brew/sbin:$PATH
   export PATH=~/git/config/bin:$PATH
   export PATH=~/.rbenv/bin:$PATH
