@@ -1,0 +1,23 @@
+"xvkbd -xsendevent -text '\[Left]'"
+  Alt + h
+
+"xvkbd -xsendevent -text '\[Down]'"
+  Alt + j
+
+"xvkbd -xsendevent -text '\[Up]'"
+  Alt + k
+
+"xvkbd -xsendevent -text '\[Right]'"
+  Alt + l
+
+"pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%"
+  XF86AudioRaiseVolume
+
+"pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%"
+  XF86AudioLowerVolume
+
+"pactl set-sink-mute 0 toggle"
+  XF86AudioMute
+
+"pactl set-source-mute 1 toggle"
+  XF86AudioMicMute

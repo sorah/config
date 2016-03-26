@@ -1,0 +1,51 @@
+!xrdb -merge ~/.Xresource
+!xrdb ~/.Xresource
+!--- urxvt
+urxvt.font: xft:Source Code Pro:style=Regular:size=10,xft:Migmix 1P:size=10,xft:Noto Sans CJK JP:size=10,xft:DejaVu Sans Mono:size=10
+
+URxvt.perl-ext-common:default,clipboard,matcher,keyboard-select,font-size
+URxvt.keysym.C-Up:    perl:font-size:increase
+URxvt.keysym.C-Down:  perl:font-size:decrease
+URxvt.keysym.M-u:     perl:url-select:select_next
+URxvt.url-launcher:   /usr/bin/xdg-open
+URxvt.underlineURLs:  True
+URxvt.matcher.button: 1 
+URxvt.keysym.M-Escape:perl:keyboard-select:activate
+URxvt.keysym.M-c:     perl:clipboard:copy
+URxvt.keysym.M-v:     perl:clipboard:paste
+URxvt.keysym.M-C-v:   perl:clipboard:paste_escaped
+URxvt.copyCommand:   xsel -ib
+URxvt.pasteCommand:  xsel -ob
+!URxvt.clipboard.autocopy: true
+ 
+
+URxvt.depth: 32
+!URxvt.transparent: true
+!URxvt.shading: 15
+URxvt.background: [85]#000000
+URxvt.foreground: #E4ECDC
+
+! black
+*color0:  #687478
+*color8:  #A5A7A3
+! red
+*color1:  #a40000
+*color9:  #EF2929
+! green
+*color2:  #4E9A06
+*color10: #8AE234
+! yellow
+*color3:  #C4A000
+*color11: #FCE94F
+! blue
+*color4:  #3465A4
+*color12: #729FCF
+! purple
+*color5:  #75507B
+*color13: #AD7FA8
+! orange (replaces cyan)
+! *color6:  #ce5c00
+! *color14: #fcaf3e
+! white
+*color7:  #babdb9
+*color15: #EEEEEC

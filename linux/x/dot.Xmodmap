@@ -1,0 +1,9 @@
+remove Lock = Caps_Lock
+add Control = Caps_Lock
+keysym Caps_Lock = Control_L
+
+keysym Shift_R = Escape
+
+keysym Muhenkan = Pointer_Button1
+
+pointer = 1 2 3 5 4 7 6 8 9 10 11 12
