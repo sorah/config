@@ -1,0 +1,106 @@
+#!/usr/bin/env ruby
+require 'aws-sdk'
+
+if ARGV.size < 2
+  abort "Usage: #$0 target-id inspector-id [vol-id]"
+end
+
+ec2 = Aws::EC2::Client.new(region: ENV['AWS_REGION'] || ENV['AWS_DEFAULT_REGION'])
+
+target_id, inspector_id, vol_id = ARGV[0, 3]
+
+instances = ec2.describe_instances(instance_ids: [target_id, inspector_id]).reservations.flat_map(&:instances)
+
+target_instance = instances.find { |_| _.instance_id == target_id }
+inspector_instance = instances.find { |_| _.instance_id == inspector_id }
+
+unless vol_id
+  dev = target_instance.block_device_mappings.find { |_| _.device_name == '/dev/sda1' } ||
+        inspector_instance.block_device_mappings.find { |_| _.device_name == '/dev/sdf' }
+  vol_id = dev.ebs.volume_id
+end
+
+vol = ec2.describe_volumes(volume_ids: [vol_id]).volumes.first
+state = case
+when vol.state == 'available'
+  :available
+when vol.attachments.any? { |_| _.instance_id == target_instance.instance_id }
+  :attached_to_target
+when vol.attachments.any? { |_| _.instance_id == inspector_instance.instance_id }
+  :attached_to_inspector
+else
+  raise "unknown state"
+end
+
+puts "=> Performing on:"
+puts 
+puts " * Volume    #{vol_id} (state=#{state})"
+puts " * Target    #{target_instance.instance_id} (#{target_instance.tags.find{ |_| _.key == 'Name' }&.value})"
+puts " * Inspector #{inspector_instance.instance_id} (#{inspector_instance.tags.find{ |_| _.key == 'Name' }&.value})"
+
+if target_instance.state.name == 'running'
+  puts "=> Stopping target..."
+  puts
+  p ec2.stop_instances(instance_ids: [target_instance.instance_id])
+  puts
+end
+
+if state == :attached_to_inspector
+  puts "=> Detaching from inspector..."
+  puts
+  p ec2.detach_volume(volume_id: vol_id, instance_id: inspector_instance.instance_id)
+  puts
+end
+
+puts "=> Waiting target to be stopped..." unless target_instance.state.name == 'stopped'
+until target_instance.state.name == 'stopped'
+  sleep 5
+  target_instance = ec2.describe_instances(instance_ids: [target_id]).reservations.first.instances.first
+  puts " * #{target_instance.state.name}..."
+end
+puts
+
+if state == :attached_to_target
+  puts "=> Detaching from target..."
+  puts
+  p ec2.detach_volume(volume_id: vol_id, instance_id: target_instance.instance_id)
+  puts
+end
+
+puts "=> Waiting the volume to be available..."
+until vol.state == 'available'
+  sleep 5
+  vol = ec2.describe_volumes(volume_ids: [vol.volume_id]).volumes.first
+  puts " * #{vol.state}"
+end
+
+case state
+when :attached_to_target # move to inspector
+  puts "=> Attaching to the inspector"
+
+  puts
+  p ec2.attach_volume(volume_id: vol_id, instance_id: inspector_instance.instance_id, device: '/dev/sdf')
+  puts
+
+  until vol.state == 'in-use'
+    sleep 5
+    vol = ec2.describe_volumes(volume_ids: [vol.volume_id]).volumes.first
+    puts " * #{vol.state}"
+  end
+
+when :available, :attached_to_inspector # move to target then start
+  puts "=> Attaching to the target"
+
+  puts
+  p ec2.attach_volume(volume_id: vol_id, instance_id: target_instance.instance_id, device: '/dev/sda1')
+  puts
+
+  until vol.state == 'in-use'
+    sleep 5
+    vol = ec2.describe_volumes(volume_ids: [vol.volume_id]).volumes.first
+    puts " * #{vol.state}"
+  end
+  puts
+
+  ec2.start_instances(instance_ids: [target_instance.instance_id])
+end
