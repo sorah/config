@@ -1,0 +1,54 @@
+#!/bin/bash
+set -x
+
+source_dir=$HOME/pictures/Tumbletail
+image_path=/tmp/sorah-i3lock.png
+next_image_path=/tmp/sorah-i3lock-next.png
+
+try=0
+while [ "$try" -lt 10 ]; do
+  source_image="$(find "${source_dir}" -type f | grep -v 'gif$' | shuf -n 1)"
+  if identify "${source_image}"; then
+    source_geometry="$(cat "${source_image}" | identify - | cut -d' ' -f 3)"
+    if echo "${source_geometry}" | grep -qP '^\d+x\d+$'; then
+      source_geometry_w="$(echo "${source_geometry}" | cut -d x -f 1)"
+      source_geometry_h="$(echo "${source_geometry}" | cut -d x -f 2)"
+      if [ "${source_geometry_h}" -le "${source_geometry_w}" ]; then
+        source_wide=1
+      else
+        source_wide=0
+      fi
+      break
+    fi
+  fi
+  let try += 1
+done
+
+resolution="$(xrandr | grep primary |grep -Po '\d+x\d+')"
+#resolution=1366x768
+if [ -n "${resolution}" ]; then
+  resolution_w="$(echo "${resolution}" | cut -d x -f 1)"
+  resolution_h="$(echo "${resolution}" | cut -d x -f 2)"
+
+  resolution_opt=""
+  if [ "_${source_wide}" = "_1" ]; then
+    convert "${source_image}" -resize "${resolution_w}x" +repage -gravity center -crop "${resolution}+0+0" "${next_image_path}"
+  else
+    source_offset_h="$(expr "${source_geometry_h}" / 10)"
+    source_new_geometry_h="$(expr "${source_geometry_h}" - "${source_offset_h}")"
+    convert "${source_image}" \
+      -crop "${source_geometry_w}x${source_new_geometry_h}+0+${source_offset_h}" \
+      +repage \
+      -resize "${resolution_w}x" \
+      -crop "${resolution}+0+0" \
+      "${next_image_path}"
+  fi
+else
+  cp -v $source_image "${next_image_path}"
+fi
+
+[ -e "${source_image}" ] && identify "${source_image}"
+if identify $next_image_path; then
+  mv -v "${next_image_path}" "${image_path}"
+fi
+

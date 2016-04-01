@@ -1,0 +1,9 @@
+#!/bin/bash
+image_path=/tmp/sorah-i3lock.png
+if [ ! -e "${image_path}" ]; then
+  sorah-i3lock-prepare > /tmp/sorah-i3lock-prepare.log 2>&1
+fi
+i3lock -d -i $image_path
+
+timeout 20 sorah-i3lock-prepare > /tmp/sorah-i3lock-prepare.log 2>&1 &
+disown %1
