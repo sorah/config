@@ -5,7 +5,7 @@
 # this file and re-run i3-config-wizard(1).
 
 exec --no-startup-id compton
-exec --no-startup-id xautolock -time 2 -locker "i3lock -d -i /home/sorah/pictures/yzat3_140263475778@wp1600900.png"
+exec --no-startup-id xautolock -time 2 -locker "sorah-i3lock"
 exec --no-startup-id dunst
 
 # i3 config file (v4)
@@ -34,6 +34,7 @@ floating_modifier $mod
 
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Shift+Return exec urxvt -e bash
 
 # kill focused window
 bindsym $mod+Shift+q kill
