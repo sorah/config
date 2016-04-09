@@ -391,6 +391,11 @@ awsi_filter-public-dns-name() {
   jq -r '.Reservations[] | .Instances[] | .PublicDnsName'
 }
 
+pull-pics() {
+  mkdir -p ~/pictures
+  rsync -avi americano.home.her:Dropbox/Photos/Tumbletail ~/pictures
+  rsync -avi americano.home.her:Dropbox/Photos/Pixitail ~/pictures
+}
 
 #====================
 # powerup your emacs
