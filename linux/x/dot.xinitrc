@@ -35,6 +35,8 @@ for dev in "TPPS/2 IBM TrackPoint" "pointer:Logitech USB Receiver"; do
   xinput set-prop "${dev}" "Device Accel Constant Deceleration" 0.95
 done
 
+systemctl --user import-environment PATH
+
 /usr/bin/start-pulseaudio-x11
 
 exec i3
