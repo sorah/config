@@ -406,9 +406,13 @@ alias emacs='vim'
 if [[ -e ~/.zshrc_global_env ]]; then;
   source ~/.zshrc_global_env # Optimized to platform
 fi
+if [[ -e ~/.zshrc.env ]]; then;
+  source ~/.zshrc.env # Optimized to environments
+fi
 if [[ -e ~/.zshrc_env ]]; then;
   source ~/.zshrc_env # Optimized to environments
 fi
+
 
 export RBENV_ROOT=${RBENV_ROOT:-$HOME/.rbenv}
 SORAH_ZSHRC_LOADED=1
