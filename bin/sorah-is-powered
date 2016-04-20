@@ -2,6 +2,8 @@
 
 if [ "$(uname)" = "Darwin" ];then
   ioreg -rc "AppleSmartBattery" |grep ExternalConnected|awk '{print $3}' | grep -q '^Yes$'
+elif [ "$(uname)" = "Linux" ]; then
+  acpi -a | grep -q on-line
 else
   exit 0
 fi
