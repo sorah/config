@@ -5,7 +5,7 @@
 # this file and re-run i3-config-wizard(1).
 
 exec --no-startup-id compton
-exec --no-startup-id xautolock -time 2 -locker "sorah-i3lock"
+exec --no-startup-id xautolock -time 2 -locker "sorah-i3lock -n"
 exec --no-startup-id dunst
 
 # i3 config file (v4)
