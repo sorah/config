@@ -24,6 +24,7 @@ while [ "$try" -lt 10 ]; do
   let try += 1
 done
 
+export DISPLAY="${DISPLAY:-:0}"
 resolution="$(xrandr | grep primary |grep -Po '\d+x\d+')"
 #resolution=1366x768
 if [ -n "${resolution}" ]; then
