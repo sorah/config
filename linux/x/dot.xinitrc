@@ -17,7 +17,7 @@ if [[ -e ~/.fehbg ]]; then
 fi
 
 if [[ -e /usr/bin/keychain ]]; then
-  eval `keychain --eval`
+  eval `keychain --eval --agents ssh --systemd`
   export SSH_AUTH_SOCK
 fi
 # if [[ -e /usr/bin/gnome-keyring-daemon ]]; then
