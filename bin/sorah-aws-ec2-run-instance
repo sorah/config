@@ -138,7 +138,7 @@ when /\Aubuntu-(.+)/
     name,_,_,release,type,arch,iregion,image_id,_,_,vt = _.chomp.split(?\t)
     {name: name, release: release, type: type, arch: arch, region: iregion, image_id: image_id, virtualization_type: vt}
   }.find { |release|
-    release[:name] == $1 && release[:region] == region && release[:virtualization_type] == 'hvm' && release[:type] == 'ebs'
+    release[:name] == $1 && release[:region] == region && release[:virtualization_type] == 'hvm' && release[:type] == 'ebs-ssd'
   }[:image_id]
   ec2.image(image_id)
 #when /\A{/
