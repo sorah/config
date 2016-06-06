@@ -93,37 +93,42 @@ export LESS='-R'
 # server aliases
 alias menheler="tmux new-window -n menheler 'ssh menheler.pasra.tk'"
 
-mssh() {
+nkmish() {
   name=$1
   shift
-  tmux new-window -n $name "ssh $* ${name}.her"
+  tmux new-window -n $name "ssh $* ${name}.c.nkmi.me"
 }
-msshr() {
+nkmish-r() {
   name=$1
   shift
-  tmux new-window -n $name "ssh -t $* ${name}.her env TMUX=1 zsh"
+  tmux new-window -n $name "ssh -t $* ${name}.c.nkmi.me env TMUX=1 zsh"
 }
-msshi() {
+nkmish-i() {
   name=$1
   shift
-  ssh -t $* ${name}.her
+  ssh "$@" ${name}.c.nkmi.me
 }
-msshri() {
+nmkish-ri() {
   name=$1
   shift
-  ssh -t $* ${name}.her env TMUX=1 zsh
+  ssh -t "$@" ${name}.c.nkmi.me env TMUX=1 zsh
 }
-msshb() {
+nkmish-b() {
   name=$1
   shift
-  tmux new-window -n $name "ssh -t $* ${name}.her bash"
+  tmux new-window -n $name "ssh -t $* ${name}.c.nkmi.me bash"
 }
-msshbi() {
+nkmish-bi() {
   name=$1
   shift
-  ssh -t $* ${name}.her bash
+  ssh -t "$@" ${name}.c.nkmi.me bash
 }
-alias ms="mssh"
+alias ms="nkmish"
+alias n="nkmish"
+alias ni="nkmish-i"
+alias nri="nkmish-ri"
+alias nb="nkmish-b"
+alias nbi="nkmish-bi"
 
 new-ssh() { tmux new-window -n $1 "ssh $*" }
 
@@ -296,14 +301,15 @@ function preexec() {
 
 # gnupg send keys
 gpg-send() {
-  gpg --keyserver pgp.mit.edu --send-keys 73E3B6AC
-  gpg --keyserver pgp.nic.ad.jp --send-keys 73E3B6AC
+for srv in pgp.mit.edu pgp.nic.ad.jp; do
+  for keyid in 73E3B6AC 31604EB9 F4C0895C 3F0F56A8; do
+    gpg --keyserver $srv --send-keys $keyid
+  done
+done
+}
 
-  gpg --keyserver pgp.mit.edu --send-keys 31604EB9
-  gpg --keyserver pgp.nic.ad.jp --send-keys 31604EB9
-
-  gpg --keyserver pgp.mit.edu --send-keys F4C0895C
-  gpg --keyserver pgp.nic.ad.jp --send-keys F4C0895C
+gpg-preset() {
+  ruby -rio/console -e '$stderr.print "Passphrase:"; puts($stdin.noecho { $stdin.gets }); $stderr.puts'| /usr/libexec/gpg-preset-passphrase --preset $1
 }
 
 mds-on() {
