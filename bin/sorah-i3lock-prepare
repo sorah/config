@@ -26,6 +26,9 @@ done
 
 export DISPLAY="${DISPLAY:-:0}"
 resolution="$(xrandr | grep primary |grep -Po '\d+x\d+')"
+if [ -z "${resolution}" ]; then
+  resolution="$(xrandr | grep ' connected ' | head -n1 |grep -Po '\d+x\d+')"
+fi
 #resolution=1366x768
 if [ -n "${resolution}" ]; then
   resolution_w="$(echo "${resolution}" | cut -d x -f 1)"
