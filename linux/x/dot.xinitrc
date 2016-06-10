@@ -20,10 +20,9 @@ if [[ -e /usr/bin/keychain ]]; then
   eval `keychain --eval --agents ssh --systemd`
   export SSH_AUTH_SOCK
 fi
-# if [[ -e /usr/bin/gnome-keyring-daemon ]]; then
-#   eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
-#   export SSH_AUTH_SOCK
-# fi
+if [[ -e /usr/bin/gnome-keyring-daemon ]]; then
+  eval $(/usr/bin/gnome-keyring-daemon --start --components=secrets)
+fi
 
 xbindkeys
 
