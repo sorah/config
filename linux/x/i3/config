@@ -44,6 +44,7 @@ bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 
 bindsym --release $mod+Print exec --no-startup-id "( sorah-gyazo | xargs xdg-open ) >/tmp/gyazo.log 2>&1"
 bindsym --release $mod+P exec --no-startup-id "( sorah-gyazo | xargs xdg-open ) >/tmp/gyazo.log 2>&1"
+bindsym --release $mod+Shift+P exec --no-startup-id "( sorah-gyazo2 | xargs xdg-open ) >/tmp/gyazo.log 2>&1"
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
