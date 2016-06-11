@@ -31,7 +31,6 @@ NeoBundle 'tpope/vim-rails'
 NeoBundle 'sudo.vim'
 NeoBundle 'plasticboy/vim-markdown'
 NeoBundle 'motemen/git-vim'
-NeoBundle 'tsukkee/lingr-vim'
 NeoBundle 'ujihisa/neco-look'
 NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'derekwyatt/vim-scala'
@@ -110,7 +109,7 @@ runtime macros/matchit.vim
 au FileType c setlocal ts=8 sw=4 noexpandtab
 au FileType ruby setlocal nowrap tabstop=8 tw=0 sw=2 expandtab
 let g:changelog_timeformat="%a %b %e %T %Y"
-let g:changelog_username = "Shota Fukumori  <her@sorah.jp>"
+let g:changelog_username = "Sorah Fukumori  <her@sorah.jp>"
 " }}}
 
 "delete all autocmds
@@ -130,25 +129,15 @@ set fencs=utf-8,iso-2022-jp,euc-jp,cp932,ucs-bom,default,latin1
 set ambiwidth=double
 set fileformats=unix,dos,mac
 lang en_US.UTF-8
-
-if !has('gui_running') && (&term == 'win32' || &term == 'win64')
-  set termencoding=cp932
-endif
 "}}}
 
 " path setting {{{
 if !exists("g:sorah_vimrc_loaded")
   if !has('win32') && !has('win64') && has('gui_running')
     let $PATH=$HOME."/.rbenv/shims:".$HOME."/.rbenv/bin:".$HOME."/local/bin:".$PATH
-    let $RUBYLIB=system("ruby -e 'puts (Dir[File.expand_path(\"~/git/ruby/*/lib\")]-Dir[File.expand_path(\"~/git/ruby/{core,ruby}*/lib\")]).join(\":\")'")
-
     let $GOPATH=$HOME."/.gopath"
     let $PATH="/usr/local/opt/go/libexec:".$PATH
     let $PATH=$HOME."/.gopath/bin:".$PATH
-  endif
-
-  if has('win32') || has('win64')
-    let $PATH="C:\Program Files (x86)\Microsoft Visual Studio 10.0\VSTSDB\Deploy;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\BIN;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\Tools;C:\Windows\Microsoft.NET\Framework\v4.0.30319;C:\Windows\Microsoft.NET\Framework\v3.5;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\VCPackages;C:\Program Files (x86)\HTML Help Workshop;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;".$PATH
   endif
 endif
 "}}}
@@ -225,11 +214,6 @@ noremap g# g#zzzv
 set pumheight=10
 set clipboard=unnamed
 
-" printing {{{
-set printoptions=wrap:y,number:y,header:0
-set printfont=Andale\ Mono:h12:cUTF8
-"}}}
-
 " folding {{{
 set foldenable
 set foldmethod=marker
@@ -304,17 +288,6 @@ augroup MyXML
 augroup END
 "}}}
 
-" lingr.vim {{{
-augroup MyLingrVim
-  autocmd!
-  autocmd FileType lingr-say imap <buffer> <CR> <Plug>(lingr-say-insert-mode-say)<esc>
-  autocmd FileType lingr-messages nmap <buffer> <CR> <Plug>(lingr-messages-show-say-buffer)
-  autocmd FileType lingr-messages nmap <buffer> <Down> <Plug>(lingr-messages-select-next-room)
-  autocmd FileType lingr-messages nmap <buffer> <Up> <Plug>(lingr-messages-select-prev-room)
-augroup END
-let g:lingr_vim_user = "sorah"
-"}}}
-
 " unite.vim {{{
 augroup MyUniteVim
   autocmd!
@@ -333,14 +306,6 @@ augroup END
 "crontab for Vim {{{
 augroup CrontabForVim
   autocmd BufReadPre crontab.* setl nowritebackup
-augroup END
-"}}}
-
-"Ruby changelog mapping {{{
-augroup RubyChangeLogMap
-  autocmd!
-  autocmd BufWinEnter,BufNewFile ~/git/github.com/ruby/ruby/ChangeLog
-        \ nnoremap <buffer> m <Leader>o
 augroup END
 "}}}
 
@@ -397,9 +362,6 @@ nnoremap <silent> <C-s> :NeoComplCacheToggle<Return>
 if !exists('g:neocomplcache_include_paths')
   let g:neocomplcache_include_paths = {}
 endif
-"if has('mac')
-"    let g:neocomplcache_include_paths['ruby'] = ".,".$HOME."/local/lib/ruby/**,".$HOME."/rubies/trunk/lib/ruby/**"
-"endif
 
 "push C-a to toggle spell check
 nnoremap <silent> <C-a> :setl spell!<Return>
@@ -414,14 +376,9 @@ nnoremap <silent> <Space>ee  :<C-u>edit $MYVIMRC<CR>
 nnoremap <silent> <Space>eg  :<C-u>edit $MYGVIMRC<CR>
 nnoremap <silent> <Space>ea  :source $MYVIMRC<Return>
 
-"markdown.vim setting
-if filereadable("/Users/sorah/local/bin/markdown.pl")
-  let g:markdownPathToMarkdown = "/Users/sorah/local/bin/markdown.pl"
-endif
-
 augroup MKDUnFold
   autocmd!
-  autocmd FileType mkd setl nofoldenable
+  autocmd FileType markdown setl nofoldenable
 augroup END
 
 nnoremap <C-h> :<C-u>vertical help<Space>
@@ -458,9 +415,6 @@ nnoremap ss <C-w>=
 "auto adjust a split window width
 "http://vim-users.jp/2009/07/hack42/
 function! s:Goodwidth()
-  if match(&filetype, "^lingr-") != -1
-    return
-  endif
   if winwidth(0) < 84
     vertical resize 90
   endif
@@ -583,20 +537,6 @@ endfunction
 call unite#define_source(s:unite_source)
 "}}}
 
-" unite-app {{{
-if has('mac')
-  let s:unite_source = {'name': 'app'}
-  function! s:unite_source.gather_candidates(args,context)
-    let apps = split(system("ruby -e\"def a(dir); Dir[dir+\\\"/*\\\"].reject{|d| d == dir }.map{|d| /\.app$/ =~ d ? d : a(d) }.flatten; end; puts a(\\\"/Applications\\\")\""),"\n")
-    return map(apps, '{
-          \ "word": v:val,
-          \ "source": "app",
-          \ "kind": "command",
-          \ "action__command": printf("!open %s", shellescape(v:val))}')
-  endfunction
-  call unite#define_source(s:unite_source)
-endif
-" }}}
 " }}}
 
 "rb
@@ -692,17 +632,6 @@ nnoremap <silent> <Space>cd :<C-u>GitCd<CR>
 
 " http://vim-users.jp/2009/11/hack104/
 vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v,'\/'),"\n",'\\n','g')<CR><CR>
-
-"rsense
-"http://vinarian.blogspot.com/2010/03/rsenseneocomplcache.html
-let g:rsenseHome = $HOME.'/local/opt/rsense'
-let g:rsenseUseOmniFunc = 1
-
-" snippet
-" imap <silent><C-a> <Plug>(neosnippet_expand_or_jump)
-" smap <silent><C-a> <Plug>(neosnippet_expand_or_jump)
-" imap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
-" smap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 " smartinput
 call smartinput#clear_rules()
@@ -834,28 +763,6 @@ function! s:CallOpenCmd(...)
   endif
 endfunction
 command! -nargs=? -complete=file Open call s:CallOpenCmd('<args>')
-
-"few
-function! s:Few(...)
-  if a:0 > 0
-    call system("few ".shellescape(expand(a:1)))
-  else
-    echomsg "hi"
-    call system("few ".shellescape(expand('%:p')))
-  endif
-endfunction
-command! -nargs=? -complete=file Few call s:Few('<args>')
-
-"notes
-let g:notes_dir_path=expand("~")."/sandbox/document/memo"
-function! s:OpenNotes(fn)
-  execute ":tabe ".expand(g:notes_dir_path."/".a:fn.".mkd")
-endfunction
-function! OpenNoteHkn(a,b,c)
-  return substitute(system("ls -1 ". shellescape(g:notes_dir_path)), ".mkd", "", "g")
-endfunction
-command! -nargs=1 -complete=custom,OpenNoteHkn Note call s:OpenNotes(<q-args>)
-nnoremap <C-e> :<C-u>Note 
 
 " metarw
 call metarw#define_wrapper_commands(1)
