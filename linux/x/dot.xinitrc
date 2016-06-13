@@ -35,6 +35,7 @@ for dev in "TPPS/2 IBM TrackPoint" "pointer:Logitech USB Receiver"; do
 done
 
 systemctl --user import-environment PATH
+systemctl --user import-environment SSH_AUTH_SOCK
 
 /usr/bin/start-pulseaudio-x11
 
