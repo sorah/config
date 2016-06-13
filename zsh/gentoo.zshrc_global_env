@@ -1,3 +1,4 @@
 unset RUBYOPT
 export EDITOR=/usr/bin/vim
+export QMAKE=/usr/lib64/qt5/bin/qmake
 alias gsed=sed
