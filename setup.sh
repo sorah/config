@@ -173,3 +173,11 @@ mkdir -p $HOME/.docker-compose
 for x in `pwd`/docker-compose/*; do
   ln -sf "${x}" ~/.docker-compose/
 done
+
+if systemctl --version 2>/dev/null >/dev/null; then
+  mkdir -p $HOME/.config/systemd/user
+  for x in `pwd`/systemd/user/*; do
+    cp -v "${x}" ~/.config/systemd/user/
+  done
+  systemctl --user daemon-reload
+fi

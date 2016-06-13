@@ -1,0 +1,16 @@
+#!/bin/bash
+if [ -n "${SORAH_AUTOSSH_PORT}" ]; then
+  echo "${SORAH_AUTOSSH_PORT}"
+  exit
+fi
+
+default_iface="$(ip -oneline r get 8.8.8.8|grep -o 'dev .\+'|cut -d' ' -f2)"
+if [ -n "${default_iface}" ]; then
+  num="$(ip -oneline a show dev "${default_iface}"|grep -o 'inet .\+/'|cut -d' ' -f2|cut -d. -f4|cut -d/ -f1)"
+  num="$(openssl rand -hex 20|sed -e 's/[^0-9]//g' |cut -c 1-2)"
+fi
+ 
+port=18600
+let "port+=${num}"
+
+echo "${port}"

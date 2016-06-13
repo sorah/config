@@ -1,0 +1,12 @@
+[Unit]
+Description=homeproxy
+
+[Service]
+Type=simple
+WorkingDirectory=/home/sorah
+ExecStart=/home/sorah/git/config/bin/sorah-autossh -N homeproxy
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
