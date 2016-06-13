@@ -1,2 +1,3 @@
 unset RUBYOPT
 export EDITOR=/usr/bin/vim
+alias gsed=sed
