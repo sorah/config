@@ -15,7 +15,7 @@ fi
 case "${nw}" in
 home)
   if [ -z "${host}" ]; then
-    host=oakland.her
+    host=oakland.home.compute.nkmi.me
     port=${sorah_ssh_port}
   fi
 
@@ -23,7 +23,7 @@ home)
   ;;
 vpn)
   if [ -z "${host}" ]; then
-    host=boston.her
+    host=chicago.stko.compute.nkmi.me
     port=${sorah_ssh_port}
   fi
 
@@ -31,9 +31,9 @@ vpn)
   ;;
 external|unknown)
   if [ -z "${host}" ]; then
-    exec nc boston.sorah.me ${sorah_ssh_port}
+    exec nc chicago.sorah.me ${sorah_ssh_port}
   else
-    exec ssh boston.sorah.me -W "${host}:${port}"
+    exec ssh chicago.sorah.me -W "${host}:${port}"
   fi
   ;;
 esac
