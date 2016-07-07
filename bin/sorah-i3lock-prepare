@@ -24,6 +24,9 @@ while [ "$try" -lt 10 ]; do
   let try += 1
 done
 
+mkdir -p ~/tmp
+echo "${source_image}" >> ~/tmp/sorah-i3lock-image.log
+
 export DISPLAY="${DISPLAY:-:0}"
 resolution="$(xrandr | grep primary |grep -Po '\d+x\d+')"
 if [ -z "${resolution}" ]; then
