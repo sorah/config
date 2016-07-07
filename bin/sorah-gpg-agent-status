@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+short = ARGV.include?('--short')
+only_warning = ARGV.include?('--warn-only')
+
+IO.popen(['gpg-connect-agent', '--no-autostart', 'getinfo version', '/bye'], 'r') do |io|
+  out = io.read
+  _, status = Process.waitpid2(io.pid)
+  unless status.success?
+    if short
+      print '?'
+    else
+      $stderr.puts out
+    end
+    exit 1
+  end
+end
+
+keys = []
+key = nil
+IO.popen(%w(gpg --list-secret-keys --with-keygrip --with-colons), 'r', &:read).each_line do |l|
+  line = l.chomp.split(?:)
+  case line[0]
+  when 'sec'
+    keys.push key if key
+    key = {uids: [], grps: []}
+  when 'uid'
+    key[:uids].push line[9]
+  when 'grp'
+    key[:grps].push line.last
+  end
+end
+keys.push key if key
+
+keyinfo = IO.popen(['gpg-connect-agent', '--no-autostart', "keyinfo --list", '/bye'], 'r', &:read).each_line.grep(/^S/).map { |_| _.split(' ') }.group_by {|_| _[2] }
+
+nothing_cached = true
+keys.each do |k|
+  cached = k[:grps].flat_map { |_| keyinfo[_] }.select { |_| _[6] == '1' }
+
+  nothing_cached = false unless cached.empty?
+  case
+  when short
+    print cached.empty? ? 'x' : 'o'
+  when only_warning
+  else
+    puts "#{k[:uids].join(?,)}: #{cached.size}"
+  end
+end
+
+if nothing_cached
+  puts "gpg:! "
+end
+
+puts if short
