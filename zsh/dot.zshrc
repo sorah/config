@@ -123,6 +123,15 @@ nkmish-bi() {
   shift
   ssh -t "$@" ${name}.c.nkmi.me bash
 }
+
+alias e="envchain"
+eb() {
+  local ns
+  ns=$1
+  shift
+  envchain "${ns}" bundle exec "$@"
+}
+
 alias ms="nkmish"
 alias n="nkmish"
 alias ni="nkmish-i"
