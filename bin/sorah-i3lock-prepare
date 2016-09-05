@@ -59,3 +59,4 @@ if identify $next_image_path; then
   mv -v "${next_image_path}" "${image_path}"
 fi
 
+sorah-i3lock-publish >/tmp/sorah-i3lock-publish.log 2>&1 &

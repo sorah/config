@@ -1,0 +1,8 @@
+#!/bin/bash
+
+(
+  echo "<ul>"
+  for url in $(tail -n3 ~/tmp/sorah-i3lock-image.log|sed -r -e 's|^.+/(.+)_([0-9]+)\..+$|http://\1.tumblr.com/post/\2|'); do
+    echo "<li><a href='${url}'>${url}</a>"
+  done
+) | envchain aws aws s3 cp --content-type text/html - s3://sorah-pub/lock/$(hostname)
