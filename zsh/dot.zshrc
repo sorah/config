@@ -412,6 +412,24 @@ pull-pics() {
   rsync -avi americano.home.her:Dropbox/Photos/Pixitail ~/pictures
 }
 
+cop() {
+  local base range
+  base=$1
+  if [[ -z $base ]]; then
+    if git diff --name-only | grep -q .; then
+      base=HEAD
+      range=HEAD
+    else
+      base=master
+    fi
+  fi
+  if [[ -z $range ]]; then
+    range="${base}...HEAD"
+  fi
+  echo "${range}"
+  git diff --name-only "${range}" -- '*.rb' | xargs rubocop --auto-correct   
+}
+
 #====================
 # powerup your emacs
 #====================
