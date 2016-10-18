@@ -44,7 +44,7 @@ targets.each do |ami_region, images|
   ec2 = ec2s[ami_region] 
 
   images.each do |image|
-    image = Aws::EC2::Image ? image : ec2.image(image)
+    image = image.is_a?(Aws::EC2::Image) ? image : ec2.image(image)
 
     puts "=> #{image.image_id} @ #{ami_region}"
     snapshot_ids = image.block_device_mappings.map do |mapping|
