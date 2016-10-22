@@ -194,15 +194,17 @@ instances = options[:names].flat_map.with_index do |name, index|
   end
 end.flat_map(&:value)
 
-instances.map! do |instance|
-  instance.reload
+until instances.all? { |_| _.private_ip_address }
+  instances.map! do |instance|
+    instance.reload
+  end
 end
 
 instances.each do |instance|
   pubip_info = if instance.public_dns_name
-                 ": #{instance.pubilc_dns_name} (#{instance.public_ip_address})"
+                 ": #{instance.public_dns_name} (#{instance.public_ip_address})"
                end
-  warn "- #{instance.instance_id} (#{i.vpc_id} / #{instance.subnet_id} / #{instance.placement.availability_zone})#{pubip_info}"
+  warn "- #{instance.instance_id} (#{instance.vpc_id} / #{instance.subnet_id} / #{instance.placement.availability_zone})#{pubip_info}"
 end
 
 if wait
