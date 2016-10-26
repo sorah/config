@@ -207,12 +207,12 @@ instances.each do |instance|
   warn "- #{instance.instance_id} (#{instance.vpc_id} / #{instance.subnet_id} / #{instance.placement.availability_zone})#{pubip_info}"
 end
 
-if wait
+if options[:wait]
   instances.map do |instance|
     Thread.new do
       instance.wait_until(max_attempts:120, delay: 20) { |i| i.state.name == 'running' }
     end
-  end.each(&:value)
+  end.each(&:join)
 end
 
 ######
