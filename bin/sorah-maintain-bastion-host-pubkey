@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+NAME = "nkmi-bastion"
+FILE = File.expand_path("~/.ssh/known_hosts")
+keys = {
+  oakland: <<EOF,
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFLLRALl2IYOLXkSCdVIeXem9/xGdLsl9CieWAb3nQ5F
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZloEmasF9+9qTjvmpv7+ycprYo2hnJDUvTflRYEcrkItgS1oqs3+axA4YG7nVBlLGPq+b8+wAQ8m3MzDe3P5tnXs/Wyq6Y2ftC/3d+YO3SYYRnwxsxVTdr1IH95B/jwwxYOPTDXtDRIyz67coYUm2rtl5NKu3J8R4cLrMRYNlhzdlEbnPkmfur3ShaacLzcZ5ntI5M7SGd54AajxJqwrmSAZm2sR1JM2GKyVKTsBUz6Mci9hpfUkt1rOtyKgPORxlqewHN3/yMzeYYmQT3YkO+2bn8hX3e9Z0thZFXZN6fK9XQCfhpAUh2ld1XlA0WQLxxNytF8UJHl67D/sDkAF5
+ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBE0J42zwVbuStHodxi0lj+2b2xqlWXWwk9vjLYad8YK8ZlnCBMBP0C0nqC70OiyCx5Nm60Uz1e8rba4GU0u34l4=
+EOF
+  chicago: <<EOF,
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMrDaJX24KFcjs+T4EI5L0bCYNkaCHDtSveESLThiiW8
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCW1KYvKvQszjsaGhVVFhVZNCO3n9H3XdBcizTOVHCG6W6lGZxKzBvgeUbsl0pe7+DDakmT6r01d5JUTB/oBZ++yoHCg6sfVv4vdvPvzxCnQRU1QUESI4fnVwdPQsTq5MHkVqEAjScJWyeGpPSFAnwxKZ1oeSKY5pt+DK4LD3D7vQnyfTEfxW2txruZp3hgANDnwv88F3c4UzqgmBrNMfPpaZy5SWFZjp1e3/YTFYx+s3Jh8TpJJdfoIPEaJN3iyYrEa3/ZO54uJe87UuwJ8LS9c73DGrPEODGxdmgnkQwYfIox0a+EEKuX0sgAhhrHo2H9/fsJkzennaYIfzWR47mf
+ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBF4Gl9zaHqdAR2xaqZ+sGznrotuornyCBfCy13fMXrgL48+YETGyUO7Stx6W/qVKhkWZknYzhPVJycgnpMXwLRg=
+EOF
+  grapevine: <<EOF,
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC7UIHzAhh1s4QOvYB2KdAoXObOyEak8Wq2shU+Tg8gz
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDxh+i8+KcGYDljh9itu9oIStDg9T8QZBHTkdetbF18ehpftNRut6sEP+JOQ270V4k4FsXgoAjRNmYj4xytrcXwhS1HEcZ46PGGxbpT8JFWgidHnafsKQuRWFvRGpXGljkcguxR77KSJ9DNJq1hZ6m/SBWC+7S16FlgYypwcr8/UBt5JSahdLu0ixLWHbScFreu3eqTKKvU8HwbAsy0ZR0TjKpUx1/DV6axQk+u/UxWGoirRwgj1cNmya0Kc3d++b9XwOGu/+lzYt0aK2mE3jvBNq7Yj/VRgT+8icSFz3rtKlNImxKYpv3vn61bPUGjIPbDCLNhe4DN2xRa6f4MiB/p
+ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPPQTldg+OqfjPMzfYadHDywoxIyCH+uUoUo8KJ2zO9ujWb9q6MOzAoPtbsaxn6bQKL91EYEeCyesL0Fbu+Xr0I=
+EOF
+  portland: <<EOF,
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIvMOYN+wvyGXQJkD2asrzw1wP3fFy6zcLf27C7bK9mM
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPie0IG+iaLZyxm9D90bElZFO3qbrkRad1hJWSBJ0eC/KKftPWj2cMAZI6d+vucs5WGiqniwmkjEf+KvPJ/7Ycdxyqtx7TJf5hPTjASFg8Qc2bHvt9mWtx+MkGh/N27sI3JaRJoxERUDRp8bjsmKA1NJwTOWSJKtEO2hB4Ih6v1oEIlh6PfuVdEUQdzMWI5INhPpQ77vqI4skxl/MNcbA7qzhb2XE7PGzX2kbqhkCMKLVBgD5+rBB0itQRei1/9z9sJ7Kfbc4ORvbY26PfIp/CvnWFiOcD7EgmJ+tHTHXAXRQCI5ausNoXXUz2PDuJkmN4QVMTVpSZDemDEjei/bWP
+ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBIlI+NXk2bBqqllVBsw2goSIqN+cThKxYqvf72eRcFJcOOKPge8SsOYYGdbYSYoLGXaxFUCP/bT8AvtsmAsoyjg=
+EOF
+}.each_value.flat_map { |_| _.each_line.map(&:chomp) }
+
+write = nil
+case
+when !File.exist?(FILE)
+  require 'fileutils'
+  FileUtils.mkdir_p(File.dirname(FILE))
+  write = keys
+when existing_keys = IO.popen(["grep", "^#{Regexp.escape(NAME)} ", FILE], "r",&:read)
+  write = keys - existing_keys.each_line.map(&:chomp).reject(&:empty?).map{ |_| _.split(" ", 2)[-1] }
+end
+
+File.open(FILE, "a") do |io|
+  write.each do |x|
+    io.puts "#{NAME} #{x}"
+  end
+end
+
