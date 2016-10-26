@@ -23,7 +23,7 @@ home)
   ;;
 vpn)
   if [ -z "${host}" ]; then
-    host=chicago.stko.compute.nkmi.me
+    host=ssh.bastion.nkmi.me
     port=${sorah_ssh_port}
   fi
 
@@ -31,9 +31,9 @@ vpn)
   ;;
 external|unknown)
   if [ -z "${host}" ]; then
-    exec nc chicago.sorah.me ${sorah_ssh_port}
+    exec nc ssh.bastion.nkmi.me ${sorah_ssh_port}
   else
-    exec ssh chicago.sorah.me -W "${host}:${port}"
+    exec ssh ssh.bastion.nkmi.me -W "${host}:${port}"
   fi
   ;;
 esac
