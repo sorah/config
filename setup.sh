@@ -20,7 +20,6 @@ ln -sfn `pwd`/vim/dot.vim ~/.vim
 ln -sf `pwd`/vim/dot.vimrc ~/.vimrc
 ln -sf `pwd`/zsh/dot.zshrc ~/.zshrc
 ln -sf `pwd`/zsh/${arch}.zshrc_global_env ~/.zshrc_global_env
-ln -sf `pwd`/screen/dot.screenrc ~/.screenrc
 ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf
 ln -sf `pwd`/misc/dot.irbrc ~/.irbrc
 ln -sf `pwd`/misc/dot.gemrc ~/.gemrc
