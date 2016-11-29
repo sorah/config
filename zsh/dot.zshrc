@@ -194,7 +194,9 @@ set_prompt() {
   local face
   face=${1:-$current_face}
   current_face=${face}
-  if [[ -n "$SSH_CLIENT" ]]; then
+  if [[ -n "$SORAH_PROMPT_HOSTNAME" ]]; then
+    PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}${SORAH_AWS_ROLE} %~ %{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
+  elif [[ -n "$SSH_CLIENT" ]]; then
     PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%m %~ %{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
   else
     PROMPT="%B%{$fg[black]%}%T %{$fg[green]%}%~ %{%(?.$fg[cyan].$fg[red])%}$face%{$reset_color%}%b "
