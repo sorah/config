@@ -22,6 +22,7 @@ run_tmux=1
 [ "_$TERM" = "_linux" ] && run_tmux=0
 
 if [ "_$run_tmux" = "_1" ]; then
+  # minimal path
   export PATH=$HOME/brew/bin:$HOME/brew/sbin:/opt/brew/bin:/opt/brew/sbin:$PATH
   export PATH=~/git/config/bin:$PATH
   export PATH=~/.rbenv/bin:$PATH
@@ -50,6 +51,7 @@ export GOPATH=$HOME/.gopath
 export HOSTNAME=`hostname`
 
 # Basic path
+export PATH=$HOME/brew/bin:$HOME/brew/sbin:/opt/brew/bin:/opt/brew/sbin:$PATH
 export PATH=$HOME/local/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 export PATH=~/git/config/bin:$PATH
