@@ -24,8 +24,8 @@ export AWS_SESSION_TOKEN="$(jq -r .Credentials.SessionToken <<< "$session")"
 export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-ap-northeast-1}"
 export AWS_REGION="${AWS_REGION:-ap-northeast-1}"
 
-role_id="$(jq .AssumedRoleUser.AssumedRoleId <<< "$session")"
-arn="$(jq .AssumedRoleUser.Arn <<< "$session")"
+role_id="$(jq -r .AssumedRoleUser.AssumedRoleId <<< "$session")"
+arn="$(jq -r .AssumedRoleUser.Arn <<< "$session")"
 
 if [ "$quiet" = "0" ]; then
   echo "arn: ${arn}" 1>&2
