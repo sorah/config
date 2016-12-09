@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH=$(dirname $0):$PATH
 sorah_ssh_port="$(grep '^# sorah_ssh_port: ' ~/.ssh/config|awk '{print $3}')"
 if [ -z "${sorah_ssh_port}" ]; then
   echo "specify '# sorah_ssh_port: ' in ~/.ssh/config" 1>&2
