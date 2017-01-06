@@ -61,6 +61,7 @@ export PATH=~/rubies/bin:~/rubies/gem/bin:$PATH
 export PATH=./local/bin:$PATH
 export PATH=~/.gem/ruby/1.9.1/bin/:$PATH
 export PATH=/usr/local/share/npm/bin:$PATH
+export PATH="$HOME/.yarn/bin:$PATH"
 alias npm-exec='PATH=$(npm bin):$PATH'
 alias ne='PATH=$(npm bin):$PATH'
 
