@@ -712,6 +712,14 @@ call smartinput#define_rule({'filetype': ['ruby.rspec'],
 
 " eskk
 imap <C-j> <Plug>(eskk:toggle)
+if filereadable("/usr/share/skk/SKK-JISYO.L")
+  let g:eskk#large_dictionary = {
+  \ 'path': "/usr/share/skk/SKK-JISYO.L",
+  \ 'sorted': 1,
+  \ 'encoding': 'euc-jp',
+  \}
+endif
+
 
 "gist.vim
 if has('mac')
