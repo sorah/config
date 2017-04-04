@@ -79,6 +79,11 @@ if [ "_$arch" = "_mac" ]; then
     pyenv global 2.7.11
   fi
 
+  if ! which gpg 2>/dev/null; then
+    brew install gnupg2
+    brew install pinentry-mac
+  fi
+
   eval "$(pyenv init -)"
 
   if ! which percol; then
@@ -108,6 +113,10 @@ if [ "_$arch" = "_mac" ]; then
   if ! which nginx; then
     brew tap homebrew/nginx
     brew install --devel nginx-full --with-auth-req --with-dav-ext-module --with-geoip --with-gunzip --with-gzip-static --with-headers-more-module --with-lua-module --with-mp4 --with-mp4-h264-module --with-pcre-jit --with-push-stream-module --with-realip --with-rtmp-module --with-spdy --with-status --with-sub --with-webdav
+  fi
+
+  if [ ! -e $(brew --prefix)/bin/ssh ]; then
+    brew install homebrew/dupes/openssh
   fi
 
   reload_launchd_nginx=0
