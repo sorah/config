@@ -34,7 +34,12 @@ external|unknown)
   if [ -z "${host}" ]; then
     exec nc ssh.bastion.nkmi.me ${sorah_ssh_port}
   else
-    exec ssh ssh.bastion.nkmi.me -W "${host}:${port}"
+    if echo "${host}" | grep -q "home\.user\."; then
+      bastion=home.igw.nkmi.me
+    else
+      bastion=ssh.bastion.nkmi.me
+    fi
+    exec ssh "${bastion}" -W "${host}:${port}"
   fi
   ;;
 esac
