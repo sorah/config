@@ -131,8 +131,11 @@ vpc = ec2.vpc(vpcs[options[:vpc]][:id])
 image = case options[:image_id]
 when /\Aami-/
   ec2.image(options[:image_id])
-when 'gentoo', nil
+when 'gentoo-build', nil
   ec2.images(owners: %w(self), filters: [name: 'name', values: %w(gentoo-2*)]).sort_by {|_| Time.parse(_.creation_date) }.last
+when 'gentoo', nil
+  ec2.images(owners: %w(self), filters: [name: 'name', values: %w(nkmi-base-gentoo-2*)]).sort_by {|_| Time.parse(_.creation_date) }.last
+
 when /\Aubuntu-(.+)/
   image_id = open("https://cloud-images.ubuntu.com/query/#{$1}/server/released.current.txt",&:read).each_line.lazy.map { |_|
     name,_,_,release,type,arch,iregion,image_id,_,_,vt = _.chomp.split(?\t)
