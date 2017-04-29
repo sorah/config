@@ -22,7 +22,7 @@ home)
 
   exec nc "${host}" "${port}"
   ;;
-vpn)
+internal|vpn)
   if [ -z "${host}" ]; then
     host=ssh.bastion.nkmi.me
     port=${sorah_ssh_port}
