@@ -1,6 +1,10 @@
 #!/bin/bash
 
 if dig +nonssearch +noall +comments SRV _ldap._tcp.dc._msdcs.ds.nkmi.me. | grep -q NOERROR; then
+  if dig +nonssearch +noall +comments SRV _ldap._tcp.dc._msdcs.ds.nkmi.me. | grep -iq 'recursion requested but not available'; then
+    echo "unknown"
+    exit 0
+  fi
   if dig +short livermore.sorah.me | grep -q '^10\.'; then
     echo "home"
   else
