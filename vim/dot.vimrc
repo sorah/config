@@ -96,6 +96,7 @@ NeoBundle 'vim-scripts/rfc-syntax'
 NeoBundle 'smerrill/vcl-vim-plugin'
 NeoBundle 'posva/vim-vue'
 NeoBundle 'nfnty/vim-nftables'
+NeoBundle 'zimbatm/haproxy.vim'
 filetype on
 filetype plugin on
 filetype indent on
