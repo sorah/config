@@ -79,8 +79,6 @@ NeoBundle 'Lokaltog/vim-distinguished'
 NeoBundle 'tomasr/molokai'
 NeoBundle 'jonathanfilip/vim-lucius'
 NeoBundle 'w0ng/vim-hybrid'
-NeoBundle 'tokorom/clang_complete-getopts-ios'
-NeoBundle 'jeroenbourgois/vim-actionscript'
 NeoBundle 'fatih/vim-go'
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'nginx/nginx', {'rtp': 'contrib/vim/'}
@@ -97,6 +95,9 @@ NeoBundle 'smerrill/vcl-vim-plugin'
 NeoBundle 'posva/vim-vue'
 NeoBundle 'nfnty/vim-nftables'
 NeoBundle 'zimbatm/haproxy.vim'
+NeoBundle 'vim-syntastic/syntastic'
+NeoBundle 'rust-lang/rust.vim'
+NeoBundle 'racer-rust/vim-racer'
 filetype on
 filetype plugin on
 filetype indent on
@@ -169,7 +170,7 @@ set hidden
 set showcmd
 set cmdheight=2
 set laststatus=2
-set statusline=%f\ %m%r%h%w%{(&fenc!='utf-8'?'['.&fenc.']':'')}%=%<%{substitute(fnamemodify(getcwd(),\ ':~'),\ '^\\~/Dropbox/\\(git\\\\|sandbox\\)',\ '-\\1',\ '')}\ [%l,%c]\ %p%%
+set statusline=%f\ %m%r%h%w%{(&fenc!='utf-8'?'['.&fenc.']':'')}%#warningmsg#%{SyntasticStatuslineFlag()}%*%=%<%{substitute(fnamemodify(getcwd(),\ ':~'),\ '^\\~/Dropbox/\\(git\\\\|sandbox\\)',\ '-\\1',\ '')}\ [%l,%c]\ %p%%
 "}}}
 
 "split
@@ -964,6 +965,26 @@ map <C-o> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
+" Rust
+let g:rustfmt_autosave = 1
+let g:racer_experimental_completer = 1 
+let g:syntastic_rust_checkers = ['cargo']
+function! s:sorah_rust_setup()
+  setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
+endfunction
+
+augroup SrhRustSetup
+  autocmd!
+  autocmd BufWinEnter,BufNewFile *.go call s:sorah_rust_setup()
+augroup END
+
+" Syntastic
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+let g:syntastic_eruby_checkers = []
 
 "read other vimrc files
 if filereadable($VIMFILES."/other/private.vim")
