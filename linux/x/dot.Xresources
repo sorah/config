@@ -3,27 +3,27 @@
 !--- urxvt
 urxvt.font: xft:Source Code Pro:style=Regular:size=10,xft:Migmix 1P:size=10,xft:Noto Sans CJK JP:size=10,xft:DejaVu Sans Mono:size=10
 
-URxvt.perl-ext-common:default,clipboard,matcher,keyboard-select,font-size
-URxvt.keysym.C-Up:    perl:font-size:increase
-URxvt.keysym.C-Down:  perl:font-size:decrease
-URxvt.keysym.M-u:     perl:url-select:select_next
-URxvt.url-launcher:   /usr/bin/xdg-open
-URxvt.underlineURLs:  True
-URxvt.matcher.button: 1 
-URxvt.keysym.M-Escape:perl:keyboard-select:activate
-URxvt.keysym.M-c:     perl:clipboard:copy
-URxvt.keysym.M-v:     perl:clipboard:paste
-URxvt.keysym.M-C-v:   perl:clipboard:paste_escaped
-URxvt.copyCommand:   xsel -ib
-URxvt.pasteCommand:  xsel -ob
+urxvt.perl-ext-common:default,clipboard,matcher,keyboard-select,font-size
+urxvt.keysym.C-Up:    perl:font-size:increase
+urxvt.keysym.C-Down:  perl:font-size:decrease
+urxvt.keysym.M-u:     perl:url-select:select_next
+urxvt.url-launcher:   /usr/bin/xdg-open
+urxvt.underlineURLs:  True
+urxvt.matcher.button: 1 
+urxvt.keysym.M-Escape:perl:keyboard-select:activate
+urxvt.keysym.M-c:     perl:clipboard:copy
+urxvt.keysym.M-v:     perl:clipboard:paste
+urxvt.keysym.M-C-v:   perl:clipboard:paste_escaped
+urxvt.copyCommand:   xsel -ib
+urxvt.pasteCommand:  xsel -ob
 !URxvt.clipboard.autocopy: true
  
 
-URxvt.depth: 32
+urxvt.depth: 32
 !URxvt.transparent: true
 !URxvt.shading: 15
-URxvt.background: [85]#000000
-URxvt.foreground: #E4ECDC
+urxvt.background: [85]#000000
+urxvt.foreground: #E4ECDC
 
 ! black
 *color0:  #687478
