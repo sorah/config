@@ -1,39 +1,63 @@
-#!/bin/bash
-if [ "$#" -lt 1 ]; then
-  echo "Usage: $0 [-q] ARN [cmd]"
-fi
+#!/usr/bin/env ruby
+require 'aws-sdk'
 
-if [ "_$1" = "_-q" ]; then
-  quiet=1
-  shift
+unless ARGV[0]
+  abort "Usage #$0 [-q] ARN [cmd]"
+end
+
+quiet = ARGV.delete('-q')
+mfa = ARGV.delete('--mfa')
+arn = ARGV.shift
+session_name = "#$USER-#{Time.now.to_i}"
+
+@sts = Aws::STS::Client.new(region: 'us-east-1')
+def identity
+  @identity ||= @sts.get_caller_identity()
+end
+
+
+unless arn.start_with?('arn:')
+  arn = "arn:aws:iam::#{identity.account}:role/#{arn}"
+end
+
+if mfa
+  mfa_serial = "arn:aws:iam::#{identity.account}:mfa/#{identity.arn.split(?/).last}"
+end
+
+options = {
+  role_arn: arn,
+  role_session_name: session_name,
+}
+options[:duration_seconds] = ENV['EXPIRES_IN'].to_i if ENV['EXPIRES_IN']
+
+if mfa_serial
+  options[:serial_number] = mfa_serial
+  print '2FA Token: '
+  options[:token_code] = $stdin.gets.chomp
+end
+
+puts "=> Assuming #{arn}" unless quiet
+credentials = begin
+  @sts.assume_role(options).credentials
+end
+
+puts " * Expires at: #{credentials.expiration} (#{'%.2f' % (credentials.expiration - Time.now)}s)" unless quiet
+if options[:duration_seconds]
+  puts " * (requested #{options[:duration_seconds]}s)" unless quiet
+end
+
+ENV['AWS_ACCESS_KEY_ID'] = credentials.access_key_id
+ENV['AWS_SECRET_ACCESS_KEY'] = credentials.secret_access_key
+ENV['AWS_SESSION_TOKEN'] = credentials.session_token
+
+ENV['AWS_DEFAULT_REGION'] ||= 'ap-northeast-1'
+ENV['AWS_REGION'] ||= 'ap-northeast-1'
+
+ENV['SORAH_PROMPT_HOSTNAME'] = arn.split(?/).last
+ENV.delete 'EXPIRES_IN'
+
+if ARGV.empty?
+  exec ENV['SHELL'] || 'bash'
 else
-  quiet=0
-fi
-
-arn=$1
-session_name="$USER-$(date +%s)"
-shift
-
-session="$(aws sts assume-role --role-arn "${arn}" --role-session-name "${session_name}")"
-
-export AWS_ACCESS_KEY_ID="$(jq -r .Credentials.AccessKeyId <<< "$session")"
-export AWS_SECRET_ACCESS_KEY="$(jq -r .Credentials.SecretAccessKey <<< "$session")"
-export AWS_SESSION_TOKEN="$(jq -r .Credentials.SessionToken <<< "$session")"
-
-
-export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-ap-northeast-1}"
-export AWS_REGION="${AWS_REGION:-ap-northeast-1}"
-
-role_id="$(jq -r .AssumedRoleUser.AssumedRoleId <<< "$session")"
-arn="$(jq -r .AssumedRoleUser.Arn <<< "$session")"
-
-if [ "$quiet" = "0" ]; then
-  echo "arn: ${arn}" 1>&2
-fi
-export SORAH_PROMPT_HOSTNAME="$(cut -d/ -f 2 <<< "$arn")"
-
-if [ -n "$1" ]; then
-  exec "$@"
-else
-  exec $SHELL
-fi
+  exec ARGV
+end
