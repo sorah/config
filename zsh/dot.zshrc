@@ -27,6 +27,7 @@ if [ "_$run_tmux" = "_1" ]; then
   export PATH=~/git/config/bin:$PATH
   export PATH=~/.rbenv/bin:$PATH
   export PATH=~/.rbenv/shims:$PATH
+  export PATH=~/.cargo/bin:$PATH
 
   if [ "$SSH_CLIENT" ]; then
     echo "set -g prefix ^X" > ~/.tmux.prefix
@@ -69,6 +70,8 @@ export PATH=~/.rbenv/bin:$PATH
 export PATH=~/.rbenv/shims:$PATH
 eval "$(rbenv init --no-rehash -)"
 
+export PATH=~/.cargo/bin:$PATH
+
 export PATH=~/.plenv/bin:$PATH
 if command -v plenv >/dev/null 2>&1; then
   eval "$(plenv init -)"
@@ -79,6 +82,7 @@ if command -v docker-machine >/dev/null 2>&1; then
 fi
 
 export GEMSRC_USE_GHQ=1
+export DISABLE_SPRING=1
 
 if which pyenv > /dev/null; then eval "$(pyenv init --no-rehash -)"; fi
 
@@ -439,6 +443,22 @@ cop() {
 # powerup your emacs
 #====================
 alias emacs='vim'
+
+if ! which apt-get >/dev/null 2>/dev/null; then
+  sorah-docker-eix-ensure() {
+    if [ -z "$(docker image ls -q $1)" ]; then
+      docker build -t $1 -f ~/git/config/docker/Dockerfile.$1 ~/git/config/docker
+    else
+      echo "(to update, run: docker image rm $1)"
+    fi
+    tag=$1
+    shift
+    docker run --rm $tag "$@"
+  }
+  alias apt='sorah-docker-eix-ensure eix-ubuntu apt'
+  alias apt-get='sorah-docker-eix-ensure eix-ubuntu apt-get'
+  alias apt-cache='sorah-docker-eix-ensure eix-ubuntu apt-cache'
+fi
 
 # Load other zshrc
 if [[ -e ~/.zshrc_global_env ]]; then;
