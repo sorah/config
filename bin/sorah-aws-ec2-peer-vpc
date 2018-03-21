@@ -1,0 +1,93 @@
+#!/usr/bin/env ruby
+require 'aws-sdk'
+
+# Aws.config[:logger] = Logger.new($stderr)
+
+default_region = ENV['AWS_REGION'] || ENV['AWS_DEFAULT_REGION'] || 'ap-northeast-1'
+
+vpc_region_i, vpc_id_i = ARGV[0].split(?/, 2).yield_self { |(r,i)| i ? [r, i] : [default_region, r] }
+vpc_region_r, vpc_id_r = ARGV[1].split(?/, 2).yield_self { |(r,i)| i ? [r, i] : [default_region, r] }
+
+ec2_i = Aws::EC2::Client.new(region: vpc_region_i)
+ec2_r = Aws::EC2::Client.new(region: vpc_region_r)
+
+vpc_i = ec2_i.describe_vpcs(vpc_ids: [vpc_id_i]).vpcs[0]
+vpc_r = ec2_r.describe_vpcs(vpc_ids: [vpc_id_r]).vpcs[0]
+
+
+puts "=> VPC data"
+puts
+{requester: [vpc_region_i, vpc_i], accepter: [vpc_region_r, vpc_r]}.each do |k, (r,v)|
+  name = (v.tags.find { |_| _.key == 'ShortName' } || v.tags.find { |_| _.key == 'Name' })&.value
+
+  puts "   #{k} VPC:"
+  puts "     * Region: #{r}"
+  puts "     * ID: #{v.vpc_id}"
+  puts "     * Name: #{name}"
+  puts
+end
+
+puts "=> CreateVpcPeeringConnection Request to #{vpc_region_i}, will be the following:"
+
+req = {
+  vpc_id: vpc_i.vpc_id,
+  peer_vpc_id: vpc_r.vpc_id,
+  peer_region: vpc_region_r,
+}
+
+puts
+puts "   * #{req.inspect}"
+puts
+
+unless ARGV[2]
+  puts "=> Are you sure to proceed?"
+
+  print "   (type 'yes'): "
+  unless $stdin.gets.chomp == 'yes'
+    abort "Aborted"
+  end
+
+  puts
+  puts "=> Requesting:"
+  puts
+
+  res = ec2_i.create_vpc_peering_connection(req)
+
+  puts
+  puts "   * #{res.inspect}"
+  puts
+
+  id = res.vpc_peering_connection.vpc_peering_connection_id
+else
+  id = ARGV[2]
+end
+
+puts "=> Checking for status of #{id}"
+
+accepted = false
+loop do
+  sleep 1
+  conn = ec2_r.describe_vpc_peering_connections(vpc_peering_connection_ids: [id]).vpc_peering_connections[0]
+  puts " * #{conn.status.code}: #{conn.status.message.inspect}"
+
+  if conn.status.code == 'pending-acceptance' && !accepted
+    puts "=> Accepting pcx"
+
+    ec2_r.accept_vpc_peering_connection(vpc_peering_connection_id: id)
+    accepted = true
+
+    puts " * Done"
+
+    puts "=> Checking for status of #{id} ..."
+  end
+
+  if conn.status.code == 'active'
+    puts "=> All set!"
+    break
+  end
+
+  if conn.status.code == 'failed'
+    puts "=> Something went wrong..."
+    exit 1
+  end
+end
