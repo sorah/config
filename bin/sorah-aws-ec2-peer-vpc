@@ -67,7 +67,14 @@ puts "=> Checking for status of #{id}"
 accepted = false
 loop do
   sleep 1
-  conn = ec2_r.describe_vpc_peering_connections(vpc_peering_connection_ids: [id]).vpc_peering_connections[0]
+  begin
+    conn = ec2_r.describe_vpc_peering_connections(vpc_peering_connection_ids: [id]).vpc_peering_connections[0]
+  rescue Aws::EC2::Errors::InvalidVpcPeeringConnectionIDNotFound
+    puts " * Waiting for the connection to appear in#{vpc_region_r}"
+    sleep 2
+    retry
+  end
+
   puts " * #{conn.status.code}: #{conn.status.message.inspect}"
 
   if conn.status.code == 'pending-acceptance' && !accepted
