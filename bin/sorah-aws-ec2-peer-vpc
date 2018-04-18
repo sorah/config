@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 require 'aws-sdk'
 
+def vpc_name(v)
+  (v.tags.find { |_| _.key == 'ShortName' } || v.tags.find { |_| _.key == 'Name' })&.value || v.vpc_id
+end
+
 # Aws.config[:logger] = Logger.new($stderr)
 
 default_region = ENV['AWS_REGION'] || ENV['AWS_DEFAULT_REGION'] || 'ap-northeast-1'
@@ -11,14 +15,20 @@ vpc_region_r, vpc_id_r = ARGV[1].split(?/, 2).yield_self { |(r,i)| i ? [r, i] : 
 ec2_i = Aws::EC2::Client.new(region: vpc_region_i)
 ec2_r = Aws::EC2::Client.new(region: vpc_region_r)
 
-vpc_i = ec2_i.describe_vpcs(vpc_ids: [vpc_id_i]).vpcs[0]
-vpc_r = ec2_r.describe_vpcs(vpc_ids: [vpc_id_r]).vpcs[0]
+vpc_i, vpc_r = [[ec2_i, vpc_id_i], [ec2_r, vpc_id_r]].map do |ec2, vpc_id|
+  case vpc_id
+  when /\Avpc-[a-z0-9]+\z/
+    ec2.describe_vpcs(vpc_ids: [vpc_id]).vpcs[0]
+  else
+    ec2.describe_vpcs(filters: [name: 'tag:Name', values: [vpc_id]]).vpcs[0]
+  end
+end
 
 
 puts "=> VPC data"
 puts
 {requester: [vpc_region_i, vpc_i], accepter: [vpc_region_r, vpc_r]}.each do |k, (r,v)|
-  name = (v.tags.find { |_| _.key == 'ShortName' } || v.tags.find { |_| _.key == 'Name' })&.value
+  name = vpc_name(v)
 
   puts "   #{k} VPC:"
   puts "     * Region: #{r}"
@@ -70,7 +80,7 @@ loop do
   begin
     conn = ec2_r.describe_vpc_peering_connections(vpc_peering_connection_ids: [id]).vpc_peering_connections[0]
   rescue Aws::EC2::Errors::InvalidVpcPeeringConnectionIDNotFound
-    puts " * Waiting for the connection to appear in#{vpc_region_r}"
+    puts " * Waiting for the connection to appear in #{vpc_region_r}"
     sleep 2
     retry
   end
@@ -89,12 +99,32 @@ loop do
   end
 
   if conn.status.code == 'active'
-    puts "=> All set!"
     break
   end
 
   if conn.status.code == 'failed'
-    puts "=> Something went wrong..."
+    puts " ! Something went wrong..."
     exit 1
   end
+end
+
+puts "=> Creating tag on the pcxs"
+tag = {key: 'Name', value: "#{vpc_name(vpc_i)}/#{vpc_name(vpc_r)}"}
+puts "   #{tag.inspect}"
+
+{vpc_region_i => ec2_i, vpc_region_r => ec2_r}.each do |region, ec2|
+  print " * #{region} ..."
+  ec2.create_tags(resources: [id], tags: [tag])
+  puts " [ok]"
+end
+
+puts "=> All set!"
+puts
+{vpc_region_i => vpc_i, vpc_region_r => vpc_r}.each do |region, vpc|
+  puts "# #{vpc_name(vpc)} (#{region})"
+  vpc.cidr_block_association_set.each do |block|
+    puts block.cidr_block
+    puts "route destination_cidr_block: '#{block.cidr_block}', vpc_peering_connection_id: '#{id}' # #{vpc_name(vpc)} (#{region})"
+  end
+  puts
 end
