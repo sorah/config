@@ -1,0 +1,196 @@
+digraph {
+  newrank=true;
+  fontname="Lato";
+  node [fontname="Lato"];
+  subgraph cluster_source_pc {
+    label="PC";
+    subgraph cluster_source_pc_gpu {
+      label="gpu";
+    pcHDMI [label="HDMI"];
+    pcDVIa [label="DVI 1"];
+    pcDVIb [label="DVI 2"];
+    
+    }
+    subgraph cluster_source_pc_amp {
+      label="AT-HA40USB";
+      pcAmp [label="in"];
+      pcAmpSPDIF [label="Line Out (S/PDIF)"];
+      pcAmpLINE [label="Line Out"];
+      pcAmpOut [label="Headphone Out"];
+    }
+  }
+  subgraph cluster_source_mb {
+    label="MacBook";
+    mbDP [label="DP"];
+    mbUSBmix [label="Mixer USB"];
+  }
+  {
+    rank=same;
+    pcHDMI; pcDVIa; pcDVIb; pcAmpSPDIF; pcAmpLINE; pcAmpOut; mbDP; mbUSBmix;
+    switch [label="Switch"];
+    ps4 [label="PS4"];
+    ps3 [label="PS3"];
+    chrome [label="Chromecast"];
+    apple [label="Apple TV"];
+  }
+  subgraph cluster_amp {
+    label="amp";
+    subgraph cluster_amp_in {
+      label="in";
+      subgraph cluster_amp_in_ps4 {
+        label="PS4";
+        ampHDMIbd [label="HDMI (BD)"]
+      }
+      subgraph cluster_amp_in_switch {
+        label="Switch";
+        ampHDMIdvd [label="HDMI (DVD)"];
+      }
+      subgraph cluster_amp_in_pc {
+        label="PC";
+        ampHDMIgame [label="HDMI (GAME)"];
+        ampSPDIFa [label="S/PDIF 1"];
+      }
+      subgraph cluster_amp_in_chrome {
+        label="Chromecast";
+        ampHDMIv4 [label="HDMI (VIDEO 4)"];
+      }
+      subgraph cluster_amp_in_apple {
+        label="Apple TV";
+        ampHDMIv3 [label="HDMI (VIDEO 3)"];
+      }
+      subgraph cluster_amp_in_ps3 {
+        label="PS3";
+        ampHDMIcd [label="HDMI (SA-CD/CD)"]
+      }
+      subgraph cluster_amp_in_front {
+        label="front";
+        ampRCAv2 [label="RCA (VIDEO 2)"];
+      }
+    }
+    subgraph cluster_amp_out {
+      label="out";
+      rank=same;
+      ampoutHDMIa [label="HDMI A"];
+      ampoutHDMIb [label="HDMI B"];
+      ampoutSpeaker [label="Speaker Out"];
+      ampoutHeadphone [label="Headphone Out"];
+    }
+
+    amp
+
+  }
+  subgraph cluster_mix {
+    label="Audio Mixer";
+    {
+      rank=same;  
+      mixInMic1 [label="In 1 (Mic)"];
+      mixIn23 [label="In 2/3"];
+      mixIn45 [label="In 4/5"];
+    }
+    {
+      rank=same;
+      mix [label="Mixer"];
+      mixTrack2 [label="Track 2"];
+    }
+    {
+      rank=same;
+      mixPhones [label="Phones"];
+      mixOut [label="Main Out"];
+    }
+  }
+
+  {rank=same; amp; mix; mixTrack2; }
+  {
+    rank=same;
+    ampHDMIbd; ampHDMIdvd; ampHDMIgame; ampSPDIFa; ampHDMIv4; ampHDMIv3; ampHDMIcd; ampRCAv2;
+    mixInMic1; mixIn23; mixIn45;
+  }
+  subgraph cluster_mon {
+    subgraph cluster_mon0 {
+      label="21\"HD";
+      mon21hdmi [label="HDMI"];
+      mon21dvi [label="DVI"];
+    }
+    subgraph cluster_mon1 {
+      label="27\"WQHD";
+      mon27dvi [label="DVI"];
+      mon27dp [label="DP"];
+    }
+    subgraph cluster_mon2 {
+
+      label="24\"HD";
+      mon24hdmi [label="HDMI"];
+    }
+  }
+  subgraph cluster_snd { 
+    sndHeadset [label="Headset (in)"];
+    sndSpeaker [label="Speaker"];
+  }
+
+  {
+    rank=same;
+    mon21hdmi; mon21dvi; mon27dvi; mon27dp; mon24hdmi; sndHeadset; sndSpeaker;
+  }
+
+
+  {
+    # Video/Audio
+    edge [style=bold];
+    ps4 -> ampHDMIbd;
+    switch -> ampHDMIdvd;
+    chrome -> ampHDMIv4;
+    apple -> ampHDMIv3;
+    ps3 -> ampHDMIcd;
+    
+    ampHDMIv4 -> amp;
+    ampHDMIv3 -> amp;
+    ampHDMIcd -> amp;
+    ampHDMIbd -> amp;
+    ampHDMIdvd -> amp;
+    
+    pcHDMI -> ampHDMIgame;
+  }
+  {
+    # Video
+    edge [color="#008899"];
+    pcDVIa -> mon21dvi;
+    ampoutHDMIa -> mon21hdmi;
+    pcDVIb -> mon27dvi;
+    mbDP -> mon27dp;
+    ampoutHDMIb -> mon24hdmi;
+
+    ampHDMIgame -> amp;
+
+    amp -> ampoutHDMIa;
+    amp -> ampoutHDMIb;
+  }
+  {
+    # Audio
+    edge [color="#bb0000"];
+   ampoutSpeaker -> sndSpeaker; 
+   
+   pcAmp -> pcAmpLINE;
+   pcAmp -> pcAmpSPDIF;
+   pcAmp -> pcAmpOut;
+   pcAmpLINE -> mixIn45;
+   pcAmpSPDIF -> ampSPDIFa;
+  
+   ampoutHeadphone -> mixIn23 [style=dashed];
+  
+   ampRCAv2 -> amp;
+   ampSPDIFa -> amp;
+   amp -> ampoutSpeaker;
+   amp -> ampoutHeadphone;
+
+   mbUSBmix -> mixTrack2;
+   mixIn23 -> mix;
+   mixIn45 -> mix;
+   mixInMic1 -> mix;
+   mix -> mixOut;
+   mixOut -> mixPhones;
+   mixTrack2 -> mixOut;
+   mix -> mbUSBmix;
+   mixPhones -> sndHeadset; 
+   mixOut -> ampRCAv2;
+  }
+}
