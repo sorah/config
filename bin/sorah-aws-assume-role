@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'aws-sdk-s3' # Workaround of load failure
 require 'aws-sdk-sts'
 
 unless ARGV[0]
