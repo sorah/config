@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require 'aws-sdk'
+require 'aws-sdk-sts'
 
 unless ARGV[0]
   abort "Usage #$0 [-q] ARN [cmd]"

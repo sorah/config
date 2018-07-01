@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require 'aws-sdk'
+require 'aws-sdk-ec2'
 
 if ARGV.size < 2
   abort "Usage: #$0 target-id inspector-id [vol-id]"
