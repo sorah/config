@@ -98,6 +98,7 @@ NeoBundle 'zimbatm/haproxy.vim'
 NeoBundle 'vim-syntastic/syntastic'
 NeoBundle 'rust-lang/rust.vim'
 NeoBundle 'racer-rust/vim-racer'
+NeoBundle 'google/vim-jsonnet'
 filetype on
 filetype plugin on
 filetype indent on
@@ -985,6 +986,8 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
 let g:syntastic_eruby_checkers = []
+let g:syntastic_sass_checkers = []
+let g:syntastic_scss_checkers = []
 
 "read other vimrc files
 if filereadable($VIMFILES."/other/private.vim")
