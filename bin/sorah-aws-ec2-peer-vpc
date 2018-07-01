@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 require 'aws-sdk'
 
+ForeignVpc = Struct.new(:vpc_id)
+
 def vpc_name(v)
   (v.tags.find { |_| _.key == 'ShortName' } || v.tags.find { |_| _.key == 'Name' })&.value || v.vpc_id
 end
@@ -9,13 +11,17 @@ end
 
 default_region = ENV['AWS_REGION'] || ENV['AWS_DEFAULT_REGION'] || 'ap-northeast-1'
 
-vpc_region_i, vpc_id_i = ARGV[0].split(?/, 2).yield_self { |(r,i)| i ? [r, i] : [default_region, r] }
-vpc_region_r, vpc_id_r = ARGV[1].split(?/, 2).yield_self { |(r,i)| i ? [r, i] : [default_region, r] }
+vpc_region_i, vpc_id_i, _ = ARGV[0].split(?/, 3).yield_self { |(r,i,o)| i ? [r, i, o] : [default_region, r, o] }
+vpc_region_r, vpc_id_r, vpc_owner_r = ARGV[1].split(?/, 3).yield_self { |(r,i,o)| i ? [r, i, o] : [default_region, r, o] }
 
 ec2_i = Aws::EC2::Client.new(region: vpc_region_i)
 ec2_r = Aws::EC2::Client.new(region: vpc_region_r)
 
-vpc_i, vpc_r = [[ec2_i, vpc_id_i], [ec2_r, vpc_id_r]].map do |ec2, vpc_id|
+vpc_i, vpc_r = [[ec2_i, vpc_id_i, nil], [ec2_r, vpc_id_r, vpc_owner_r]].map do |ec2, vpc_id, owner|
+  if owner
+    next ForeignVpc.new(vpc_id)
+  end
+
   case vpc_id
   when /\Avpc-[a-z0-9]+\z/
     ec2.describe_vpcs(vpc_ids: [vpc_id]).vpcs[0]
@@ -28,6 +34,11 @@ end
 puts "=> VPC data"
 puts
 {requester: [vpc_region_i, vpc_i], accepter: [vpc_region_r, vpc_r]}.each do |k, (r,v)|
+  if v.is_a?(ForeignVpc)
+    puts "   #{k} VPC: #{v.vpc_id}"
+    puts
+    next
+  end
   name = vpc_name(v)
 
   puts "   #{k} VPC:"
@@ -44,6 +55,8 @@ req = {
   peer_vpc_id: vpc_r.vpc_id,
   peer_region: vpc_region_r,
 }
+
+req[:peer_owner_id] = vpc_owner_r if vpc_owner_r
 
 puts
 puts "   * #{req.inspect}"
@@ -87,7 +100,7 @@ loop do
 
   puts " * #{conn.status.code}: #{conn.status.message.inspect}"
 
-  if conn.status.code == 'pending-acceptance' && !accepted
+  if conn.status.code == 'pending-acceptance' && !accepted && !vpc_owner_r
     puts "=> Accepting pcx"
 
     ec2_r.accept_vpc_peering_connection(vpc_peering_connection_id: id)
