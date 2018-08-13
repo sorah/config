@@ -1,0 +1,3 @@
+#!/bin/bash
+export PATH=$HOME/local/opt/heroku/bin:$PATH
+exec heroku "$@"
