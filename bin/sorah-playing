@@ -1,0 +1,87 @@
+#!/usr/bin/env ruby
+require 'json'
+require 'open-uri'
+require 'net/http'
+require 'pp'
+
+webhook_urls = File.read(File.expand_path('~/.sorah-playing')).each_line.map(&:chomp)
+
+def find_its(*keywords, country: 'JP')
+  query = URI.encode_www_form_component keywords.join(' ')
+  p JSON.parse(open("https://itunes.apple.com/search?term=#{query}&media=music&limit=1&country=#{country}", 'r', &:read), symbolize_names: true)
+rescue OpenURI::HTTPError, JSON::ParserError => e
+  $stderr.puts "===Ignoring error from ITS==="
+  $stderr.puts keywords.inspect
+  $stderr.puts e.full_message
+  $stderr.puts "============================="
+end
+
+def current_track
+  scpt = <<-EOS
+  var it = Application("iTunes");
+  var track = it.currentTrack();
+  var res = "{}";
+  if (track && it.playerState() == "playing") {
+  res = JSON.stringify({"name": track.name(), "artist": track.artist(), "album": track.album(), "composer": track.composer(), "position": it.playerPosition(), "id": track.id()});
+  }
+
+  res
+  EOS
+
+  IO.popen(["osascript", "-l", "JavaScript"], 'w+') do |io|
+    io.puts scpt
+    io.close_write
+    JSON.parse(io.read.chomp, symbolize_names: true)
+  end
+end
+
+last = current_track
+p last
+sleep 15
+loop do
+  track = current_track
+  p track
+  unless track[:id]
+    sleep 15
+    next
+  end
+  if track.fetch(:id) == last[:id]
+    sleep 15
+    next
+  end
+  if track.fetch(:position) < 15
+    sleep 3
+    next
+  end
+  puts "==> Searching iTS"
+  its = find_its(current_track.values_at(:name, :artist))
+  music = its.fetch(:results, [])[0]
+  pp music
+  puts "==> Payload"
+  payload = {
+    text: [
+      if music&.fetch(:trackViewUrl, nil)
+        ":musical_note: <#{music[:trackViewUrl]}|#{track.fetch(:name)}>"
+      else
+        ":musical_note: #{track.fetch(:name)}"
+      end,
+      ":cd: #{track.fetch(:album)}",
+      ":studio_microphone: #{track.fetch(:artist)}",
+      if track.fetch(:composer).empty?
+        nil
+      else
+        ":pencil2: #{track.fetch(:composer)}"
+      end,
+    ].compact.join(?\n),
+    username: 'sorah playing',
+    icon_url: music&.fetch(:artworkUrl60, nil),
+  }
+  pp payload
+  puts "==> Posting"
+  webhook_urls.each do |url|
+    puts " * #{url}"
+    Net::HTTP.post_form(URI(url), payload: payload.to_json)
+  end
+  last = track
+  sleep 15
+end
