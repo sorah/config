@@ -213,16 +213,20 @@ set_prompt() {
   fi
 }
 sorah-prompt-face-a() {
-  set_prompt "%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)"
+  set_prompt "%(?.(▰╹◡╹%).(.>﹏<%))"
+
 }
 sorah-prompt-face-b() {
+  set_prompt "%(?.(▰╹◡╹%).ヾ(｡>﹏<｡%)ﾉﾞ)"
+}
+sorah-prompt-face-c() {
   set_prompt '%(?.(▰╹◡╹%).(▰╹o╹%))'
 }
 
 sorah-prompt-face-a
-if [ -n "$SSH_CLIENT" ]; then
-  sorah-prompt-face-b
-fi
+#if [ -n "$SSH_CLIENT" ]; then
+#  sorah-prompt-face-b
+#fi
 
 PROMPT2='%B%_%(?.%f.%S%F)%b %#%f%s '
 SPROMPT="%r is correct? [n,y,a,e]: "
