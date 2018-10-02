@@ -2,7 +2,7 @@
 require 'aws-sdk-ec2'
 require 'optparse'
 
-region = ENV['AWS_DEFAULT_REGION']
+region = nil
 tag, tag_value = nil, nil
 keep = nil
 name = nil
@@ -37,9 +37,9 @@ args.each do |arg|
 end
 
 if name || tag
-  REGIONS = Aws::EC2::Client.new(region: region || 'ap-northeast-1').describe_regions.regions.map(&:region_name)
+  regions = region ? [region] : Aws::EC2::Client.new(region: ENV['AWS_DEFAULT_REGION'] || 'ap-northeast-1').describe_regions.regions.map(&:region_name)
 
-  REGIONS.each do |target_region|
+  regions.each do |target_region|
     puts "=> Finding AMI from #{target_region}"
     filter = tag ? {name: "tag:#{tag}", values: [tag_value]} : {name: 'name', values: [name]}
     ec2s[target_region].images(filters: [filter, {name: 'state', values: %w(available)}]).each do |image|
@@ -76,3 +76,4 @@ targets.each do |ami_region, images|
     end
   end
 end
+
