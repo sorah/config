@@ -26,14 +26,12 @@ endif
 "NeoBundle 'mrkn/mrkn256.vim'
 NeoBundle 'mattn/webapi-vim'
 NeoBundle 'tyru/restart.vim'
-NeoBundle 'git@github.com:sorah/metarw-simplenote.vim.git'
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'sudo.vim'
 NeoBundle 'plasticboy/vim-markdown'
 NeoBundle 'motemen/git-vim'
 NeoBundle 'ujihisa/neco-look'
 NeoBundle 'thinca/vim-quickrun'
-NeoBundle 'derekwyatt/vim-scala'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'ujihisa/unite-gem'
 NeoBundle 'Shougo/unite-outline'
@@ -43,7 +41,6 @@ NeoBundle 'kana/vim-metarw'
 NeoBundle 'kana/vim-metarw-git'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'taka84u9/vim-ref-ri'
-NeoBundle 'Shougo/vimfiler'
 NeoBundle 'Shougo/vimproc',
         \ { 'build' : {
         \     'mac'  : 'make -f make_mac.mak',
@@ -107,8 +104,6 @@ runtime macros/matchit.vim
 
 
 " Basic {{{
-
-
 
 " ruby - developer {{{
 au FileType c setlocal ts=8 sw=4 noexpandtab
@@ -284,15 +279,6 @@ augroup SorahRuby
 augroup END
 "}}}
 
-"input </ to auto close tag on XML {{{
-augroup MyXML
-  autocmd!
-  autocmd Filetype xml inoremap <buffer> </ </<C-x><C-o>
-  autocmd Filetype html inoremap <buffer> </ </<C-x><C-o>
-  "autocmd Filetype eruby inoremap <buffer> </ </<C-x><C-o>
-augroup END
-"}}}
-
 " unite.vim {{{
 augroup MyUniteVim
   autocmd!
@@ -424,16 +410,6 @@ function! s:Goodwidth()
     vertical resize 90
   endif
 endfunction
-
-
-"tab shortcut
-nnoremap <silent> tn :tabn<Cr>
-nnoremap <silent> tp :tabp<Cr>
-nnoremap <silent> tb :tabp<Cr>
-nnoremap <silent> te :tabe<Cr>
-
-"align.vim
-let g:Align_xstrlen=3
 
 "q -> C-o
 nnoremap q <C-o>
@@ -586,16 +562,11 @@ end
 let g:vimshell_enable_interactive = 1
 let g:vimshell_enable_smart_case = 1
 
-":cdd => :Cdd
-cabbrev cdd Cdd
-
 "easy to save
 nnoremap W :<C-u>w<Cr>
 nnoremap <Space> :<C-u>w<Cr>
 nnoremap V :<C-u>vsp<Cr>
 nnoremap Q :<C-u>q<Cr>
-nnoremap E :<C-u>tabe<Space>
-nnoremap e :<C-u>tabe<Cr>
 
 "mv editing file
 function! g:MvEditingFile(new_file_name)
@@ -724,32 +695,8 @@ if filereadable("/usr/share/skk/SKK-JISYO.L")
   \}
 endif
 
-
-"gist.vim
-if has('mac')
-  let g:gist_clip_command = 'pbcopy'
-endif
-
 "compl
 "inoremap <expr> ] searchpair('\[', '', '\]', 'nbW', 'synIDattr(synID(line("."), col("."), 1), "name") =~? "String"') ? ']' : "\<C-n>"
-
-"vimfiler
-let g:vimfiler_execute_file_list = {}
-let g:vimfiler_execute_file_list['rb'] = 'ruby'
-let g:vimfiler_execute_file_list['pl'] = 'perl'
-let g:vimfiler_execute_file_list['py'] = 'python'
-let g:vimfiler_edit_command = 'tabe'
-let g:vimfiler_split_command = ''
-if has('mac')
-  let g:vimfiler_execute_file_list['html'] = 'open'
-  let g:vimfiler_execute_file_list['htm'] = 'open'
-  let g:vimfiler_execute_file_list['xhtml'] = 'open'
-elseif has('win32') || has('win64')
-  let g:vimfiler_execute_file_list['html'] = 'open'
-  let g:vimfiler_execute_file_list['htm'] = 'open'
-  let g:vimfiler_execute_file_list['xhtml'] = 'open'
-endif
-
 
 "ew
 function! s:VimRcWriteEdit()
@@ -779,8 +726,6 @@ command! -nargs=? -complete=file Open call s:CallOpenCmd('<args>')
 
 " metarw
 call metarw#define_wrapper_commands(1)
-
-let g:metarw_simplenote_email = "sorah@tubusu.net"
 
 " RSpec
 function! s:QuickRunRSpecWithoutLine()
