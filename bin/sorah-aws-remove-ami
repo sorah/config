@@ -3,14 +3,23 @@ require 'aws-sdk-ec2'
 require 'optparse'
 
 region = ENV['AWS_DEFAULT_REGION']
+tag, tag_value = nil, nil
+keep = nil
 name = nil
+dry_run = false
 
 parser = OptionParser.new do |_|
   _.on('-r REGION', '--region REGION') { |reg| region = reg }
   _.on('-n NAME', '--name NAME') { |n| name = n }
+  _.on('-t TAG', '--tag TAG') { |n| tag, tag_value = n.split(?=,2) }
+  _.on('-k KEEP', '--keep KEEP') { |n| keep = n.to_i }
+  _.on('-N', '--dry-run') { dry_run = true }
 end
 
 args = parser.parse(ARGV)
+if keep.nil?
+  keep = tag ? 3 : 0
+end
 
 ec2s = Hash.new { |h, k| h[k] = Aws::EC2::Resource.new(region: k) }
 
@@ -27,14 +36,22 @@ args.each do |arg|
   (targets[ami_region] ||= []) << ami_id
 end
 
-if name
+if name || tag
   REGIONS = Aws::EC2::Client.new(region: region || 'ap-northeast-1').describe_regions.regions.map(&:region_name)
 
   REGIONS.each do |target_region|
     puts "=> Finding AMI from #{target_region}"
-    ec2s[target_region].images(filters: [name: 'name', values: [name]]).each do |image|
-      puts " * #{image.image_id}"
+    filter = tag ? {name: "tag:#{tag}", values: [tag_value]} : {name: 'name', values: [name]}
+    ec2s[target_region].images(filters: [filter, {name: 'state', values: %w(available)}]).each do |image|
       (targets[target_region] ||= []) << image
+    end
+    if targets[target_region]
+      if keep > 0
+        targets[target_region] = targets[target_region].sort_by(&:creation_date)[0...-keep]
+      end
+      targets[target_region].each do |image|
+        puts " * #{image.image_id} | #{image.name}"
+      end
     end
   end
   puts
@@ -51,11 +68,11 @@ targets.each do |ami_region, images|
       mapping.ebs && mapping.ebs.snapshot_id
     end.compact
 
-    puts " * Deregister #{image.image_id} (#{image.name})"
-    image.deregister
+    puts " * Deregister #{image.image_id} (#{image.name}) @ #{ami_region}"
+    image.deregister unless dry_run
     snapshot_ids.each do |snapshot_id|
-      puts " * Delete snapshot #{snapshot_id}"
-      ec2.client.delete_snapshot(snapshot_id: snapshot_id)
+      puts " * Delete snapshot #{snapshot_id} @ #{ami_region}"
+      ec2.client.delete_snapshot(snapshot_id: snapshot_id) unless dry_run
     end
   end
 end
