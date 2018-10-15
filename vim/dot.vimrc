@@ -96,6 +96,8 @@ NeoBundle 'vim-syntastic/syntastic'
 NeoBundle 'rust-lang/rust.vim'
 NeoBundle 'racer-rust/vim-racer'
 NeoBundle 'google/vim-jsonnet'
+NeoBundle 'leafgarland/typescript-vim'
+NeoBundle 'Quramy/tsuquyomi'
 filetype on
 filetype plugin on
 filetype indent on
@@ -411,6 +413,12 @@ function! s:Goodwidth()
   endif
 endfunction
 
+"tab shortcut
+nnoremap <silent> tn :tabn<Cr>
+nnoremap <silent> tp :tabp<Cr>
+nnoremap <silent> tb :tabp<Cr>
+nnoremap <silent> te :tabe<Cr>
+
 "q -> C-o
 nnoremap q <C-o>
 nnoremap } <C-]>
@@ -567,6 +575,7 @@ nnoremap W :<C-u>w<Cr>
 nnoremap <Space> :<C-u>w<Cr>
 nnoremap V :<C-u>vsp<Cr>
 nnoremap Q :<C-u>q<Cr>
+nnoremap e :<C-u>tabe<Cr>
 
 "mv editing file
 function! g:MvEditingFile(new_file_name)
