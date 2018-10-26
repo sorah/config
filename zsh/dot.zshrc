@@ -470,11 +470,11 @@ if ! which apt-get >/dev/null 2>/dev/null; then
   alias apt-cache='sorah-docker-ensure eix-ubuntu apt-cache'
   gbp() {
     reponame=$(basename "${PWD}")
-    sorah-docker-ensure gbp _ --net=host -u $(id -u):$(id -g) -e HOME=/home/sorah -v "${HOME}/.gitconfig:/home/sorah/.gitconfig:ro" -v "$(realpath ${PWD}/../):/git" -w /git/${reponame} gbp gbp "$@"
+    sorah-docker-ensure gbp _ -ti --net=host -u $(id -u):$(id -g) -e HOME=/home/sorah -v "${HOME}/.gitconfig:/home/sorah/.gitconfig:ro" -v "$(realpath ${PWD}/../):/git" -w /git/${reponame} gbp gbp "$@"
   }
   sorah-devscripts() {
     reponame=$(basename "${PWD}")
-    sorah-docker-ensure devscripts _ --net=host -u $(id -u):$(id -g) -e HOME=/home/sorah -v "$(realpath ${PWD}/../):/git" -w /git/${reponame} devscripts "$@"
+    sorah-docker-ensure devscripts _ -ti --net=host -u $(id -u):$(id -g) -e HOME=/home/sorah -v "$(realpath ${PWD}/../):/git" -w /git/${reponame} devscripts "$@"
   }
   alias dch='sorah-devscripts dch'
 fi
