@@ -449,19 +449,34 @@ cop() {
 alias emacs='vim'
 
 if ! which apt-get >/dev/null 2>/dev/null; then
-  sorah-docker-eix-ensure() {
-    if [ -z "$(docker image ls -q $1)" ]; then
+  sorah-docker-ensure() {
+    if [[ -z "$(docker image ls -q $1)" ]]; then
       docker build -t $1 -f ~/git/config/docker/Dockerfile.$1 ~/git/config/docker
     else
       echo "(to update, run: docker image rm $1)"
     fi
     tag=$1
     shift
-    docker run --rm $tag "$@"
+    if [[ "_$1" = "__" ]]; then
+      shift
+      docker run --rm "$@"
+    else
+      docker run --rm "${tag}" "$@"
+    fi
   }
-  alias apt='sorah-docker-eix-ensure eix-ubuntu apt'
-  alias apt-get='sorah-docker-eix-ensure eix-ubuntu apt-get'
-  alias apt-cache='sorah-docker-eix-ensure eix-ubuntu apt-cache'
+
+  alias apt='sorah-docker-ensure eix-ubuntu apt'
+  alias apt-get='sorah-docker-ensure eix-ubuntu apt-get'
+  alias apt-cache='sorah-docker-ensure eix-ubuntu apt-cache'
+  gbp() {
+    reponame=$(basename "${PWD}")
+    sorah-docker-ensure gbp _ --net=host -u $(id -u):$(id -g) -e HOME=/home/sorah -v "${HOME}/.gitconfig:/home/sorah/.gitconfig:ro" -v "$(realpath ${PWD}/../):/git" -w /git/${reponame} gbp gbp "$@"
+  }
+  sorah-devscripts() {
+    reponame=$(basename "${PWD}")
+    sorah-docker-ensure devscripts _ --net=host -u $(id -u):$(id -g) -e HOME=/home/sorah -v "$(realpath ${PWD}/../):/git" -w /git/${reponame} devscripts "$@"
+  }
+  alias dch='sorah-devscripts dch'
 fi
 
 # Load other zshrc
