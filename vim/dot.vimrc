@@ -98,6 +98,7 @@ NeoBundle 'racer-rust/vim-racer'
 NeoBundle 'google/vim-jsonnet'
 NeoBundle 'leafgarland/typescript-vim'
 NeoBundle 'Quramy/tsuquyomi'
+NeoBundle 'Quramy/tsuquyomi-vue'
 filetype on
 filetype plugin on
 filetype indent on
@@ -932,6 +933,9 @@ augroup SrhRustSetup
   autocmd!
   autocmd BufWinEnter,BufNewFile *.go call s:sorah_rust_setup()
 augroup END
+
+let g:tsuquyomi_disable_quickfix = 1
+let g:syntastic_typescript_checkers = ['tsuquyomi']
 
 " Syntastic
 let g:syntastic_always_populate_loc_list = 1
