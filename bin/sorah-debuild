@@ -86,8 +86,8 @@ cd "${name}-${version}"
 #rm -rf ./debian/out
 
 sed -i -e 's/_dist_/${dist}/g' debian/changelog
+sed -i -e 's/~dist) unstable; urgency=/~${dist}) ${dist}; urgency=/g' debian/changelog
 sed -i -e 's/~dist)/~${dist})/g' debian/changelog
-sed -i -e 's/unstable; urgency=/${dist}; urgency=/g' debian/changelog
 
 debuild -us -uc
 EOF
