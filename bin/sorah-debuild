@@ -110,11 +110,12 @@ docker run \
 
 cp -v ${out_dir}/.$$/*.symbols debian/ || :
 
-sorah-debsign debian/out/$(cat debian/out/.last-$$)*{dsc,changes}
+if [[ -z $NO_SIGN ]]; then
+  sorah-debsign ${out_dir}/$(cat ${out_dir}/.last-$$)*{dsc,changes}
 
-source_pkg="$(head -n1 debian/changelog|awk '{print $1}')"
-tag="$(ruby -e 'dist = ARGV.first; puts File.open("debian/changelog", "r", &:gets).match(/\((.+?)\)/)[1].sub(/~dist/, "~#{dist}").gsub(/\.(?=\.|$|lock$)/, ".#").tr("~:","_%")' "${dist}")"
-deb_version="$(head -n1 debian/changelog|grep --only-matching -P '(?<=\().+?(?=\))'|sed -e "s/~dist/~${dist}/g")"
+  tag="$(ruby -e 'dist = ARGV.first; puts File.open("debian/changelog", "r", &:gets).match(/\((.+?)\)/)[1].sub(/~dist/, "~#{dist}").gsub(/\.(?=\.|$|lock$)/, ".#").tr("~:","_%")' "${dist}")"
+  deb_version="$(head -n1 debian/changelog|grep --only-matching -P '(?<=\().+?(?=\))'|sed -e "s/~dist/~${dist}/g")"
 
-git tag -s -m "${source_pkg} Debian release ${deb_version}" debian/${tag}
-git show --summary debian/${tag} | cat
+  git tag -s -m "${name} Debian release ${deb_version}" debian/${tag}
+  git show --summary debian/${tag} | cat
+fi
