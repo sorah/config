@@ -20,7 +20,9 @@ trap "rm $gpg_public_key" EXIT
 export DEBSIGN_MAINT="$(git config --global --get user.email)"
 
 # Unlock GPG secret key when necessary
-export GPG_TTY=$(tty)
+if [[ -z $GPG_TTY ]]; then
+  export GPG_TTY=$(tty)
+fi
 echo | gpg -u "${gpg_user}" --clearsign --output /dev/null
 
 bootstrap_cmds=$(mktemp)

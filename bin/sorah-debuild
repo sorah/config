@@ -21,6 +21,7 @@ if [ x"$dist" = x"" ]; then
 fi
 
 set -ex
+export GPG_TTY=$(tty)
 here="$(pwd)"
 mkdir -p debian/out
 
