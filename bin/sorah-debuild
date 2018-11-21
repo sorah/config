@@ -6,11 +6,11 @@ fi
 
 dist=$1
 version="$2"
-gpg_agent_socket=$(gpgconf --list-dirs agent-socket)
-gpg_user="$GPGUSER"
-if [[ -z "$gpg_user" ]]; then
-  gpg_user=$(gpg --list-secret-keys --with-colons|grep '^fpr:'|head -n1|cut -d: -f10)
-fi
+#gpg_agent_socket=$(gpgconf --list-dirs agent-socket)
+#gpg_user="$GPGUSER"
+#if [[ -z "$gpg_user" ]]; then
+#  gpg_user=$(gpg --list-secret-keys --with-colons|grep '^fpr:'|head -n1|cut -d: -f10)
+#fi
 
 if [ x"$version" = x"" ]; then
   echo "Usage: $0 <dist> <version>"
@@ -25,59 +25,75 @@ image_tag=debuild-${name}-${dist}
 set -ex
 here="$(pwd)"
 mkdir -p debian/out
-docker build -f debian/Dockerfile.${dist} -t "$image_tag" "${here}/debian"
-source_archive="${name}_${version}.orig.tar.gz"
-git archive --format=tar --prefix "${name}-${version}/" "upstream/${version}" | gzip > "debian/out/$source_archive"
 
-gpg_public_key=/tmp/debuild-${name}-${dist}-pub.asc
-gpg --export "$gpg_user" >  $gpg_public_key
-trap "rm $gpg_public_key" EXIT
+if [ -n "${NO_CACHE}" ]; then
+  NO_CACHE=--no-cache
+fi
+docker build -f debian/Dockerfile.${dist} -t "$image_tag" "${here}/debian" $NO_CACHE
 
-# Unlock GPG secret key when necessary
-export GPG_TTY=$(tty)
-echo | gpg -u "${gpg_user}" --clearsign --output /dev/null
+orig_archive="${name}_${version}.orig.tar.gz"
+source_archive=".tmp_${name}_${version}.tar.gz"
+git archive --format=tar --prefix "${name}-${version}/" "upstream/${version}" | gzip > "debian/out/$orig_archive"
+git archive --format=tar --prefix "${name}-${version}/" HEAD | gzip > "debian/out/$source_archive"
+
+#gpg_public_key=/tmp/debuild-${name}-${dist}-pub.asc
+#gpg --export "$gpg_user" >  $gpg_public_key
+#trap "rm $gpg_public_key" EXIT
+#
+## Unlock GPG secret key when necessary
+#export GPG_TTY=$(tty)
+#echo | gpg -u "${gpg_user}" --clearsign --output /dev/null
 
 bootstrap_cmds=$(mktemp)
 cat >${bootstrap_cmds} <<-EOF
 useradd -u $(id -u) -m buildbot
-chown buildbot:buildbot /home/buildbot
-chown buildbot:buildbot /home/buildbot/.gnupg
 chown buildbot:buildbot /build
+chown buildbot:buildbot /home/buildbot
 cp /run.sh /run2.sh
 chown buildbot:buildbot /run2.sh
 
 su buildbot -c 'bash -xe /run2.sh'
 
-cp -pv /build/*.{deb,debian.tar.xz,dsc,changes} /output/
-cp -v /build/*/debian/*.symbols /output/
+echo "\$(basename -s .dsc /build/*.dsc)" > /output/.last-$$
+mkdir /output/.$$
+ls /build
+cp -pv /build/*.{deb,dsc,changes} /output/
+cp -pv /build/*.buildinfo /output/ || :
+cp -pv /build/*.debian.tar* /output/
+cp -v /build/*/debian/*.symbols /output/.$$/
 chown $(id -u):$(id -g) /output/*
+chown -R $(id -u):$(id -g) /output/.$$
+chown -R $(id -u):$(id -g) /output/.last-$$
 EOF
 
 cmds=$(mktemp)
 cat >${cmds} <<-EOF
-gpg2 --import < /pub.asc
-export DEBSIGN_KEYID=0x\$(gpg2 --with-colons --list-keys|grep '^sub:'|head|cut -d: -f 5)
+#gpg2 --import < /pub.asc
+#export DEBSIGN_KEYID=0x\$(gpg2 --with-colons --list-keys|grep '^sub:'|head|cut -d: -f 5)
 
 cd /build
 tar xf /output/${source_archive}
 ln -s /output/${source_archive} /build/
+ln -s /output/${orig_archive} /build/
 cd "${name}-${version}"
-cp -a /debian .
-rm -rf ./debian/out
+#rm -rf debian
+#cp -a /debian .
+#rm -rf ./debian/out
 
 sed -i -e 's/_dist_/${dist}/g' debian/changelog
+sed -i -e 's/~dist)/~${dist})/g' debian/changelog
 sed -i -e 's/unstable; urgency=/${dist}; urgency=/g' debian/changelog
 
-debuild -pgpg2
+debuild -us -uc
 EOF
 
 
+#  --volume "${gpg_public_key}:/pub.asc" \
 docker run \
   --privileged \
   --net=host \
   --tty \
   --interactive \
-  --volume "${gpg_public_key}:/pub.asc" \
   --volume "${here}/debian:/debian:ro" \
   --volume "${here}/debian/out:/output" \
   --volume "${gpg_agent_socket}:/home/buildbot/.gnupg/S.gpg-agent" \
@@ -87,4 +103,13 @@ docker run \
   "$image_tag" \
   bash -xe /bootstrap.sh
 
-cp -v debian/out/*.symbols debian/ || :
+cp -v debian/out/.$$/*.symbols debian/ || :
+
+sorah-debsign debian/out/$(cat debian/out/.last-$$)*{dsc,changes}
+
+source_pkg="$(head -n1 debian/changelog|awk '{print $1}')"
+tag="$(ruby -e 'dist = ARGV.first; puts File.open("debian/changelog", "r", &:gets).match(/\((.+?)\)/)[1].sub(/~dist/, "~#{dist}").gsub(/\.(?=\.|$|lock$)/, ".#").tr("~:","_:")' "${dist}")"
+deb_version="$(head -n1 debian/changelog|grep --only-matching -P '(?<=\().+?(?=\))'|sed -e "s/~dist/~${dist}/g")"
+
+git tag -s -m "${source_pkg} Debian release ${deb_version}" debian/${tag}
+git show --summary debian/${tag} | cat

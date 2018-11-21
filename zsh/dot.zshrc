@@ -477,6 +477,7 @@ if ! which apt-get >/dev/null 2>/dev/null; then
     sorah-docker-ensure devscripts _ -ti --net=host -u $(id -u):$(id -g) -e HOME=/home/sorah -v "$(realpath ${PWD}/../):/git" -w /git/${reponame} devscripts "$@"
   }
   alias dch='sorah-devscripts dch'
+  alias debsign='sorah-devscripts debsign'
 fi
 
 # Load other zshrc

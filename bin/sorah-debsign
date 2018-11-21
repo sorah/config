@@ -1,0 +1,58 @@
+#!/bin/bash
+if which apt-get >/dev/null 2>/dev/null; then
+  exec debsign "$@"
+fi
+if [[ -z "$(docker image ls -q devscripts)" ]]; then
+  docker build -t devscripts -f ~/git/config/docker/Dockerfile.devscripts ~/git/config/docker
+fi
+#docker run --rm devscripts debsign "$@"
+
+gpg_agent_socket=$(gpgconf --list-dirs agent-socket)
+gpg_user="$GPGUSER"
+if [[ -z "$gpg_user" ]]; then
+  gpg_user=$(gpg --list-secret-keys --with-colons|grep '^fpr:'|head -n1|cut -d: -f10)
+fi
+
+gpg_public_key=/tmp/debsign-$$-pub.asc
+gpg --export "$gpg_user" >  $gpg_public_key
+trap "rm $gpg_public_key" EXIT
+
+export DEBSIGN_MAINT="$(git config --global --get user.email)"
+
+# Unlock GPG secret key when necessary
+export GPG_TTY=$(tty)
+echo | gpg -u "${gpg_user}" --clearsign --output /dev/null
+
+bootstrap_cmds=$(mktemp)
+cat >${bootstrap_cmds} <<-EOF
+useradd -u $(id -u) -m buildbot
+chown buildbot:buildbot /home/buildbot
+chown buildbot:buildbot /home/buildbot/.gnupg
+chmod 700 /home/buildbot
+chmod 700 /home/buildbot/.gnupg
+cp /run.sh /run2.sh
+chown buildbot:buildbot /run2.sh
+
+exec sudo -u buildbot env DEBSIGN_MAINT='$DEBSIGN_MAINT' bash -xe /run2.sh "\$@"
+EOF
+
+cmds=$(mktemp)
+cat >${cmds} <<-'EOF'
+gpg2 --import --no-tty --batch < /pub.asc
+export DEBSIGN_KEYID=0x$(gpg2 --with-colons --list-keys|grep '^sub:'|head -n1|cut -d: -f 5)
+exec debsign -pgpg2 -k $DEBSIGN_KEYID "$@"
+EOF
+
+docker run \
+  --rm \
+  --net=host \
+  --tty \
+  --interactive \
+  --volume "${gpg_public_key}:/pub.asc" \
+  --volume "${gpg_agent_socket}:/home/buildbot/.gnupg/S.gpg-agent" \
+  --volume "${cmds}:/run.sh:ro" \
+  --volume "${bootstrap_cmds}:/bootstrap.sh:ro" \
+  --volume "$(pwd):/here" \
+  --workdir /here \
+  devscripts \
+  bash -xe /bootstrap.sh "$@"
