@@ -12,15 +12,13 @@ version="$2"
 #  gpg_user=$(gpg --list-secret-keys --with-colons|grep '^fpr:'|head -n1|cut -d: -f10)
 #fi
 
-if [ x"$version" = x"" ]; then
+if [ x"$dist" = x"" ]; then
   echo "Usage: $0 <dist> <version>"
   echo "NAME=${name}"
   echo "GPGUSER=${gpg_user}"
   echo "gpg_agent_socket=${gpg_agent_socket}"
   exit 1
 fi
-
-image_tag=debuild-${name}-${dist}
 
 set -ex
 here="$(pwd)"
@@ -29,8 +27,14 @@ mkdir -p debian/out
 if [ -n "${NO_CACHE}" ]; then
   NO_CACHE=--no-cache
 fi
-docker build -f debian/Dockerfile.${dist} -t "$image_tag" "${here}/debian" $NO_CACHE
 
+if [ -e debian/Dockerfile.${dist} ]; then
+  image_tag=debuild-${name}-${dist}
+  docker build -f debian/Dockerfile.${dist} -t "$image_tag" "${here}/debian" $NO_CACHE
+else
+  image_tag=debuild-common-${dist}
+  docker build -f ~/git/config/debuild-docker/Dockerfile.${dist} -t "$image_tag" ~/git/config/debuild-docker $NO_CACHE
+fi
 
 source_archive=".tmp_$$_${name}.tar.gz"
 git archive --format=tar --prefix "${name}-${version}/" HEAD | gzip > "debian/out/$source_archive"
@@ -56,6 +60,9 @@ chown buildbot:buildbot /home/buildbot
 cp /run.sh /run2.sh
 chown buildbot:buildbot /run2.sh
 
+if [ ! -e /control ]; then
+  mk-build-deps -i --t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends' /debian/control
+fi
 su buildbot -c 'bash -xe /run2.sh'
 
 echo "\$(basename -s .dsc /build/*.dsc)" > /output/.last-$$
