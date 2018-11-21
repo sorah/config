@@ -30,7 +30,6 @@ when 'bintray-original'
 when 'ruby'
   target = :aptly
   gh_organization = 'sorah-rbpkg'
-  aptly_distros = %w(trusty xenial bionic)
   aptly_endpoint = 's3:sorah-ruby:'
   aptly_repo = 'sorah-ruby'
   aptly_gpg_key = '805E57E2327EE86EB8180E0669CEB9D53F0F56A8'
@@ -224,15 +223,16 @@ when :bintray
 when :aptly
   puts "=> Adding to aptly"
 
-  deb_files.group_by {|_| _[:distro] }.each do |distro, files|
+  deb_files_by_dist =  deb_files.group_by {|_| _[:distro] }
+  deb_files_by_dist.each do |distro, files|
     puts  "  * distro=#{distro}"
-    ret = system("aptly", "repo", "add", "#{aptly_repo}-#{distro}", *files.map {|_| _[:path] }.grep(/\.dsc$|\.deb$/))
+    ret = system("aptly", "repo", "add", "#{aptly_repo}-#{distro}", *files.map {|_| _[:path] }.grep(/\.dsc$|\.d?deb$/))
     exit $? unless ret
   end
 
   puts "=> Publish repository"
 
-  aptly_distros.each do |distro|
+  deb_files_by_dist.each_key do |distro|
     puts "  * #{distro}, #{aptly_endpoint}"
     # aptly publish repo -distribution=x -architecture=amd64 -gpg-key=805E57E2327EE86EB8180E0669CEB9D53F0F56A8 sorah-ruby-x s3:sorah-ruby:
     ret = system(*%w(aptly publish update), "-gpg-key=#{aptly_gpg_key}", distro, aptly_endpoint)
