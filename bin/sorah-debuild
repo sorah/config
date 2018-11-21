@@ -16,7 +16,13 @@ fi
 set -ex
 export GPG_TTY=$(tty)
 here="$(pwd)"
-mkdir -p debian/out
+
+out_dir=${OUT_DIR}
+if [[ -z $out_dir ]]; then
+  out_dir=${here}/debian/out
+fi
+
+mkdir -p $out_dir
 
 if [ -n "${NO_CACHE}" ]; then
   NO_CACHE=--no-cache
@@ -31,11 +37,11 @@ else
 fi
 
 source_archive=".tmp_$$_${name}.tar.gz"
-git archive --format=tar --prefix "${name}-${version}/" HEAD | gzip > "debian/out/$source_archive"
+git archive --format=tar --prefix "${name}-${version}/" HEAD | gzip > "${out_dir}/$source_archive"
 
 if [ -n "${version}" ]; then
   orig_archive="${name}_${version}.orig.tar.gz"
-  git archive --format=tar --prefix "${name}-${version}/" "upstream/${version}" | gzip > "debian/out/$orig_archive"
+  git archive --format=tar --prefix "${name}-${version}/" "upstream/${version}" | gzip > "${out_dir}/$orig_archive"
 fi
 
 bootstrap_cmds=$(mktemp)
@@ -94,7 +100,7 @@ docker run \
   --tty \
   --interactive \
   --volume "${here}/debian:/debian:ro" \
-  --volume "${here}/debian/out:/output" \
+  --volume "${out_dir}:/output" \
   --volume "${gpg_agent_socket}:/home/buildbot/.gnupg/S.gpg-agent" \
   --volume "${cmds}:/run.sh:ro" \
   --volume "${bootstrap_cmds}:/bootstrap.sh:ro" \
@@ -102,7 +108,7 @@ docker run \
   "$image_tag" \
   bash -xe /bootstrap.sh
 
-cp -v debian/out/.$$/*.symbols debian/ || :
+cp -v ${out_dir}/.$$/*.symbols debian/ || :
 
 sorah-debsign debian/out/$(cat debian/out/.last-$$)*{dsc,changes}
 
