@@ -2,7 +2,7 @@
 require 'optparse'
 require 'open-uri'
 require 'tempfile'
-require 'aws-sdk'
+require 'aws-sdk-ec2'
 require 'json'
 require 'yaml'
 require 'logger'
