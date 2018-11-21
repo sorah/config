@@ -63,8 +63,8 @@ mkdir /output/.$$
 ls /build
 cp -pv /build/*.{deb,dsc,changes} /output/
 cp -pv /build/*.buildinfo /output/ || :
-cp -pv /build/*.debian.tar* /output/
-cp -v /build/*/debian/*.symbols /output/.$$/
+cp -pv /build/*.debian.tar* /output/ || cp -pv /build/*.tar* /output/
+cp -v /build/*/debian/*.symbols /output/.$$/ || :
 chown $(id -u):$(id -g) /output/*
 chown -R $(id -u):$(id -g) /output/.$$
 chown -R $(id -u):$(id -g) /output/.last-$$
