@@ -61,7 +61,7 @@ cp /run.sh /run2.sh
 chown buildbot:buildbot /run2.sh
 
 if [ ! -e /control ]; then
-  mk-build-deps -i --t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends' /debian/control
+  mk-build-deps -r -i -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends' /debian/control
 fi
 su buildbot -c 'bash -xe /run2.sh'
 
@@ -121,7 +121,7 @@ cp -v debian/out/.$$/*.symbols debian/ || :
 sorah-debsign debian/out/$(cat debian/out/.last-$$)*{dsc,changes}
 
 source_pkg="$(head -n1 debian/changelog|awk '{print $1}')"
-tag="$(ruby -e 'dist = ARGV.first; puts File.open("debian/changelog", "r", &:gets).match(/\((.+?)\)/)[1].sub(/~dist/, "~#{dist}").gsub(/\.(?=\.|$|lock$)/, ".#").tr("~:","_:")' "${dist}")"
+tag="$(ruby -e 'dist = ARGV.first; puts File.open("debian/changelog", "r", &:gets).match(/\((.+?)\)/)[1].sub(/~dist/, "~#{dist}").gsub(/\.(?=\.|$|lock$)/, ".#").tr("~:","_%")' "${dist}")"
 deb_version="$(head -n1 debian/changelog|grep --only-matching -P '(?<=\().+?(?=\))'|sed -e "s/~dist/~${dist}/g")"
 
 git tag -s -m "${source_pkg} Debian release ${deb_version}" debian/${tag}
