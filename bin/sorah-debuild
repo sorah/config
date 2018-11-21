@@ -68,9 +68,9 @@ su buildbot -c 'bash -xe /run2.sh'
 echo "\$(basename -s .dsc /build/*.dsc)" > /output/.last-$$
 mkdir /output/.$$
 ls /build
-cp -pv /build/*.{deb,dsc,changes} /output/
-cp -pv /build/*.buildinfo /output/ || :
-cp -pv /build/*.debian.tar* /output/ || cp -pv /build/*.tar* /output/
+cat */debian/files
+cat */debian/files | cut -d' ' -f1 | xargs cp -p -v -t /output/
+cp -pv /build/*.changes /output/
 cp -v /build/*/debian/*.symbols /output/.$$/ || :
 chown $(id -u):$(id -g) /output/*
 chown -R $(id -u):$(id -g) /output/.$$
