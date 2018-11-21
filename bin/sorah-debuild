@@ -6,17 +6,10 @@ fi
 
 dist=$1
 version="$2"
-#gpg_agent_socket=$(gpgconf --list-dirs agent-socket)
-#gpg_user="$GPGUSER"
-#if [[ -z "$gpg_user" ]]; then
-#  gpg_user=$(gpg --list-secret-keys --with-colons|grep '^fpr:'|head -n1|cut -d: -f10)
-#fi
 
 if [ x"$dist" = x"" ]; then
   echo "Usage: $0 <dist> <version>"
   echo "NAME=${name}"
-  echo "GPGUSER=${gpg_user}"
-  echo "gpg_agent_socket=${gpg_agent_socket}"
   exit 1
 fi
 
@@ -44,14 +37,6 @@ if [ -n "${version}" ]; then
   orig_archive="${name}_${version}.orig.tar.gz"
   git archive --format=tar --prefix "${name}-${version}/" "upstream/${version}" | gzip > "debian/out/$orig_archive"
 fi
-
-#gpg_public_key=/tmp/debuild-${name}-${dist}-pub.asc
-#gpg --export "$gpg_user" >  $gpg_public_key
-#trap "rm $gpg_public_key" EXIT
-#
-## Unlock GPG secret key when necessary
-#export GPG_TTY=$(tty)
-#echo | gpg -u "${gpg_user}" --clearsign --output /dev/null
 
 bootstrap_cmds=$(mktemp)
 cat >${bootstrap_cmds} <<-EOF
