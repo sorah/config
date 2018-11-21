@@ -31,10 +31,14 @@ if [ -n "${NO_CACHE}" ]; then
 fi
 docker build -f debian/Dockerfile.${dist} -t "$image_tag" "${here}/debian" $NO_CACHE
 
-orig_archive="${name}_${version}.orig.tar.gz"
-source_archive=".tmp_${name}_${version}.tar.gz"
-git archive --format=tar --prefix "${name}-${version}/" "upstream/${version}" | gzip > "debian/out/$orig_archive"
+
+source_archive=".tmp_$$_${name}.tar.gz"
 git archive --format=tar --prefix "${name}-${version}/" HEAD | gzip > "debian/out/$source_archive"
+
+if [ -n "${version}" ]; then
+  orig_archive="${name}_${version}.orig.tar.gz"
+  git archive --format=tar --prefix "${name}-${version}/" "upstream/${version}" | gzip > "debian/out/$orig_archive"
+fi
 
 #gpg_public_key=/tmp/debuild-${name}-${dist}-pub.asc
 #gpg --export "$gpg_user" >  $gpg_public_key
@@ -74,7 +78,9 @@ cat >${cmds} <<-EOF
 cd /build
 tar xf /output/${source_archive}
 ln -s /output/${source_archive} /build/
-ln -s /output/${orig_archive} /build/
+if [ -e /output/${orig_archive} ]; then
+  ln -s /output/${orig_archive} /build/
+fi
 cd "${name}-${version}"
 #rm -rf debian
 #cp -a /debian .
