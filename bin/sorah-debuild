@@ -19,7 +19,7 @@ here="$(pwd)"
 
 out_dir=${OUT_DIR}
 if [[ -z $out_dir ]]; then
-  out_dir=${here}/debian/out
+  out_dir=debian/out
 fi
 
 mkdir -p $out_dir
@@ -62,7 +62,8 @@ mkdir /output/.$$
 ls /build
 cat */debian/files
 cat */debian/files | cut -d' ' -f1 | xargs cp -p -v -t /output/
-cp -pv /build/*.changes /output/
+cp -pv /build/*.{dsc,changes} /output/
+cp -pv /build/*.debian.tar* /output/ || cp -pv /build/*.tar* /output/
 cp -v /build/*/debian/*.symbols /output/.$$/ || :
 chown $(id -u):$(id -g) /output/*
 chown -R $(id -u):$(id -g) /output/.$$
@@ -100,7 +101,7 @@ docker run \
   --tty \
   --interactive \
   --volume "${here}/debian:/debian:ro" \
-  --volume "${out_dir}:/output" \
+  --volume "${here}/${out_dir}:/output" \
   --volume "${gpg_agent_socket}:/home/buildbot/.gnupg/S.gpg-agent" \
   --volume "${cmds}:/run.sh:ro" \
   --volume "${bootstrap_cmds}:/bootstrap.sh:ro" \
