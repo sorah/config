@@ -46,8 +46,8 @@ export RBENV_VERSION=$newver
 
 gem pristine --extensions
 
-gem i bundler --no-rdoc --no-ri
-gem i foreman --no-rdoc --no-ri
+gem i bundler --no-doc
+gem i foreman --no-doc
 
 rbenv rehash
 
