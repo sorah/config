@@ -70,6 +70,8 @@ parser = OptionParser.new do |_|
   _.on('-r ROLE', '--role ROLE') { |r| options[:role]= r }
 
   _.on('--ebs-optimized') { options[:ebs_optimized] = true }
+
+  _.on('-T TAG', '--tag TAG') { |ts| k,v = ts.split(/[=:]/,2); (options[:tags] = {})[k] = v }
 end
 
 args = parser.parse(ARGV)
