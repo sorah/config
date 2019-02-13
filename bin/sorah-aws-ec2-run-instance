@@ -24,7 +24,7 @@ options = {
   image_id: nil,
   key_name: 'sorah',
   public_ip: nil,
-  volumes: { '/dev/sda1' => { device_name: '/dev/sda1', ebs: {volume_size: 15, volume_type: 'standard'} } },
+  volumes: { '/dev/sda1' => { device_name: '/dev/sda1', ebs: {volume_size: 15, volume_type: 'gp2'} } },
   role: nil,
   ebs_optimized: false,
   wait: false,
