@@ -42,7 +42,8 @@ git archive --format=tar --prefix "${name}-${version}/" HEAD | gzip > "${out_dir
 if [ -n "${version}" ]; then
   orig_archive="${name}_${version}.orig.tar.gz"
   if [ ! -e $orig_archive ]; then
-    git archive --format=tar --prefix "${name}-${version}/" "upstream/${version}" | gzip > "${out_dir}/$orig_archive"
+    version_tag=$(ruby -e 'puts ARGV.first.tr("~:","_%")' "${version}")
+    git archive --format=tar --prefix "${name}-${version}/" "upstream/${version_tag}" | gzip > "${out_dir}/$orig_archive"
   fi
 fi
 
