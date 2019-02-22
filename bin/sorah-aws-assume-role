@@ -60,5 +60,5 @@ ENV.delete 'EXPIRES_IN'
 if ARGV.empty?
   exec ENV['SHELL'] || 'bash'
 else
-  exec ARGV
+  exec(*ARGV)
 end
