@@ -41,7 +41,9 @@ git archive --format=tar --prefix "${name}-${version}/" HEAD | gzip > "${out_dir
 
 if [ -n "${version}" ]; then
   orig_archive="${name}_${version}.orig.tar.gz"
-  git archive --format=tar --prefix "${name}-${version}/" "upstream/${version}" | gzip > "${out_dir}/$orig_archive"
+  if [ ! -e $orig_archive ]; then
+    git archive --format=tar --prefix "${name}-${version}/" "upstream/${version}" | gzip > "${out_dir}/$orig_archive"
+  fi
 fi
 
 bootstrap_cmds=$(mktemp)
