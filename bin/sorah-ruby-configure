@@ -1,8 +1,8 @@
 #!/bin/bash
 set -x
 
-export optflags="-O0 -g"
-export debugflags="-g"
+export optflags="-O0"
+export debugflags="-ggdb3"
 export CXXFLAGS="${optflags} ${debugflags}"
 export CFLAGS="${optflags} ${debugflags}"
 
