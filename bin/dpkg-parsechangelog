@@ -1,0 +1,7 @@
+#!/bin/bash
+if which apt-get 2>/dev/null >/dev/null; then
+  exec dpkg-parsechangelog "$@"
+else
+  reponame=$(basename "${PWD}")
+  exec docker run --rm -i --net=host -u $(id -u):$(id -g) -e HOME=/home/sorah -v "$(realpath ${PWD}/../):/git" -w /git/${reponame} devscripts dpkg-parsechangelog "$@"
+fi
