@@ -158,6 +158,11 @@ end.each do |tag, changes|
     changes.each {|_| body.push("#### #{_[:change_arch]}", '', '```', _[:dsc], '```', '') }
   end
 
+  if ENV['NO_GITHUB']
+    puts ' ! SKIPPING GitHub Release'
+    next
+  end
+
   release = octo.create_release(repo, tag, body: body.join("\n"))
   
   puts

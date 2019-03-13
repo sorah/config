@@ -91,6 +91,7 @@ cd "${name}-${version}"
 
 sed -i -e 's/_dist_/${dist}/g' debian/changelog
 sed -i -e 's/~dist) unstable; urgency=/~${dist}) ${dist}; urgency=/g' debian/changelog
+sed -i -e 's/~dist) unstable-proposed; urgency=/~${dist}) ${dist}-proposed; urgency=/g' debian/changelog
 sed -i -e 's/~dist)/~${dist})/g' debian/changelog
 
 debuild -us -uc
@@ -119,7 +120,9 @@ if [[ -z $NO_SIGN ]]; then
 
   tag="$(ruby -e 'dist = ARGV.first; puts File.open("debian/changelog", "r", &:gets).match(/\((.+?)\)/)[1].sub(/~dist/, "~#{dist}").gsub(/\.(?=\.|$|lock$)/, ".#").tr("~:","_%")' "${dist}")"
   deb_version="$(head -n1 debian/changelog|grep --only-matching -P '(?<=\().+?(?=\))'|sed -e "s/~dist/~${dist}/g")"
-
+fi
+if [[ -z $NO_TAG ]]; then
   git tag -s -m "${name} Debian release ${deb_version}" debian/${tag}
   git show --summary debian/${tag} | cat
 fi
+
