@@ -98,7 +98,7 @@ NeoBundle 'racer-rust/vim-racer'
 NeoBundle 'google/vim-jsonnet'
 NeoBundle 'leafgarland/typescript-vim'
 NeoBundle 'Quramy/tsuquyomi'
-NeoBundle 'Quramy/tsuquyomi-vue'
+NeoBundle 'hashivim/vim-hashicorp-tools'
 filetype on
 filetype plugin on
 filetype indent on

@@ -84,7 +84,8 @@ ln -s /output/${source_archive} /build/
 if [ -e /output/${orig_archive} ]; then
   ln -s /output/${orig_archive} /build/
 fi
-cd "${name}-${version}"
+mv "${name}-${version}" ${name}
+cd "${name}"
 #rm -rf debian
 #cp -a /debian .
 #rm -rf ./debian/out
@@ -116,7 +117,7 @@ docker run \
 cp -v ${out_dir}/.$$/*.symbols debian/ || :
 
 if [[ -z $NO_SIGN ]]; then
-  sorah-debsign ${out_dir}/$(cat ${out_dir}/.last-$$)*{dsc,changes}
+  sorah-debsign ${out_dir}/$(cat ${out_dir}/.last-$$)*changes
 
   tag="$(ruby -e 'dist = ARGV.first; puts File.open("debian/changelog", "r", &:gets).match(/\((.+?)\)/)[1].sub(/~dist/, "~#{dist}").gsub(/\.(?=\.|$|lock$)/, ".#").tr("~:","_%")' "${dist}")"
   deb_version="$(head -n1 debian/changelog|grep --only-matching -P '(?<=\().+?(?=\))'|sed -e "s/~dist/~${dist}/g")"

@@ -16,6 +16,8 @@ if [[ -e ~/.fehbg ]]; then
   sh ~/.fehbg &
 fi
 
+dbus-update-activation-environment --systemd DISPLAY
+
 if [[ -e /usr/bin/keychain ]]; then
   eval `keychain --eval --agents ssh --systemd`
   export SSH_AUTH_SOCK

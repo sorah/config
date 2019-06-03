@@ -48,6 +48,7 @@ fi
 [ ! -d ~/.gopath ] && mkdir ~/.gopath
 [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
 export GOPATH=$HOME/.gopath
+export GO111MODULE=on
 
 export HOSTNAME=`hostname`
 
@@ -63,6 +64,7 @@ export PATH=./local/bin:$PATH
 export PATH=~/.gem/ruby/1.9.1/bin/:$PATH
 export PATH=/usr/local/share/npm/bin:$PATH
 export PATH="$HOME/.yarn/bin:$PATH"
+export PATH=$HOME/.nodebrew/current/bin:$PATH
 alias npm-exec='PATH=$(npm bin):$PATH'
 alias ne='PATH=$(npm bin):$PATH'
 
@@ -91,6 +93,7 @@ export PATH=~/.gopath/bin:$PATH
 # export PATH=~/local/opt/heroku/bin:$PATH
 export PATH=~/local/opt/google-cloud-sdk/bin:$PATH
 export PATH=~/local/opt/packer:$PATH
+export PATH=~/local/opt/go/bin:$PATH
 # export PATH="/usr/local/heroku/bin:$PATH"
 
 
