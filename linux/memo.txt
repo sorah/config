@@ -1,0 +1,41 @@
+pacman -Syu gnupg pinentry jq screen tmux zsh git strace mercurial subversion bazel adobe-source-han-sans-jp-fonts adobe-source-code-pro-fonts ttf-anonymous-pro ttf-dejavu ttf-droid ttf-inconsolata otf-ipafont ttf-opensans noto-fonts noto-fonts-cjk noto-fonts-extra noto-fonts-emoji ttf-ubuntu-font-family mtr nmap netcat tcpdump traceroute bind-tools
+pacman -Syu swaks autossh bridge-utils curl ipcalc iperf dstat pv smartmontools usbutils cryptsetup dosfstools lvm2 htop iotop lsof parallel
+pacman -Syu i3 i3lock i3status dunst dmenu compton xautolock xbindkeys xclip xkeycaps rxvt-unicode
+pacman -Syu xrandr xorgs-drivers xinput xfontsel xmodmap xorg-server
+pacman -Syu xorg-server
+pacman -Syu xf86-video-intel
+pacman -Syu xorg-xinput xorg-xrandr xorg-xmodmap xorg-xfontsel xorg-xev
+pacman -Syu urxvt-perls
+pacman -Syu urxvt-perls urxvt-font-size
+pacman -Syu urxvt-perls
+pacman -Syu xorg-startx
+pacman -Syu startx
+pacman -Syu xorg-xinit
+pacman -Syu feh
+pacman -Syu xautolock
+pacman -Syu alsa-utils pulseaudio pulseaudio-alsa
+pacman -Syu gnome-keyring
+pacman -Syu seashore
+pacman -Syu seahorse
+pacman -Syu imagemagick
+pacman -Syu gnome-keyring-query
+pacman -Syu secret-tool
+pacman -Syu libsecret
+pacman -Syu aws-cli
+pacman -Syu postgresql postgresql-libs
+pacman -Syu postgresql-old-upgrade
+pacman -Syu keychain
+pacman -Syu terminfo
+pacman -Syu docker docker-compose
+pacman -Syu libvirt qemu virt-manager
+pacman -Syu ebtables nftables
+pacman -Syu ibus ibus-skk
+pacman -Syu skk-jisyo
+pacman -Syu go
+pacman -Syu ffmpeg mpv vlc
+pacman -Syu remmina
+pacman -Syu google-chrome-dev
+pacman -Syu community/firefox-developer-edition
+pacman -Syu whois
+pacman -Syu python-pip
+pacman -Syu xkbset
