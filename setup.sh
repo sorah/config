@@ -154,6 +154,58 @@ if [ "_$arch" = "_mac" ]; then
   done
 fi
 
+if [[ "_$arch" = "_arch" ]]; then
+  if ! grep -q aur-sorah /etc/pacman.conf; then
+    curl -Ssf https://sorah.jp/packaging/arch/17C611F16D92677398E0ADF51AD43CA09D82C624.txt | sudo pacman-key -a -
+    sudo pacman-key --lsign-key 17C611F16D92677398E0ADF51AD43CA09D82C624
+    sudo tee -a /etc/pacman.conf <<-'EOF'
+[aur-sorah]
+SigLevel = Required
+Server = https://arch.sorah.jp/$repo/os/$arch
+EOF
+  fi
+  if ! grep -q aur-eagletmt /etc/pacman.conf; then
+    curl https://wanko.cc/gpg-key.txt | sudo pacman-key -a -
+    sudo pacman-key --lsign-key C48DBD97
+    sudo tee -a /etc/pacman.conf <<-'EOF'
+[aur-eagletmt]
+SigLevel = Required
+Server = http://arch.wanko.cc/$repo/os/$arch
+EOF
+  fi
+
+
+  sudo pacman --needed --noconfirm -Syyu \
+    base-devel \
+    gnupg pinentry \
+    jq \
+    screen tmux zsh \
+    git \
+    strace \
+    git mercurial subversion \
+    bazel go \
+    whois ipcalc iperf mtr nmap netcat tcpdump traceroute bind-tools \
+    ebtables nftables \
+    swaks \
+    autossh \
+    bridge-utils \
+    curl \
+    pv \
+    smartmontools usbutils \
+    cryptsetup btrfs-progs dosfstools lvm2 \
+    dstat htop iotop lsof \
+    parallel \
+    imagemagick \
+    ruby \
+    python-pip \
+    aws-cli \
+    keychain \
+    ffmpeg \
+    osquery-bin \
+    envchain \
+    amazon-ecr-credential-helper
+  fi
+
 if which go 2>/dev/null >/dev/null; then
   [ ! -d ~/.gopath ] && mkdir ~/.gopath
   [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
