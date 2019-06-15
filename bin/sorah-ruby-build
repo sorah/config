@@ -31,9 +31,7 @@ else
   export RUBY_CONFIGURE_OPTS=" \
     --enable-shared \
     --with-out-ext=tk,tk/* \
-    --with-valgrind \
-    --disable-install-capi \
-    --disable-install-doc"
+    --with-valgrind"
 
   export optflags="-O0 -ggdb3"
   export RUBY_CFLAGS="${optflags} ${debugflags}"
