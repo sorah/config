@@ -159,7 +159,7 @@ alias s="git status -sb"
 alias g="git grep"
 alias b="git branch"
 alias br="git name-rev --name-only HEAD"
-alias ci="git commit -v"
+alias ci="GPG_TTY=\$(tty) git commit -v"
 a() { git add $*; git status -s }
 m() { git commit -m "$*" }
 am() { git commit -am "$*" }
