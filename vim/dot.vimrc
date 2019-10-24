@@ -99,6 +99,7 @@ NeoBundle 'google/vim-jsonnet'
 NeoBundle 'leafgarland/typescript-vim'
 NeoBundle 'Quramy/tsuquyomi'
 NeoBundle 'hashivim/vim-hashicorp-tools'
+NeoBundle 'hashivim/vim-terraform'
 filetype on
 filetype plugin on
 filetype indent on
@@ -936,6 +937,9 @@ augroup END
 
 let g:tsuquyomi_disable_quickfix = 1
 let g:syntastic_typescript_checkers = ['tsuquyomi']
+
+" Terraform
+let g:terraform_fmt_on_save=1
 
 " Syntastic
 let g:syntastic_always_populate_loc_list = 1
