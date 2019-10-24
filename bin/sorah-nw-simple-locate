@@ -5,11 +5,7 @@ if dig +nonssearch +noall +comments SRV _ldap._tcp.dc._msdcs.ds.nkmi.me. | grep 
     echo "unknown"
     exit 0
   fi
-  if dig +short livermore.sorah.me | grep -q '^10\.'; then
-    echo "home"
-  else
-    echo "internal"
-  fi
+  echo "internal"
 else
   echo "unknown"
 fi
