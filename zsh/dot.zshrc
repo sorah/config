@@ -25,8 +25,8 @@ if [ "_$run_tmux" = "_1" ]; then
   # minimal path
   export PATH=$HOME/brew/bin:$HOME/brew/sbin:/opt/brew/bin:/opt/brew/sbin:$PATH
   export PATH=~/git/config/bin:$PATH
-  export PATH=~/.rbenv/bin:$PATH
-  export PATH=~/.rbenv/shims:$PATH
+  export PATH=$HOME/.rbenv/shims:$HOME/.rbenv/shims:$PATH
+  export PATH=/usr/share/rbenv/bin:/usr/share/rbenv/shims:$PATH
   export PATH=~/.cargo/bin:$PATH
 
   if [ "$SSH_CLIENT" ]; then
@@ -68,8 +68,8 @@ export PATH=$HOME/.nodebrew/current/bin:$PATH
 alias npm-exec='PATH=$(npm bin):$PATH'
 alias ne='PATH=$(npm bin):$PATH'
 
-export PATH=~/.rbenv/bin:$PATH
-export PATH=~/.rbenv/shims:$PATH
+export PATH=$HOME/.rbenv/shims:$HOME/.rbenv/shims:$PATH
+export PATH=/usr/share/rbenv/bin:/usr/share/rbenv/shims:$PATH
 eval "$(rbenv init --no-rehash -)"
 
 export PATH=~/.cargo/bin:$PATH
