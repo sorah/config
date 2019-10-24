@@ -2,7 +2,7 @@
 FROM ubuntu:18.04
 
 # just to invalidate cache
-ENV NKMIBUILDREV=1
+ARG BUILDDATE=99999999
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir -p /build \

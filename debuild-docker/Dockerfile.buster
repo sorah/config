@@ -1,5 +1,5 @@
 # See also: https://github.com/sorah/config/blob/master/bin/sorah-debuild
-FROM ubuntu:14.04
+FROM debian:buster
 
 # just to invalidate cache
 ARG BUILDDATE=99999999

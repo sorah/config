@@ -30,10 +30,10 @@ fi
 
 if [ -e debian/Dockerfile.${dist} ]; then
   image_tag=debuild-${name}-${dist}
-  docker build -f debian/Dockerfile.${dist} -t "$image_tag" "${here}/debian" $NO_CACHE
+  docker build --build-arg BUILDDATE=$(date +%Y%m%d) -f debian/Dockerfile.${dist} -t "$image_tag" "${here}/debian" $NO_CACHE
 else
   image_tag=debuild-common-${dist}
-  docker build -f ~/git/config/debuild-docker/Dockerfile.${dist} -t "$image_tag" ~/git/config/debuild-docker $NO_CACHE
+  docker build --build-arg BUILDDATE=$(date +%Y%m%d) -f ~/git/config/debuild-docker/Dockerfile.${dist} -t "$image_tag" ~/git/config/debuild-docker $NO_CACHE
 fi
 
 source_archive=".tmp_$$_${name}.tar.gz"
