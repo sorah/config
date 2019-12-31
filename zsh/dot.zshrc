@@ -86,6 +86,8 @@ fi
 export GEMSRC_USE_GHQ=1
 export DISABLE_SPRING=1
 
+export BUNDLE_JOBS=300
+
 if which pyenv > /dev/null; then eval "$(pyenv init --no-rehash -)"; fi
 
 export PATH=~/.gopath/bin:$PATH
