@@ -25,7 +25,7 @@ if [ "_$run_tmux" = "_1" ]; then
   # minimal path
   export PATH=$HOME/brew/bin:$HOME/brew/sbin:/opt/brew/bin:/opt/brew/sbin:$PATH
   export PATH=~/git/config/bin:$PATH
-  export PATH=$HOME/.rbenv/shims:$HOME/.rbenv/shims:$PATH
+  export PATH=$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH
   export PATH=/usr/share/rbenv/bin:/usr/share/rbenv/shims:$PATH
   export PATH=~/.cargo/bin:$PATH
 
