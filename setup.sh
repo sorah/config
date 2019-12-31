@@ -241,3 +241,5 @@ if systemctl --version 2>/dev/null >/dev/null; then
   done
   systemctl --user daemon-reload
 fi
+
+pip3 install --user pynvim

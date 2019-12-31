@@ -57,7 +57,6 @@ NeoBundle 'sorah/vim-slim'
 NeoBundle 'groenewege/vim-less'
 NeoBundle 'taka84u9/unite-git'
 NeoBundle 'thinca/vim-scouter'
-NeoBundle 'ujihisa/neco-ruby'
 NeoBundle 'altercation/vim-colors-solarized'
 NeoBundle 'tyru/eskk.vim'
 NeoBundle 'tyru/skkdict.vim'
@@ -77,7 +76,6 @@ NeoBundle 'tomasr/molokai'
 NeoBundle 'jonathanfilip/vim-lucius'
 NeoBundle 'w0ng/vim-hybrid'
 NeoBundle 'fatih/vim-go'
-NeoBundle 'nsf/gocode', {'rtp': 'vim/'}
 NeoBundle 'nginx/nginx', {'rtp': 'contrib/vim/'}
 NeoBundle 'dgryski/vim-godef'
 NeoBundle 'sorah/unite-ghq'
@@ -100,6 +98,11 @@ NeoBundle 'leafgarland/typescript-vim'
 NeoBundle 'Quramy/tsuquyomi'
 NeoBundle 'hashivim/vim-hashicorp-tools'
 NeoBundle 'hashivim/vim-terraform'
+NeoBundle 'Shougo/deoplete.nvim'
+NeoBundle 'mhartington/vim-typescript', { 'build' : './install.sh' }
+
+NeoBundle 'roxma/nvim-yarp'
+NeoBundle 'roxma/vim-hug-neovim-rpc'
 filetype on
 filetype plugin on
 filetype indent on
@@ -336,27 +339,21 @@ augroup EssixFt
 
   autocmd BufWinEnter,BufNewFile *.es6 setf javascript
 augroup END
+
+augroup TerraformFt
+  autocmd!
+
+  autocmd BufWinEnter,BufNewFile *.tf setf terraform
+augroup END
 "}}}
 
+
+"deoplete
+let g:deoplete#enable_at_startup = 1
+
 "neocomplcache settings
-let g:neocomplcache_enable_camel_case_completion = 1
-let g:neocomplcache_enable_underbar_completion = 1
-let g:NeoComplCache_enable_info = 1
-let g:neocomplcache_enable_smart_case = 1
-let g:neocomplcache_manual_completion_start_length = 2
-let g:neocomplcache_enable_at_startup = 1 
-
-" Enable heavy omni completion.
-if !exists('g:neocomplcache_force_omni_patterns')
- let g:neocomplcache_force_omni_patterns = {}
-endif
-let g:neocomplcache_force_omni_patterns.go = '\h\w*\.\?'
-
-nnoremap <silent> <C-s> :NeoComplCacheToggle<Return>
-
-if !exists('g:neocomplcache_include_paths')
-  let g:neocomplcache_include_paths = {}
-endif
+call deoplete#custom#option('camel_case', v:true)
+call deoplete#custom#option('smartcase', v:false)
 
 "push C-a to toggle spell check
 nnoremap <silent> <C-a> :setl spell!<Return>
