@@ -19,90 +19,90 @@ endif
 
 " Bundle {{{
 filetype off
-if has('vim_starting')
-  set runtimepath+=$VIMFILES/neobundle.vim
-  call neobundle#rc(expand('~/.bundle'))
-endif
-"NeoBundle 'mrkn/mrkn256.vim'
-NeoBundle 'mattn/webapi-vim'
-NeoBundle 'tyru/restart.vim'
-NeoBundle 'tpope/vim-rails'
-NeoBundle 'sudo.vim'
-NeoBundle 'plasticboy/vim-markdown'
-NeoBundle 'motemen/git-vim'
-NeoBundle 'ujihisa/neco-look'
-NeoBundle 'thinca/vim-quickrun'
-NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'ujihisa/unite-gem'
-NeoBundle 'Shougo/unite-outline'
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'kchmck/vim-coffee-script'
-NeoBundle 'kana/vim-metarw'
-NeoBundle 'kana/vim-metarw-git'
-NeoBundle 'thinca/vim-ref'
-NeoBundle 'taka84u9/vim-ref-ri'
-NeoBundle 'Shougo/vimproc',
-        \ { 'build' : {
-        \     'mac'  : 'make -f make_mac.mak',
-        \     'unix' : 'make -f make_unix.mak'
-        \ }}
-NeoBundle 'Shougo/vimshell'
-NeoBundle 'ujihisa/vimshell-ssh'
-NeoBundle 'godlygeek/csapprox'
-NeoBundle 'ujihisa/shadow.vim'
-NeoBundle 'cakebaker/scss-syntax.vim'
-NeoBundle 'tpope/vim-haml'
-NeoBundle 'sorah/vim-slim'
-"NeoBundle 'Shougo/neosnippet'
-NeoBundle 'groenewege/vim-less'
-NeoBundle 'taka84u9/unite-git'
-NeoBundle 'thinca/vim-scouter'
-NeoBundle 'altercation/vim-colors-solarized'
-NeoBundle 'tyru/eskk.vim'
-NeoBundle 'tyru/skkdict.vim'
-NeoBundle 'kana/vim-textobj-user'
-NeoBundle 'kana/vim-smartword'
-NeoBundle 'nelstrom/vim-textobj-rubyblock'
-NeoBundle 'nathanaelkane/vim-indent-guides'
-NeoBundle 'kana/vim-smartchr'
-NeoBundle 'kana/vim-smartinput'
-NeoBundle 'sgur/unite-git_grep'
-NeoBundle 'sorah/puppet.vim'
-NeoBundle 'elixir-lang/vim-elixir'
-NeoBundle 'noprompt/vim-yardoc'
-NeoBundle 'nanotech/jellybeans.vim'
-NeoBundle 'Lokaltog/vim-distinguished'
-NeoBundle 'tomasr/molokai'
-NeoBundle 'jonathanfilip/vim-lucius'
-NeoBundle 'w0ng/vim-hybrid'
-NeoBundle 'fatih/vim-go'
-NeoBundle 'nginx/nginx', {'rtp': 'contrib/vim/'}
-NeoBundle 'dgryski/vim-godef'
-NeoBundle 'sorah/unite-ghq'
-NeoBundle 'sorah/unite-bundler'
-NeoBundle 'dotcloud/docker', {'rtp': 'contrib/syntax/vim'}
-NeoBundle 'eagletmt/vim-ruby_namespace'
-NeoBundle 'sorah/unite-outline-piculet'
-NeoBundle 'pangloss/vim-javascript'
-NeoBundle 'mxw/vim-jsx'
-NeoBundle 'vim-scripts/rfc-syntax'
-NeoBundle 'smerrill/vcl-vim-plugin'
-NeoBundle 'posva/vim-vue'
-NeoBundle 'nfnty/vim-nftables'
-NeoBundle 'zimbatm/haproxy.vim'
-NeoBundle 'vim-syntastic/syntastic'
-NeoBundle 'rust-lang/rust.vim'
-NeoBundle 'racer-rust/vim-racer'
-NeoBundle 'google/vim-jsonnet'
-NeoBundle 'leafgarland/typescript-vim'
-NeoBundle 'Quramy/tsuquyomi'
-NeoBundle 'hashivim/vim-hashicorp-tools'
-NeoBundle 'hashivim/vim-terraform'
-NeoBundle 'Shougo/deoplete.nvim'
-NeoBundle 'mhartington/vim-typescript', { 'build' : './install.sh' }
+set runtimepath+=~/.vim-dein/cache/repos/github.com/Shougo/dein.vim
+if dein#load_state('~/.vim-dein/state')
+  call dein#begin('~/.vim-dein/state')
+  "NeoBundle 'mrkn/mrkn256.vim'
+  call dein#add('mattn/webapi-vim')
+  call dein#add('tyru/restart.vim')
+  call dein#add('tpope/vim-rails')
+  call dein#add('vim-scripts/sudo.vim')
+  call dein#add('plasticboy/vim-markdown')
+  call dein#add('motemen/git-vim')
+  call dein#add('ujihisa/neco-look')
+  call dein#add('thinca/vim-quickrun')
+  call dein#add('Shougo/neocomplcache')
+  call dein#add('ujihisa/unite-gem')
+  call dein#add('Shougo/unite-outline')
+  call dein#add('Shougo/unite.vim')
+  call dein#add('kchmck/vim-coffee-script')
+  call dein#add('kana/vim-metarw')
+  call dein#add('kana/vim-metarw-git')
+  call dein#add('thinca/vim-ref')
+  call dein#add('taka84u9/vim-ref-ri')
+  call dein#add('Shougo/vimproc', { 'build': 'make' })
+  call dein#add('Shougo/vimshell')
+  call dein#add('ujihisa/vimshell-ssh')
+  call dein#add('godlygeek/csapprox')
+  call dein#add('ujihisa/shadow.vim')
+  call dein#add('cakebaker/scss-syntax.vim')
+  call dein#add('tpope/vim-haml')
+  call dein#add('sorah/vim-slim')
+  "call dein#add('Shougo/neosnippet')
+  call dein#add('groenewege/vim-less')
+  call dein#add('taka84u9/unite-git')
+  call dein#add('thinca/vim-scouter')
+  call dein#add('altercation/vim-colors-solarized')
+  call dein#add('tyru/eskk.vim')
+  call dein#add('tyru/skkdict.vim')
+  call dein#add('kana/vim-textobj-user')
+  call dein#add('kana/vim-smartword')
+  call dein#add('nelstrom/vim-textobj-rubyblock')
+  call dein#add('nathanaelkane/vim-indent-guides')
+  call dein#add('kana/vim-smartchr')
+  call dein#add('kana/vim-smartinput')
+  call dein#add('sgur/unite-git_grep')
+  call dein#add('sorah/puppet.vim')
+  call dein#add('elixir-lang/vim-elixir')
+  call dein#add('noprompt/vim-yardoc')
+  call dein#add('nanotech/jellybeans.vim')
+  call dein#add('Lokaltog/vim-distinguished')
+  call dein#add('tomasr/molokai')
+  call dein#add('jonathanfilip/vim-lucius')
+  call dein#add('w0ng/vim-hybrid')
+  call dein#add('fatih/vim-go')
+  call dein#add('nginx/nginx', {'rtp': 'contrib/vim/'})
+  call dein#add('dgryski/vim-godef')
+  call dein#add('sorah/unite-ghq')
+  call dein#add('sorah/unite-bundler')
+  call dein#add('dotcloud/docker', {'rtp': 'contrib/syntax/vim'})
+  call dein#add('eagletmt/vim-ruby_namespace')
+  call dein#add('sorah/unite-outline-piculet')
+  call dein#add('pangloss/vim-javascript')
+  call dein#add('mxw/vim-jsx')
+  call dein#add('vim-scripts/rfc-syntax')
+  call dein#add('smerrill/vcl-vim-plugin')
+  call dein#add('posva/vim-vue')
+  call dein#add('nfnty/vim-nftables')
+  call dein#add('zimbatm/haproxy.vim')
+  call dein#add('vim-syntastic/syntastic')
+  call dein#add('rust-lang/rust.vim')
+  call dein#add('racer-rust/vim-racer')
+  call dein#add('google/vim-jsonnet')
+  call dein#add('leafgarland/typescript-vim')
+  call dein#add('Quramy/tsuquyomi')
+  call dein#add('hashivim/vim-hashicorp-tools')
+  call dein#add('hashivim/vim-terraform')
+  call dein#add('Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' })
+  call dein#add('mhartington/vim-typescript', { 'build' : './install.sh' })
 
-NeoBundle 'roxma/nvim-yarp'
-NeoBundle 'roxma/vim-hug-neovim-rpc'
+  call dein#add('roxma/nvim-yarp')
+  call dein#add('roxma/vim-hug-neovim-rpc')
+
+  call dein#end()
+  call dein#save_state()
+endif
+
 filetype on
 filetype plugin on
 filetype indent on

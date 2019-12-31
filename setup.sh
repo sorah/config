@@ -1,8 +1,10 @@
 #!/bin/bash
-if [ "$1" = "" ]; then
+arch=$1
+if [[ -z $arch && "_$(uname)" = "_Linux" ]]; then
+  arch=linux
+fi
+if [[ -z $arch ]]; then
   arch=mac
-else
-  arch=$1
 fi
 
 if [ "_$arch" = "_mac" ]; then
@@ -43,6 +45,11 @@ fi
 git config --global ghq.root $HOME/git
 git config --global ui.color auto
 git config --global push.default simple
+
+if [ ! -d ~/.vim-dein ]; then
+  mkdir -p ~/.vim-dein/cache/repos/github.com/Shougo
+  git clone https://github.com/Shougo/dein.vim ~/.vim-dein/cache/repos/github.com/Shougo/dein.vim
+fi
 
 if [ "_$arch" = "_mac" ]; then
   if ! which gsed 2>/dev/null; then
@@ -216,8 +223,8 @@ if which go 2>/dev/null >/dev/null; then
     go get github.com/motemen/ghq
   fi
 
-  if ! which gocode; then
-    go get github.com/nsf/gocode
+  if ! which gopls; then
+    go get golang.org/x/tools/...
   fi
 
   if ! which godef; then
