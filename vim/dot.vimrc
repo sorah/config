@@ -935,7 +935,7 @@ endfunction
 
 augroup SrhRustSetup
   autocmd!
-  autocmd BufWinEnter,BufNewFile *.go call s:sorah_rust_setup()
+  autocmd BufWinEnter,BufNewFile *.rs call s:sorah_rust_setup()
 augroup END
 
 let g:tsuquyomi_disable_quickfix = 1
