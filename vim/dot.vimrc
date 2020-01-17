@@ -89,15 +89,21 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('rust-lang/rust.vim')
   call dein#add('racer-rust/vim-racer')
   call dein#add('google/vim-jsonnet')
-  call dein#add('leafgarland/typescript-vim')
-  call dein#add('Quramy/tsuquyomi')
   call dein#add('hashivim/vim-hashicorp-tools')
   call dein#add('hashivim/vim-terraform')
-  call dein#add('Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' })
-  call dein#add('mhartington/vim-typescript', { 'build' : './install.sh' })
-
-  call dein#add('roxma/nvim-yarp')
-  call dein#add('roxma/vim-hug-neovim-rpc')
+  if has('nvim')
+    call dein#add('Shougo/deoplete.nvim')
+  else
+    call dein#add('Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' })
+    call dein#add('roxma/nvim-yarp')
+    call dein#add('roxma/vim-hug-neovim-rpc')
+  endif
+  call dein#add('HerringtonDarkholme/yats.vim')
+  if has('nvim')
+    call dein#add('mhartington/nvim-typescript', { 'build' : './install.sh' })
+  else
+    call dein#add('Quramy/tsuquyomi')
+  endif
 
   call dein#end()
   call dein#save_state()
@@ -243,7 +249,7 @@ hi Normal ctermbg=none
 "}}}
 
 "mouse setting {{{
-if !has('gui_running')
+if !has('gui_running') && !has('nvim')
   set mouse=a
   if exists('$WINDOW') || exists('$TMUX')
     set ttymouse=xterm2
