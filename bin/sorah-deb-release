@@ -34,6 +34,13 @@ when 'ruby'
   aptly_repo = 'sorah-ruby'
   aptly_gpg_key = '805E57E2327EE86EB8180E0669CEB9D53F0F56A8'
   puts "   aptly #{aptly_endpoint.inspect}"
+when 'nkmideb'
+  target = :aptly
+  gh_organization = 'nkmideb'
+  aptly_endpoint = 's3:nkmideb:'
+  aptly_repo = 'nkmideb'
+  aptly_gpg_key = '3D38A16556C57C162F0D6F5AA3599225C3FF3305'
+  puts "   aptly #{aptly_endpoint.inspect}"
 else
   raise
 end
