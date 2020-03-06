@@ -366,6 +366,15 @@ let g:deoplete#enable_at_startup = 1
 call deoplete#custom#option('camel_case', v:true)
 call deoplete#custom#option('smartcase', v:false)
 
+let g:deoplete#omni_patterns = {}
+call deoplete#custom#option('omni_patterns', {
+\ 'complete_method': 'omnifunc',
+\ 'terraform': '[^ *\t"{=$]\w*',
+\})
+
+let g:deoplete#sources#rust#racer_binary = $HOME . "/.cargo/bin/racer"
+let g:deoplete#sources#rust#rust_source_path = $HOME . "/git/github.com/rust-lang/rust"
+
 "push C-a to toggle spell check
 nnoremap <silent> <C-a> :setl spell!<Return>
 
