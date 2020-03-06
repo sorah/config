@@ -85,7 +85,7 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('posva/vim-vue')
   call dein#add('nfnty/vim-nftables')
   call dein#add('zimbatm/haproxy.vim')
-  call dein#add('vim-syntastic/syntastic')
+  call dein#add('dense-analysis/ale')
   call dein#add('rust-lang/rust.vim')
   call dein#add('racer-rust/vim-racer')
   call dein#add('google/vim-jsonnet')
@@ -179,7 +179,7 @@ set hidden
 set showcmd
 set cmdheight=2
 set laststatus=2
-set statusline=%f\ %m%r%h%w%{(&fenc!='utf-8'?'['.&fenc.']':'')}%#warningmsg#%{SyntasticStatuslineFlag()}%*%=%<%{substitute(fnamemodify(getcwd(),\ ':~'),\ '^\\~/Dropbox/\\(git\\\\|sandbox\\)',\ '-\\1',\ '')}\ [%l,%c]\ %p%%
+set statusline=%f\ %m%r%h%w%{(&fenc!='utf-8'?'['.&fenc.']':'')}%#warningmsg%*%=%<%{substitute(fnamemodify(getcwd(),\ ':~'),\ '^\\~/Dropbox/\\(git\\\\|sandbox\\)',\ '-\\1',\ '')}\ [%l,%c]\ %p%%
 "}}}
 
 "split
