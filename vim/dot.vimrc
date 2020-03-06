@@ -92,6 +92,10 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('hashivim/vim-hashicorp-tools')
   call dein#add('hashivim/vim-terraform')
   if has('nvim')
+    call dein#add('juliosueiras/vim-terraform-completion')
+  endif
+
+  if has('nvim')
     call dein#add('Shougo/deoplete.nvim')
   else
     call dein#add('Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' })
