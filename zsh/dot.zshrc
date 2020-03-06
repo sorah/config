@@ -453,6 +453,7 @@ cop() {
 # powerup your emacs
 #====================
 alias emacs='vim'
+alias vim='nvim'
 
 if ! which apt-get >/dev/null 2>/dev/null; then
   sorah-docker-ensure() {
