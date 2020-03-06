@@ -105,6 +105,7 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('HerringtonDarkholme/yats.vim')
   if has('nvim')
     call dein#add('mhartington/nvim-typescript', { 'build' : './install.sh' })
+    call dein#add('sebastianmarkow/deoplete-rust')
   else
     call dein#add('Quramy/tsuquyomi')
   endif
