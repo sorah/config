@@ -98,7 +98,6 @@ sed -i -e 's/~dist)/~${dist})/g' debian/changelog
 debuild -us -uc
 EOF
 
-
 #  --volume "${gpg_public_key}:/pub.asc" \
 docker run \
   --privileged \
@@ -110,6 +109,8 @@ docker run \
   --volume "${gpg_agent_socket}:/home/buildbot/.gnupg/S.gpg-agent" \
   --volume "${cmds}:/run.sh:ro" \
   --volume "${bootstrap_cmds}:/bootstrap.sh:ro" \
+  -e DEBSIGN_KEYID \
+  -e GPGUSER \
   --workdir /build \
   "$image_tag" \
   bash -xe /bootstrap.sh

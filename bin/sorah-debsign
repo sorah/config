@@ -35,13 +35,16 @@ chmod 700 /home/buildbot/.gnupg
 cp /run.sh /run2.sh
 chown buildbot:buildbot /run2.sh
 
-exec sudo -u buildbot env DEBSIGN_MAINT='$DEBSIGN_MAINT' bash -xe /run2.sh "\$@"
+exec sudo -u buildbot env DEBSIGN_KEYID='$DEBSIGN_KEYID' DEBSIGN_MAINT='$DEBSIGN_MAINT' bash -xe /run2.sh "\$@"
 EOF
 
 cmds=$(mktemp)
 cat >${cmds} <<-'EOF'
+
 gpg2 --import --no-tty --batch < /pub.asc
-export DEBSIGN_KEYID=0x$(gpg2 --with-colons --list-keys|grep '^sub:'|head -n1|cut -d: -f 5)
+if [ -z $DEBSIGN_KEYID ]; then
+  export DEBSIGN_KEYID=0x$(gpg2 --with-colons --list-keys|grep '^sub:'|head -n1|cut -d: -f 5)
+fi
 exec debsign -pgpg2 -k $DEBSIGN_KEYID "$@"
 EOF
 
@@ -56,5 +59,6 @@ docker run \
   --volume "${bootstrap_cmds}:/bootstrap.sh:ro" \
   --volume "$(pwd):/here" \
   --workdir /here \
+  -e DEBSIGN_KEYID \
   devscripts \
   bash -xe /bootstrap.sh "$@"
