@@ -963,11 +963,16 @@ augroup SrhRustSetup
   autocmd BufWinEnter,BufNewFile *.rs call s:sorah_rust_setup()
 augroup END
 
-let g:tsuquyomi_disable_quickfix = 1
-let g:syntastic_typescript_checkers = ['tsuquyomi']
-
 " Terraform
 let g:terraform_fmt_on_save=1
+
+" Syntastic/Ale
+let g:ale_linters_ignore = {
+\  'ruby': ['rubocop'],
+\ }
+
+let g:tsuquyomi_disable_quickfix = 1
+let g:syntastic_typescript_checkers = ['tsuquyomi']
 
 " Syntastic
 let g:syntastic_always_populate_loc_list = 1
