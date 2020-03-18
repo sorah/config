@@ -91,9 +91,6 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('google/vim-jsonnet')
   call dein#add('hashivim/vim-hashicorp-tools')
   call dein#add('hashivim/vim-terraform')
-  if has('nvim')
-    call dein#add('juliosueiras/vim-terraform-completion')
-  endif
 
   if has('nvim')
     call dein#add('Shougo/deoplete.nvim')
@@ -108,6 +105,11 @@ if dein#load_state('~/.vim-dein/state')
     call dein#add('sebastianmarkow/deoplete-rust')
   else
     call dein#add('Quramy/tsuquyomi')
+  endif
+  if has('nvim')
+    call dein#add('prabirshrestha/async.vim')
+    call dein#add('prabirshrestha/vim-lsp')
+    call dein#add('lighttiger2505/deoplete-vim-lsp')
   endif
 
   call dein#end()
@@ -374,6 +376,15 @@ call deoplete#custom#option('omni_patterns', {
 
 let g:deoplete#sources#rust#racer_binary = $HOME . "/.cargo/bin/racer"
 let g:deoplete#sources#rust#rust_source_path = $HOME . "/git/github.com/rust-lang/rust"
+
+"lsp
+if executable('terraform-lsp')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'terraform-lsp',
+        \ 'cmd': {server_info->['terraform-lsp']},
+        \ 'whitelist': ['terraform'],
+        \ })
+endif
 
 "push C-a to toggle spell check
 nnoremap <silent> <C-a> :setl spell!<Return>
