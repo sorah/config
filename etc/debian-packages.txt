@@ -1,0 +1,4 @@
+ruby2.4 --dist=dist/2.4 --master=master-2.4 trusty xenial
+ruby2.5 --dist=dist/2.5 --master=master-2.5 trusty xenial bionic stretch
+ruby2.6 --dist=dist/2.6 --master=master-2.6        xenial bionic stretch buster
+ruby2.7 --dist=dist/2.7                                   bionic         buster

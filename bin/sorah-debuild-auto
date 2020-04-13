@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+config = File.read(File.expand_path('~/git/config/etc/debian-packages.txt')).each_line.map {|line| c = line.split(/\s+/); [c[0], c[1..-1]] }.to_h
+source = File.read('./debian/control').lines.grep(/^Source: /).first&.split(/\s+/)&.fetch(1) || File.basename(Dir.pwd)
+
+distros_args = config.fetch(source)
+args, distros = distros_args.partition { |_| _.start_with?('--') }
+args = args.map { |_| _.match(/^--(.+?)(?:=(.+))?$/) }.compact.map { |_| [_[1], _[2]] }.to_h
+
+# def system(*a); p a; end
+
+p args
+p distros
+p ARGV
+p :_________
+sleep 1
+
+distros.each do |distro|
+  if args['dist']
+    master = args['master'] || 'master'
+    system("git", "checkout", "#{args['dist']}/#{distro}", exception: true)
+    # system("git", "reset", "--hard", "origin/#{args['dist']}/#{distro}") or system("git", "reset", "--hard", master, exception: true)
+    system("git", "merge", "--no-ff", "--no-edit", master, exception: true)
+  end
+  res = system("sorah-debuild", distro, *ARGV)
+  unless res
+    warn "!!!!!!!!!!!!!!!!! #{distros.inspect}; failed at #{distro}: sorah-debuild #{distro} #{ARGV.join(' ')}"
+    print "hit return to continue after investigated"
+    $gets.gets
+  end
+end
