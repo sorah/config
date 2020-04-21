@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+require 'json'
+require 'openssl'
+require 'fileutils'
+
+pki,role,name,cn = ARGV[0,4]
+unless pki && role && name && cn
+  abort "usage: #$0 pki role localname cn"
+end
+
+FileUtils.mkdir_p '/dev/shm/sorah/vault-cert'
+File.chmod 0700, '/dev/shm/sorah/vault-cert'
+Dir.chdir '/dev/shm/sorah/vault-cert'
+
+args = ["#{pki}/issue/#{role}"]
+args << "common_name=#{cn}"
+result = IO.popen(['vault', 'write', '-format=json', *args], 'r', &:read)
+exitstatus = $?
+unless exitstatus.success?
+  raise "vault-cert #{k} failed"
+end
+
+FileUtils.mkdir_p "./#{name}"
+Dir.chdir "./#{name}"
+
+json = JSON.parse(result, symbolize_names: true)
+data = json.fetch(:data)
+
+key_file = "key.pem"
+File.open("#{key_file}.new", 'w', 0600) do |io|
+  io.puts data.fetch(:private_key)
+end
+File.rename("#{key_file}.new", key_file)
+
+{
+  'ca.pem' => [data.fetch(:ca_chain, data.fetch(:issuing_ca))].flatten.join(?\n),
+  'cert.pem' => data.fetch(:certificate),
+  'fullchain.pem' => [data.fetch(:certificate), data.fetch(:ca_chain, data.fetch(:issuing_ca))].flatten.join(?\n),
+}.each do |path, content|
+  File.open("#{path}.new", 'w', 0644) do |io|
+    io.puts content
+  end
+  File.rename("#{path}.new", path)
+end
+
+puts "serial=#{data.fetch(:serial_number)}"
+
+
