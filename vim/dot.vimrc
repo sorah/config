@@ -984,6 +984,19 @@ let g:syntastic_eruby_checkers = []
 let g:syntastic_sass_checkers = []
 let g:syntastic_scss_checkers = []
 
+function s:sorah_jsonnet_setup()
+  setl autoindent
+  setl nocindent
+endfunction
+
+augroup SrhJsonnetSetup
+  autocmd!
+  autocmd BufWinEnter,BufNewFile *.jsonnet call s:sorah_jsonnet_setup()
+  autocmd BufWinEnter,BufNewFile *.libsonnet call s:sorah_jsonnet_setup()
+augroup END
+
+
+
 "read other vimrc files
 if filereadable($VIMFILES."/other/private.vim")
   source $VIMFILES/other/private.vim
