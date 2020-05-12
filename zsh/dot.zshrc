@@ -458,6 +458,10 @@ cop() {
   git diff --name-only "${range}" -- '*.rb' | xargs rubocop --auto-correct   
 }
 
+yaml2json() {
+  ruby -ryaml -rjson -e 'YAML.load_stream($stdin) {|_| puts _.to_json }' | jq .
+}
+
 #====================
 # powerup your emacs
 #====================
