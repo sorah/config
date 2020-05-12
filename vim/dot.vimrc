@@ -495,7 +495,6 @@ function! s:SorahFileRec()
   endif
 endfunction
 
-nnoremap <C-d> :<C-u>call <SID>SorahFileRec()<Cr>
 nnoremap <C-z> :<C-u>call <SID>SorahFileRec()<Cr>
 nnoremap <C-x> :<C-u>Unite -start-insert outline<Cr>
 nnoremap <C-s> :<C-u>Unite -start-insert tab<Cr>
@@ -844,7 +843,7 @@ function! s:git_blame_show(filename,line_num)
 endfunction
 
 nnoremap <C-g>  :echo <SID>git_blame_info(expand('%'),line('.'))<CR>
-nnoremap <silent><C-f>  :call <SID>git_blame_show(expand('%'),line('.'))<CR>
+nnoremap <silent><C-d>  :call <SID>git_blame_show(expand('%'),line('.'))<CR>
 "}}}
 
 " project specific {{{
@@ -954,6 +953,22 @@ map <C-o> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
 let g:rustfmt_autosave = 1
 let g:racer_experimental_completer = 1 
 let g:syntastic_rust_checkers = ['cargo']
+
+if executable('rust-analyzer')
+  call ale#linter#Define('rust', {
+  \   'name': 'rust-analyzer',
+  \   'lsp': 'stdio',
+  \   'executable': 'rust-analyzer',
+  \   'command': '%e',
+  \   'project_root': '.',
+  \})
+  au User lsp_setup call lsp#register_server({
+      \ 'name': 'rust-analyzer',
+      \ 'cmd': {server_info->['rust-analyzer']},
+      \ 'whitelist': ['rust'],
+      \ })
+endif
+
 function! s:sorah_rust_setup()
   setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
 endfunction
@@ -962,6 +977,8 @@ augroup SrhRustSetup
   autocmd!
   autocmd BufWinEnter,BufNewFile *.rs call s:sorah_rust_setup()
 augroup END
+
+
 
 " Terraform
 let g:terraform_fmt_on_save=1
