@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+require 'openssl'
+require 'json'
+
+data = ARGF.read.yield_self{ |_| _.start_with?('-----') ? _ : _.unpack1('m*') }
+key = OpenSSL::PKey::EC.new(data, '')
+key.private_key = nil
+
+crv = case key.group.curve_name
+      when 'prime256v1'
+        'P-256'
+      when 'secp384r1'
+        'P-384'
+      when 'secp521r1'
+        'P-521'
+      else
+        raise "unknown curve"
+      end
+
+# https://github.com/unixcharles/acme-client/blob/master/lib/acme/client/jwk/ecdsa.rb
+hex = key.public_key.to_bn.to_s(16)
+data_len = hex.length - 2
+hex_x = hex[2, data_len / 2]
+hex_y = hex[2 + data_len / 2, data_len / 2]
+
+jwk = {
+  use: "sig",
+  kty: 'EC',
+  crv: crv,
+  kid: "",
+  x: [OpenSSL::BN.new([hex_x].pack('H*'), 2).to_s(2)].pack('m0').gsub(/\n|=/, ''),
+  y: [OpenSSL::BN.new([hex_y].pack('H*'), 2).to_s(2)].pack('m0').gsub(/\n|=/, ''),
+}.to_json
+
+puts jwk
