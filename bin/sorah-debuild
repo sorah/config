@@ -66,7 +66,8 @@ ls /build
 cat */debian/files
 cat */debian/files | cut -d' ' -f1 | xargs cp -p -v -t /output/
 cp -pv /build/*.{dsc,changes} /output/
-cp -pv /build/*.debian.tar* /output/ || cp -pv /build/*.tar* /output/
+cp -pv /build/*.debian.tar* /output/ || :
+cp -pv /build/*.tar* /output/ || :
 cp -v /build/*/debian/*.symbols /output/.$$/ || :
 chown $(id -u):$(id -g) /output/*
 chown -R $(id -u):$(id -g) /output/.$$
