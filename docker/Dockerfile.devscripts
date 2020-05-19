@@ -1,2 +1,2 @@
-FROM debian:stretch
+FROM debian:buster
 RUN apt-get update && apt-get install -y devscripts vim gnupg2 sudo

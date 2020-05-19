@@ -1,30 +1,60 @@
 #!/usr/bin/env ruby
-config = File.read(File.expand_path('~/git/config/etc/debian-packages.txt')).each_line.map {|line| c = line.split(/\s+/); [c[0], c[1..-1]] }.to_h
-source = File.read('./debian/control').lines.grep(/^Source: /).first&.split(/\s+/)&.fetch(1) || File.basename(Dir.pwd)
+ARCH = ENV['ARCH'] || 'amd64'
+ARCH_FILTER = ENV['ARCH_FILTER']&.split(/,\s*/)
 
-distros_args = config.fetch(source)
-args, distros = distros_args.partition { |_| _.start_with?('--') }
-args = args.map { |_| _.match(/^--(.+?)(?:=(.+))?$/) }.compact.map { |_| [_[1], _[2]] }.to_h
+BuildOption = Struct.new(:distro, :arch, :dist, :master, keyword_init: true)
+config = File.read(File.expand_path('~/git/config/etc/debian-packages.txt'))
+  .each_line
+  .map { |line| c = line.split(/\s+/); [c[0], c[1..-1]] }
+  .group_by(&:first)
+  .map do |source, lines|
+    [
+      source,
+      lines.flat_map do |(_s, options)|
+       args, distros = options.partition { |_| _.start_with?('--') }
+       args = args.map { |_| _.match(/^--(.+?)(?:=(.+))?$/) }.compact.map { |_| [_[1].to_sym, _[2]] }.to_h
+       distros.map do |distro|
+         args.merge(distro: distro)
+       end
+      end
+    ]
+  end
+
+source = File.read('./debian/control').lines.grep(/^Source: /).first&.split(/\s+/)&.fetch(1) || File.basename(Dir.pwd)
+build_options = config.fetch(source)
 
 # def system(*a); p a; end
 
-p args
-p distros
-p ARGV
-p :_________
+pp build_options
 sleep 1
 
-distros.each do |distro|
-  if args['dist']
-    master = args['master'] || 'master'
-    system("git", "checkout", "#{args['dist']}/#{distro}", exception: true)
+build_options.each do |opt|
+  if opt.dist
+    master = opt.master || 'master'
+    system("git", "checkout", "#{opt.dist}/#{opt.distro}", exception: true)
     # system("git", "reset", "--hard", "origin/#{args['dist']}/#{distro}") or system("git", "reset", "--hard", master, exception: true)
     system("git", "merge", "--no-ff", "--no-edit", master, exception: true)
   end
-  res = system("sorah-debuild", distro, *ARGV)
-  unless res
-    warn "!!!!!!!!!!!!!!!!! #{distros.inspect}; failed at #{distro}: sorah-debuild #{distro} #{ARGV.join(' ')}"
-    print "hit return to continue after investigated"
-    $gets.gets
+
+  archs = (opt.arch || ARCH).split(?,)
+  archs.each do |arch|
+    next if ARCH_FILTER && !ARCH_FILTER.include?(arch)
+
+    cmd = case 
+    when ARCH
+      ["sorah-debuild", opt.distro, *ARGV]
+    when 'arm64'
+      ["sorah-debuild-codebuild", '--arm', opt.distro, *ARGV]
+    else
+      raise "unsupported arch #{arch.inspect}"
+    end
+
+    res = system(*cmd)
+
+    unless res
+      warn "!!!!!!!!!!!!!!!!! #{opt.inspect}; failed at #{opt.distro} @ #{arch}: #{cmd.shelljoin}"
+      print "hit return to continue after investigated"
+      $stdin.gets
+    end
   end
 end

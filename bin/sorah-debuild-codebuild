@@ -1,0 +1,180 @@
+#!/usr/bin/env ruby
+REGION = 'us-west-2'
+PROJECT = 'sorah-debuild'
+
+BUCKET = 'sorah-codebuild'
+SOURCE_PREFIX = 'sources/'
+
+BUILDSPEC = File.read(File.join(__dir__, '..', 'debuild-docker', 'buildspec.yml'))
+
+require 'uri'
+require 'fileutils'
+require 'aws-sdk-s3'
+require 'aws-sdk-codebuild'
+require 'optparse'
+
+
+if ARGV.size < 1
+  abort "usage: #$0 docker_repo:distro [upstream_version] [--arm] [--debian-ref=DEBIAN_TAG]"
+end
+
+arm = false
+debian_ref = 'HEAD'
+
+argv = OptionParser.new do |o|
+  o.on('-a', "--arm", "Use ARM_CONTAINER") do
+    arm = true
+  end
+  o.on('-d', "--debian-ref", "Use specified git ref for a debian source (default=HEAD)") do |r|
+    debian_ref = r
+  end
+end.parse(ARGV)
+
+image, upstream_version = argv[0,2]
+
+unless image.include?(':')
+  repo = case image
+         when 'stretch', 'buster'
+           'debian'
+          else
+           'ubuntu'
+         end
+  image = "#{repo}:#{image}"
+end
+
+distro = image.split(?:,2)[1]
+
+puts "===> PID: #$$"
+
+@s3 = Aws::S3::Client.new(region: REGION)
+@codebuild = Aws::CodeBuild::Client.new(region: REGION)
+
+unless File.exist?('debian')
+  abort "Run in debian package directory root"
+end
+
+source_zip_directory = "debian/out/codebuild-src-#$$"
+source_name = File.read('debian/control').each_line.lazy.map { |_| _.match(/^Source:\s+(.+?)$/) }.find(&:itself)[1]
+
+FileUtils.mkdir_p(source_zip_directory)
+
+puts "===> Archiving #{debian_ref}"
+File.open(File.join(source_zip_directory, 'source.tar'), 'wb') do |io|
+  system("git", "archive", "--format=tar", debian_ref, out: io, exception: true)
+end
+
+if upstream_version
+  orig_name = "#{source_name}_#{upstream_version}.orig.tar.gz"
+  unless File.exist?(File.join('debian/out', orig_name))
+    upstream_version_tag = "upstream/#{upstream_version.tr('~:', '_%')}"
+    puts "===> Archiving #{upstream_version_tag}"
+    File.open(File.join('debian/out', orig_name), 'wb') do |f|
+      IO.popen(["git", "archive", "--format=tar", "--prefix", "#{source_name}-#{upstream_version}/", upstream_version_tag], 'rb') do |io|
+        system("gzip", in: io, out: f, exception: true)
+      end
+      raise unless $?.success?
+    end
+  end
+  FileUtils.cp File.join('debian/out', orig_name), File.join(source_zip_directory, orig_name)
+end
+
+puts "===> zip source directory"
+
+zip_path = File.expand_path("./debian/out/codebuild-src-#$$.zip")
+Dir.chdir(source_zip_directory) do
+  system("zip", "-r", zip_path, '.', exception: true)
+end
+
+puts "===> uploading source"
+
+source_key = "#{SOURCE_PREFIX}#{PROJECT}.zip"
+puts "   * Bucket: #{BUCKET}"
+puts "   * Key: #{source_key}"
+
+source_version = File.open(zip_path, 'rb') do |io|
+  @s3.put_object(
+    bucket: BUCKET,
+    key: source_key,
+    body: io,
+  ).version_id
+end
+
+puts "   [ ok ] version=#{source_version}"
+
+File.unlink zip_path
+FileUtils.remove_entry_secure source_zip_directory
+
+puts
+puts "===> Starting build"
+
+build = @codebuild.start_build(
+  project_name: PROJECT,
+  source_version: source_version,
+  environment_variables_override: [
+    { type: 'PLAINTEXT', name: 'DEBIAN_FRONTEND', value: 'noninteractive' },
+    { type: 'PLAINTEXT', name: 'DEBUILD_CODEBUILD_SOURCE', value: source_name },
+    { type: 'PLAINTEXT', name: 'DEBUILD_CODEBUILD_BUILD', value: arm ? 'any' : 'full' },
+    { type: 'PLAINTEXT', name: 'DEBUILD_CODEBUILD_DIST', value: distro },
+  ],
+  compute_type_override: 'BUILD_GENERAL1_LARGE',
+  environment_type_override: arm ? 'ARM_CONTAINER' : 'LINUX_CONTAINER',
+  image_override: image,
+  buildspec_override: BUILDSPEC,
+  idempotency_token: "#{File.basename($0)}-#{ENV['USER']}-#$$",
+).build
+
+puts "   * ARN: #{build.arn}"
+puts "   * Log: https://console.aws.amazon.com/codesuite/codebuild/projects/#{URI.encode_www_form_component(build.project_name)}/build/#{URI.encode_www_form_component(build.id)}/log?region=#{REGION}"
+
+sleep 2
+puts
+puts "===> Waiting build to complete..."
+
+loop do
+  build = @codebuild.batch_get_builds(ids: [build.id]).builds[0]
+  if build
+    puts "   * status: #{build.build_status}, phase: #{build.current_phase}"
+    break if build.build_status != 'IN_PROGRESS'
+  else
+    puts "   * build not found"
+  end
+  sleep 5
+end
+
+unless build.build_status == 'SUCCEEDED'
+  raise "build not succeeded"
+end
+
+puts
+puts "===> Downloading artifacts"
+
+File.open("./debian/out/codebuild-out-#$$.zip", 'wb') do |io|
+  m = build.artifacts.location.match(%r{\Aarn:aws:s3:::(.+?)/(.+?)\z})
+  unless m
+    raise "artifact location not supported"
+  end
+  @s3.get_object(
+    bucket:  m[1],
+    key: m[2],
+    response_target: io,
+  )
+end
+
+puts
+puts "===> Unzip and debsign"
+
+FileUtils.mkdir_p("debian/out/codebuild-out-#$$")
+Dir.chdir("debian/out/codebuild-out-#$$") do
+  system("unzip", "../codebuild-out-#$$.zip", exception: true)
+  File.unlink  "../codebuild-out-#$$.zip"
+  Dir['./*.changes'].each do |changes|
+    system("sorah-debsign", changes, exception: true)
+  end
+end
+
+(Dir["./debian/out/codebuild-out-#$$/*"] + Dir["./debian/out/codebuild-out-#$$/.*"]).each do |file|
+  next if file.end_with?('/.') || file.end_with?('/..')
+  File.rename file, "./debian/out/#{File.basename(file)}"
+end
+
+Dir.rmdir "./debian/out/codebuild-out-#$$"

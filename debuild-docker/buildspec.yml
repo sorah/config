@@ -1,0 +1,58 @@
+version: 0.2
+
+env:
+  DEBIAN_FRONTEND: 'noninteractive'
+  DEBUILD_CODEBUILD_SOURCE: 'source-name'
+  DEBUILD_CODEBUILD_BUILD: 'full'
+  DEBUILD_CODEBUILD_DIST: ''
+
+phases:
+  install:
+    commands:
+      - 'useradd -m buildbot'
+      - apt-get update
+      - apt-get install -y --no-install-recommends tzdata debhelper dh-make devscripts gnupg2 equivs lsb-release
+
+  pre_build:
+    commands:
+      - 'mkdir out'
+      - 'mkdir -p "${DEBUILD_CODEBUILD_SOURCE}"'
+      - 'tar xf source.tar* -C "${DEBUILD_CODEBUILD_SOURCE}"'
+      - 'rm -fv source.tar*'
+
+      - 'cd "${DEBUILD_CODEBUILD_SOURCE}"'
+      - 'if [ -z "${DEBUILD_CODEBUILD_DIST}" ]; then export DEBUILD_CODEBUILD_DIST=$(lsb_release -sc); fi'
+      - 'dist="${DEBUILD_CODEBUILD_DIST}"'
+      - 'sed -i -e "s/_dist_/${dist}/g" debian/changelog || :'
+      - 'sed -i -e "s/~dist) unstable; urgency=/~${dist}) ${dist}; urgency=/g" debian/changelog || :'
+      - 'sed -i -e "s/~dist) unstable-proposed; urgency=/~${dist}) ${dist}-proposed; urgency=/g" debian/changelog || :'
+      - 'sed -i -e "s/~dist)/~${dist})/g" debian/changelog || :'
+      - "head -n20 debian/changelog"
+
+      - "mk-build-deps -r -i -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends' debian/control"
+      - 'chown -R buildbot:buildbot  "${CODEBUILD_SRC_DIR}"'
+
+  build:
+    run-as: buildbot
+    commands:
+      - 'cd "${CODEBUILD_SRC_DIR}/${DEBUILD_CODEBUILD_SOURCE}"'
+      - 'debuild --no-sign --build=${DEBUILD_CODEBUILD_BUILD}'
+      - 'ls -la "${CODEBUILD_SRC_DIR}"'
+
+  post_build:
+    commands:
+      - 'cd "${CODEBUILD_SRC_DIR}"'
+      - 'mkdir -p out'
+      - 'cat ${DEBUILD_CODEBUILD_SOURCE}/debian/files | cut -d" " -f1 | xargs mv -v -t out/'
+      - 'mv -v ./*.changes -t out/'
+      - 'mv -v ./*.dsc -t out/ || :'
+      - 'mv -v ./*.debian.tar* -t out/ || :'
+      - 'mv -v ./*.tar* -t out/ || :'
+      - 'rm out/*_orig.tar.* || :'
+      - 'mkdir -p "./out/.codebuild-${CODEBUILD_BUILD_ID}"'
+      - 'mv -v ./${DEBUILD_CODEBUILD_SOURCE}/debian/*.symbols -t "out/.codebuild-${CODEBUILD_BUILD_ID}" || :'
+
+artifacts:
+  base-directory: 'out'
+  files:
+    - '**/*'
