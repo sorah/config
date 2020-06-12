@@ -10,6 +10,12 @@ phases:
   install:
     commands:
       - 'useradd -m buildbot'
+
+      # using IPv6 addrinfo registered to "localhost" might fail because containers have no IPv6
+      # https://img.sorah.jp/x/20200519_171607_MSwJTE7E3T.png
+      # https://github.com/moby/moby/issues/35954
+      - "( sed -e '/^::1/d' /etc/hosts > /etc/hosts2 && cp /etc/hosts2 /etc/hosts ) || :"
+
       - apt-get update
       - apt-get install -y --no-install-recommends tzdata debhelper dh-make devscripts gnupg2 equivs lsb-release
 
@@ -35,6 +41,7 @@ phases:
   build:
     run-as: buildbot
     commands:
+      - 'export HOME=/home/buildbot'
       - 'cd "${CODEBUILD_SRC_DIR}/${DEBUILD_CODEBUILD_SOURCE}"'
       - 'debuild --no-sign --build=${DEBUILD_CODEBUILD_BUILD}'
       - 'ls -la "${CODEBUILD_SRC_DIR}"'

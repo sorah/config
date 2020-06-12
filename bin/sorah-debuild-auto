@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
+require 'shellwords'
 ARCH = ENV['ARCH'] || 'amd64'
 ARCH_FILTER = ENV['ARCH_FILTER']&.split(/,\s*/)
+NO_MERGE = ENV['NO_MERGE']
 
 BuildOption = Struct.new(:distro, :arch, :dist, :master, keyword_init: true)
 config = File.read(File.expand_path('~/git/config/etc/debian-packages.txt'))
@@ -14,11 +16,11 @@ config = File.read(File.expand_path('~/git/config/etc/debian-packages.txt'))
        args, distros = options.partition { |_| _.start_with?('--') }
        args = args.map { |_| _.match(/^--(.+?)(?:=(.+))?$/) }.compact.map { |_| [_[1].to_sym, _[2]] }.to_h
        distros.map do |distro|
-         args.merge(distro: distro)
+         BuildOption.new(**args.merge(distro: distro))
        end
       end
     ]
-  end
+end.to_h
 
 source = File.read('./debian/control').lines.grep(/^Source: /).first&.split(/\s+/)&.fetch(1) || File.basename(Dir.pwd)
 build_options = config.fetch(source)
@@ -33,14 +35,18 @@ build_options.each do |opt|
     master = opt.master || 'master'
     system("git", "checkout", "#{opt.dist}/#{opt.distro}", exception: true)
     # system("git", "reset", "--hard", "origin/#{args['dist']}/#{distro}") or system("git", "reset", "--hard", master, exception: true)
-    system("git", "merge", "--no-ff", "--no-edit", master, exception: true)
+    unless NO_MERGE
+      system("git", "merge", "--no-ff", "--no-edit", master, exception: true)
+    end
   end
 
   archs = (opt.arch || ARCH).split(?,)
   archs.each do |arch|
     next if ARCH_FILTER && !ARCH_FILTER.include?(arch)
 
-    cmd = case 
+    puts "===> #{opt.inspect} @ #{arch}"
+
+    cmd = case arch
     when ARCH
       ["sorah-debuild", opt.distro, *ARGV]
     when 'arm64'
@@ -48,6 +54,7 @@ build_options.each do |opt|
     else
       raise "unsupported arch #{arch.inspect}"
     end
+    puts "$ #{cmd.shelljoin}"
 
     res = system(*cmd)
 
