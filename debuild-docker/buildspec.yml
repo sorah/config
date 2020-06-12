@@ -17,7 +17,7 @@ phases:
       - "( sed -e '/^::1/d' /etc/hosts > /etc/hosts2 && cp /etc/hosts2 /etc/hosts ) || :"
 
       - apt-get update
-      - apt-get install -y --no-install-recommends tzdata debhelper dh-make devscripts gnupg2 equivs lsb-release
+      - apt-get install -y --no-install-recommends tzdata debhelper dh-make devscripts gnupg2 equivs lsb-release sudo
 
   pre_build:
     commands:
@@ -39,11 +39,10 @@ phases:
       - 'chown -R buildbot:buildbot  "${CODEBUILD_SRC_DIR}"'
 
   build:
-    run-as: buildbot
+    # run-as: buildbot
     commands:
-      - 'export HOME=/home/buildbot'
       - 'cd "${CODEBUILD_SRC_DIR}/${DEBUILD_CODEBUILD_SOURCE}"'
-      - 'debuild --no-sign --build=${DEBUILD_CODEBUILD_BUILD}'
+      - 'sudo -u buildbot -H debuild --no-sign --build=${DEBUILD_CODEBUILD_BUILD}'
       - 'ls -la "${CODEBUILD_SRC_DIR}"'
 
   post_build:
