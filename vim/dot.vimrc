@@ -24,9 +24,7 @@ if dein#load_state('~/.vim-dein/state')
   call dein#begin('~/.vim-dein/state')
   "NeoBundle 'mrkn/mrkn256.vim'
   call dein#add('mattn/webapi-vim')
-  call dein#add('tyru/restart.vim')
   call dein#add('tpope/vim-rails')
-  call dein#add('vim-scripts/sudo.vim')
   call dein#add('plasticboy/vim-markdown')
   call dein#add('motemen/git-vim')
   call dein#add('ujihisa/neco-look')
@@ -41,15 +39,11 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('thinca/vim-ref')
   call dein#add('taka84u9/vim-ref-ri')
   call dein#add('Shougo/vimproc', { 'build': 'make' })
-  call dein#add('Shougo/vimshell')
-  call dein#add('ujihisa/vimshell-ssh')
   call dein#add('godlygeek/csapprox')
   call dein#add('ujihisa/shadow.vim')
   call dein#add('cakebaker/scss-syntax.vim')
   call dein#add('tpope/vim-haml')
-  call dein#add('sorah/vim-slim')
   "call dein#add('Shougo/neosnippet')
-  call dein#add('groenewege/vim-less')
   call dein#add('taka84u9/unite-git')
   call dein#add('thinca/vim-scouter')
   call dein#add('altercation/vim-colors-solarized')
@@ -63,19 +57,15 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('kana/vim-smartinput')
   call dein#add('sgur/unite-git_grep')
   call dein#add('sorah/puppet.vim')
-  call dein#add('elixir-lang/vim-elixir')
   call dein#add('noprompt/vim-yardoc')
   call dein#add('nanotech/jellybeans.vim')
   call dein#add('Lokaltog/vim-distinguished')
   call dein#add('tomasr/molokai')
   call dein#add('jonathanfilip/vim-lucius')
   call dein#add('w0ng/vim-hybrid')
-  call dein#add('fatih/vim-go')
   call dein#add('nginx/nginx', {'rtp': 'contrib/vim/'})
-  call dein#add('dgryski/vim-godef')
   call dein#add('sorah/unite-ghq')
   call dein#add('sorah/unite-bundler')
-  call dein#add('dotcloud/docker', {'rtp': 'contrib/syntax/vim'})
   call dein#add('eagletmt/vim-ruby_namespace')
   call dein#add('sorah/unite-outline-piculet')
   call dein#add('pangloss/vim-javascript')
@@ -91,20 +81,14 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('google/vim-jsonnet')
   call dein#add('hashivim/vim-hashicorp-tools')
   call dein#add('hashivim/vim-terraform')
+  call dein#add('HerringtonDarkholme/yats.vim')
 
   if has('nvim')
     call dein#add('Shougo/deoplete.nvim')
-  else
-    call dein#add('Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' })
-    call dein#add('roxma/nvim-yarp')
-    call dein#add('roxma/vim-hug-neovim-rpc')
   endif
-  call dein#add('HerringtonDarkholme/yats.vim')
   if has('nvim')
     call dein#add('mhartington/nvim-typescript', { 'build' : './install.sh' })
     call dein#add('sebastianmarkow/deoplete-rust')
-  else
-    call dein#add('Quramy/tsuquyomi')
   endif
   if has('nvim')
     call dein#add('prabirshrestha/async.vim')
@@ -380,11 +364,19 @@ let g:deoplete#sources#rust#rust_source_path = $HOME . "/git/github.com/rust-lan
 "lsp
 if executable('terraform-lsp')
     au User lsp_setup call lsp#register_server({
-        \ 'name': 'terraform-lsp',
-        \ 'cmd': {server_info->['terraform-lsp']},
+        \ 'name': 'terraform-ls',
+        \ 'cmd': {server_info->['terraform-ls']},
         \ 'whitelist': ['terraform'],
         \ })
 endif
+if executable('gopls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'gopls',
+        \ 'cmd': {server_info->['gopls']},
+        \ 'whitelist': ['go'],
+        \ })
+endif
+
 
 "push C-a to toggle spell check
 nnoremap <silent> <C-a> :setl spell!<Return>
@@ -566,38 +558,6 @@ endif
 
 set vb t_vb=
 
-"vimshell
-let g:vimshell_execute_file_list = {}
-if has('win32') || has('win64')
-  " Display user name on Windows.
-  let g:vimshell_prompt = $USERNAME."@".hostname()."% "
-elseif has('mac') || has('unix')
-  " Display user name on Linux.
-  let g:vimshell_prompt = $USER.'@'.hostname()."% "
-  let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
-  call vimshell#set_execute_file('bmp,jpg,png,gif,mp3,m4a,ogg', 'open')
-  let g:vimshell_execute_file_list['zip'] = 'zipinfo'
-  call vimshell#set_execute_file('tgz,gz', 'gzcat')
-  call vimshell#set_execute_file('tbz,bz2', 'bzcat')
-endif
-
-
-
-" Initialize execute file list.
-call vimshell#set_execute_file('txt,vim,c,h,cpp,d,xml,java', 'vim')
-let g:vimshell_execute_file_list['rb'] = 'ruby'
-let g:vimshell_execute_file_list['pl'] = 'perl'
-let g:vimshell_execute_file_list['py'] = 'python'
-if has('win32') || has('win64')
-  call vimshell#set_execute_file('html,xhtml', 'start')
-elseif has('mac')
-  call vimshell#set_execute_file('html,xhtml', 'open')
-else
-  call vimshell#set_execute_file('html,xhtml', 'firefox')
-end
-
-let g:vimshell_enable_interactive = 1
-let g:vimshell_enable_smart_case = 1
 
 "easy to save
 nnoremap W :<C-u>w<Cr>
@@ -744,39 +704,10 @@ endfunction
 command! WriteEdit call s:VimRcWriteEdit()
 cabbrev we WriteEdit
 
-"open
-function! s:CallOpenCmd(...)
-  if a:0 > 0
-    if has('mac')
-      call system("open ".shellescape(a:1))
-    else
-      call system("gnome-open ".shellescape(a:1))
-    endif
-  else
-    if has('mac')
-      call system("open ".shellescape(expand('%:p')))
-    else
-      call system("gnome-open ".shellescape(expand('%:p')))
-    endif
-  endif
-endfunction
-command! -nargs=? -complete=file Open call s:CallOpenCmd('<args>')
-
 " metarw
 call metarw#define_wrapper_commands(1)
 
-" RSpec
-function! s:QuickRunRSpecWithoutLine()
-  let g:quickrun_config['ruby.rspec'] = {'command': 'rspec',
-                                    \    'exec': '%c %o -fd %s'}
-endfunction
-function! s:QuickRunRSpecWithLine()
-  let g:quickrun_config['ruby.rspec'] = {'command': 'rspec -l {line(".")}',
-                                    \    'exec': '%c %o -fd %s'}
-endfunction
-call s:QuickRunRSpecWithoutLine()
-command! QuickRSpecWithLine call s:QuickRunRSpecWithLine()
-command! QuickRSpec call s:QuickRunRSpecWithoutLine()
+" rspec
 augroup UjihisaRSpec
   autocmd!
   autocmd BufWinEnter,BufNewFile *_spec.rb set filetype=ruby.rspec
@@ -846,8 +777,7 @@ nnoremap <C-g>  :echo <SID>git_blame_info(expand('%'),line('.'))<CR>
 nnoremap <silent><C-d>  :call <SID>git_blame_show(expand('%'),line('.'))<CR>
 "}}}
 
-" project specific {{{
-
+" Go
 let g:go_fmt_autosave = 1
 let g:go_doc_keywordprg_enabled = 0
 let g:godef_split = 0
@@ -856,7 +786,7 @@ function! s:sorah_go_setup()
   setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
 endfunction
 
-augroup HerGoSetup
+augroup SorahGoSetup
   autocmd!
   autocmd BufWinEnter,BufNewFile *.go call s:sorah_go_setup()
 augroup END
@@ -926,14 +856,6 @@ augroup END
 
 
 
-
-"}}}
-
-augroup MyObjC
-  autocmd!
-  autocmd FileType objc setl tags+=$VIMFILES/tag/objc.tags
-augroup END
-
 let g:rails_no_syntax = '1'
 
 "quickrun customize for competitive programming
@@ -952,7 +874,6 @@ map <C-o> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
 " Rust
 let g:rustfmt_autosave = 1
 let g:racer_experimental_completer = 1 
-let g:syntastic_rust_checkers = ['cargo']
 
 if executable('rust-analyzer')
   call ale#linter#Define('rust', {
@@ -970,7 +891,7 @@ if executable('rust-analyzer')
 endif
 
 function! s:sorah_rust_setup()
-  setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
+  setlocal tabstop=4 softtabstop=4 shiftwidth=4
 endfunction
 
 augroup SrhRustSetup
@@ -989,18 +910,8 @@ let g:ale_linters_ignore = {
 \ }
 
 let g:tsuquyomi_disable_quickfix = 1
-let g:syntastic_typescript_checkers = ['tsuquyomi']
 
-" Syntastic
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-let g:syntastic_eruby_checkers = []
-let g:syntastic_sass_checkers = []
-let g:syntastic_scss_checkers = []
-
+" jsonnet
 function s:sorah_jsonnet_setup()
   setl autoindent
   setl nocindent
