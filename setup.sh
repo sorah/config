@@ -22,6 +22,7 @@ ln -sfn `pwd`/vim/dot.vim ~/.vim
 ln -sf `pwd`/vim/dot.vimrc ~/.vimrc
 mkdir -p ~/.config/nvim
 ln -sf `pwd`/vim/dot.vimrc ~/.config/nvim/init.vim
+ln -sf `pwd`/vim/coc-settings.json ~/.config/nvim/coc-settings.json
 ln -sf `pwd`/zsh/dot.zshrc ~/.zshrc
 ln -sf `pwd`/zsh/${arch}.zshrc_global_env ~/.zshrc_global_env
 ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf

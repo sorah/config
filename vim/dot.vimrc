@@ -82,23 +82,34 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('hashivim/vim-hashicorp-tools')
   call dein#add('hashivim/vim-terraform')
   call dein#add('HerringtonDarkholme/yats.vim')
+  call dein#add('kevinoid/vim-jsonc')
 
   if has('nvim')
-    call dein#add('Shougo/deoplete.nvim')
-  endif
-  if has('nvim')
     call dein#add('mhartington/nvim-typescript', { 'build' : './install.sh' })
-    call dein#add('sebastianmarkow/deoplete-rust')
-  endif
-  if has('nvim')
-    call dein#add('prabirshrestha/async.vim')
-    call dein#add('prabirshrestha/vim-lsp')
-    call dein#add('lighttiger2505/deoplete-vim-lsp')
+
+    call dein#add('neoclide/coc.nvim', { 'rev': 'release' })
   endif
 
   call dein#end()
   call dein#save_state()
 endif
+
+let g:coc_global_extensions = [
+  \   "coc-clangd",
+  \   "coc-css",
+  \   "coc-dictionary",
+  \   "coc-emoji",
+  \   "coc-go",
+  \   "coc-html",
+  \   "coc-json",
+  \   "coc-omni",
+  \   "coc-rust-analyzer",
+  \   "coc-solargraph",
+  \   "coc-syntax",
+  \   "coc-tag",
+  \   "coc-tsserver",
+  \   "coc-word",
+  \ ]
 
 filetype on
 filetype plugin on
@@ -197,9 +208,19 @@ set scrolloff=5
 set formatoptions& formatoptions+=mM
 set tw=0
 set nobackup
+set nowritebackup
 set history=1000
 set mouse=a
 set noautochdir
+
+" coc.nvim requirement
+set updatetime=300
+set shortmess+=c
+if has("patch-8.1.1564")
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
 
 "enable filetype plugins
 filetype plugin on
@@ -344,38 +365,147 @@ augroup TerraformFt
 augroup END
 "}}}
 
-
-"deoplete
-let g:deoplete#enable_at_startup = 1
-
-"neocomplcache settings
-call deoplete#custom#option('camel_case', v:true)
-call deoplete#custom#option('smartcase', v:false)
-
-let g:deoplete#omni_patterns = {}
-call deoplete#custom#option('omni_patterns', {
-\ 'complete_method': 'omnifunc',
-\ 'terraform': '[^ *\t"{=$]\w*',
-\})
-
-let g:deoplete#sources#rust#racer_binary = $HOME . "/.cargo/bin/racer"
-let g:deoplete#sources#rust#rust_source_path = $HOME . "/git/github.com/rust-lang/rust"
-
-"lsp
-if executable('terraform-lsp')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'terraform-ls',
-        \ 'cmd': {server_info->['terraform-ls']},
-        \ 'whitelist': ['terraform'],
-        \ })
+"coc.nvim
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
 endif
-if executable('gopls')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'gopls',
-        \ 'cmd': {server_info->['gopls']},
-        \ 'whitelist': ['go'],
-        \ })
-endif
+
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+" Applying codeAction to the selected region.
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Remap <C-f> and <C-b> for scroll float windows/popups.
+" Note coc#float#scroll works on neovim >= 0.4.3 or vim >= 8.2.0750
+nnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+inoremap <nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+
+" " Use CTRL-S for selections ranges.
+" " Requires 'textDocument/selectionRange' support of language server.
+" nmap <silent> <C-s> <Plug>(coc-range-select)
+" xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call CocAction('format')
+
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer.
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support.
+" NOTE: Please see `:h coc-status` for integrations with external plugins that
+" provide custom statusline: lightline.vim, vim-airline.
+" set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" Mappings for CoCList
+" Show all diagnostics.
+nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions.
+nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+" Show commands.
+nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document.
+nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols.
+nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list.
+nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+""deoplete
+"let g:deoplete#enable_at_startup = 1
+"
+""neocomplcache settings
+"call deoplete#custom#option('camel_case', v:true)
+"call deoplete#custom#option('smartcase', v:false)
+"
+"let g:deoplete#omni_patterns = {}
+"call deoplete#custom#option('omni_patterns', {
+"\ 'complete_method': 'omnifunc',
+"\ 'terraform': '[^ *\t"{=$]\w*',
+"\})
+"
+"let g:deoplete#sources#rust#racer_binary = $HOME . "/.cargo/bin/racer"
+"let g:deoplete#sources#rust#rust_source_path = $HOME . "/git/github.com/rust-lang/rust"
+"
+""lsp
+"if executable('terraform-lsp')
+"    au User lsp_setup call lsp#register_server({
+"        \ 'name': 'terraform-ls',
+"        \ 'cmd': {server_info->['terraform-ls']},
+"        \ 'whitelist': ['terraform'],
+"        \ })
+"endif
+"if executable('gopls')
+"    au User lsp_setup call lsp#register_server({
+"        \ 'name': 'gopls',
+"        \ 'cmd': {server_info->['gopls']},
+"        \ 'whitelist': ['go'],
+"        \ })
+"endif
 
 
 "push C-a to toggle spell check
