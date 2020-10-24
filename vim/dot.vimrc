@@ -238,6 +238,11 @@ noremap g# g#zzzv
 
 set pumheight=10
 set clipboard=unnamed
+if has('nvim')
+  " Save only the last register
+  set shada=!,'100,<1,s10,h
+endif
+
 
 " folding {{{
 set foldenable
