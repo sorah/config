@@ -468,6 +468,10 @@ yaml2json() {
 alias emacs='vim'
 alias vim='nvim'
 
+timecurl() {
+  curl -w "@$HOME/git/config/etc/curl-timing.txt" "$@"
+}
+
 if ! which apt-get >/dev/null 2>/dev/null; then
   sorah-docker-ensure() {
     if [[ -z "$(docker image ls -q $1)" ]]; then
