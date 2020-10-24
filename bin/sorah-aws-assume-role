@@ -54,7 +54,7 @@ ENV['AWS_SESSION_TOKEN'] = credentials.session_token
 ENV['AWS_DEFAULT_REGION'] ||= 'ap-northeast-1'
 ENV['AWS_REGION'] ||= 'ap-northeast-1'
 
-ENV['SORAH_PROMPT_HOSTNAME'] = arn.split(?/).last
+ENV['SORAH_PROMPT_HOSTNAME'] ||= arn.split(?/).last
 ENV.delete 'EXPIRES_IN'
 
 if ARGV.empty?
