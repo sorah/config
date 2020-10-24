@@ -107,7 +107,7 @@ export PATH=~/local/opt/packer:$PATH
 export PATH=~/local/opt/go/bin:$PATH
 # export PATH="/usr/local/heroku/bin:$PATH"
 
-export RUST_SRC_PATH=$HOME/git/github.com/rust-lang/rust/src
+export RUST_SRC_PATH=$(rustc --print sysroot 2>/dev/null)/lib/rustlib/src/rust/src
 
 # Other env-vars
 export LESS='-R'
