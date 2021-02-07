@@ -162,7 +162,7 @@ target_changes = ARGV.map do |change_path|
   arch = change_fields['Architecture'][0].split(/\s+/).grep_v('source').first
 
   case
-  when /^ruby2\.\d+$/ === package_name
+  when /^ruby[23]\.\d+$/ === package_name
     repo_name = "ruby"
   else
     repo_name = package_name
@@ -280,7 +280,7 @@ end.each do |tag, changes|
       if changes.size == 1
         name = File.basename(file)
       else
-        name = "#{change.change_arch}--#{File.basename(file)}"
+        name = File.basename(file) #"#{change.change_arch}--#{File.basename(file)}"
       end
 
       deb_files << DebFile.new(
