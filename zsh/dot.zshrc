@@ -104,10 +104,11 @@ export PATH=~/.gopath/bin:$PATH
 # export PATH=~/local/opt/heroku/bin:$PATH
 export PATH=~/local/opt/google-cloud-sdk/bin:$PATH
 export PATH=~/local/opt/packer:$PATH
+export PATH=~/local/opt/istio/bin:$PATH
 export PATH=~/local/opt/go/bin:$PATH
 # export PATH="/usr/local/heroku/bin:$PATH"
 
-export RUST_SRC_PATH=$(rustc --print sysroot 2>/dev/null)/lib/rustlib/src/rust/src
+#export RUST_SRC_PATH=$(rustc --print sysroot 2>/dev/null)/lib/rustlib/src/rust/src
 
 # Other env-vars
 export LESS='-R'
@@ -461,6 +462,23 @@ cop() {
 yaml2json() {
   ruby -ryaml -rjson -e 'YAML.load_stream($stdin) {|_| puts _.to_json }' | jq .
 }
+
+yaml2jsona() {
+  ruby -ryaml -rjson -e 'a = []; YAML.load_stream($stdin) {|_| a << _ }; puts a.to_json' | jq .
+}
+
+jl() {
+  jq --color-output "$@" | less -R
+}
+yl() {
+  yaml2json | jl "$@"
+}
+
+alias k=kubectl
+if which kubectl >/dev/null 2>/dev/null; then
+  source <(kubectl completion zsh)
+  complete -F __start_kubectl k
+fi
 
 #====================
 # powerup your emacs

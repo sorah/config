@@ -1,0 +1,2 @@
+#!/bin/bash
+ruby -ryaml -rjson -e 'YAML.load_stream($stdin) {|_| puts _.to_json }' | jq .
