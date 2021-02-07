@@ -4,3 +4,4 @@ ruby2.6 --arch=amd64       --dist=dist/2.6 --master=master-2.6        xenial bio
 ruby2.6 --arch=arm64       --dist=dist/2.6 --master=master-2.6               bionic focal         buster
 ruby2.7 --arch=amd64,arm64 --dist=dist/2.7                                   bionic focal         buster
 envchain --arch=amd64,arm64 bionic focal buster
+subsystemctl --arch=amd64,arm64 focal
