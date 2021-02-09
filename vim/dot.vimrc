@@ -83,10 +83,10 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('hashivim/vim-terraform')
   call dein#add('HerringtonDarkholme/yats.vim')
   call dein#add('kevinoid/vim-jsonc')
+  call dein#add('PProvost/vim-ps1')
 
   if has('nvim')
-    call dein#add('mhartington/nvim-typescript', { 'build' : './install.sh' })
-
+    "call dein#add('mhartington/nvim-typescript', { 'build' : './install.sh' })
     call dein#add('neoclide/coc.nvim', { 'rev': 'release' })
   endif
 
