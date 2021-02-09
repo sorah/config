@@ -15,7 +15,7 @@ config = File.read(File.expand_path('~/git/config/etc/debian-packages.txt'))
       lines.flat_map do |(_s, options)|
        args, distros = options.partition { |_| _.start_with?('--') }
        args = args.map { |_| _.match(/^--(.+?)(?:=(.+))?$/) }.compact.map { |_| [_[1].to_sym, _[2]] }.to_h
-       distros.map do |distro|
+       distros.reverse.map do |distro|
          BuildOption.new(**args.merge(distro: distro))
        end
       end
