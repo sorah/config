@@ -493,30 +493,34 @@ timecurl() {
   curl -w "@$HOME/git/config/etc/curl-timing.txt" "$@"
 }
 
-if ! which apt-get >/dev/null 2>/dev/null; then
-  sorah-docker-ensure() {
-    if [[ -z "$(docker image ls -q $1)" ]]; then
-      docker build -t $1 -f ~/git/config/docker/Dockerfile.$1 ~/git/config/docker
-    else
-      echo "(to update, run: docker image rm $1)"
-    fi
-    tag=$1
+sorah-docker-ensure() {
+  if [[ -z "$(docker image ls -q $1)" ]]; then
+    docker build -t $1 -f ~/git/config/docker/Dockerfile.$1 ~/git/config/docker
+  else
+    echo "(to update, run: docker image rm $1)"
+  fi
+  tag=$1
+  shift
+  if [[ "_$1" = "__" ]]; then
     shift
-    if [[ "_$1" = "__" ]]; then
-      shift
-      docker run --rm "$@"
-    else
-      docker run --rm "${tag}" "$@"
-    fi
-  }
+    docker run --rm "$@"
+  else
+    docker run --rm "${tag}" "$@"
+  fi
+}
 
+if ! which apt-get >/dev/null 2>/dev/null; then
   alias apt='sorah-docker-ensure eix-ubuntu apt'
   alias apt-get='sorah-docker-ensure eix-ubuntu apt-get'
   alias apt-cache='sorah-docker-ensure eix-ubuntu apt-cache'
+fi
+if ! which gbp >/dev/null 2>/dev/null; then
   gbp() {
     reponame=$(basename "${PWD}")
     sorah-docker-ensure gbp _ -ti --net=host -u $(id -u):$(id -g) -e HOME=/home/sorah -v "${HOME}/.gitconfig:/home/sorah/.gitconfig:ro" -v "$(realpath ${PWD}/../):/git" -w /git/${reponame} gbp gbp "$@"
   }
+fi
+if ! which dch >/dev/null 2>/dev/null; then
   sorah-devscripts() {
     reponame=$(basename "${PWD}")
     sorah-docker-ensure devscripts _ -ti --net=host -u $(id -u):$(id -g) -e HOME=/home/sorah -v "$(realpath ${PWD}/../):/git" -w /git/${reponame} devscripts "$@"
