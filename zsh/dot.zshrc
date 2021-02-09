@@ -114,6 +114,8 @@ export PATH=~/local/opt/go/bin:$PATH
 # Other env-vars
 export LESS='-R'
 
+alias utc='TZ=Etc/UTC date'
+
 # server aliases
 alias menheler="tmux new-window -n menheler 'ssh menheler.pasra.tk'"
 
