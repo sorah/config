@@ -33,8 +33,8 @@ font pango:OpenSans 8
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
-bindsym $mod+Shift+Return exec urxvt -e bash
+bindsym $mod+Return exec env TERMINAL=alacritty i3-sensible-terminal
+bindsym $mod+Shift+Return exec alacritty -e bash
 
 # kill focused window
 bindsym $mod+Shift+q kill
