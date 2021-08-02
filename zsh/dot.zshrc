@@ -467,7 +467,7 @@ cop() {
     range="${base}...HEAD"
   fi
   echo "${range}"
-  git diff --name-only "${range}" -- '*.rb' | xargs rubocop --auto-correct   
+  git diff --name-only "${range}" -- '*.rb' | xargs bundle exec rubocop --auto-correct   
 }
 
 yaml2json() {
