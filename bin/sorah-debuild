@@ -107,7 +107,6 @@ docker run \
   --interactive \
   --volume "${here}/debian:/debian:ro" \
   --volume "${here}/${out_dir}:/output" \
-  --volume "${gpg_agent_socket}:/home/buildbot/.gnupg/S.gpg-agent" \
   --volume "${cmds}:/run.sh:ro" \
   --volume "${bootstrap_cmds}:/bootstrap.sh:ro" \
   -e DEBSIGN_KEYID \
