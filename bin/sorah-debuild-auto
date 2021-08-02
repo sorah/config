@@ -28,7 +28,7 @@ build_options = config.fetch(source)
 # def system(*a); p a; end
 
 pp build_options
-sleep 1
+sleep 3
 
 build_options.each do |opt|
   if opt.dist

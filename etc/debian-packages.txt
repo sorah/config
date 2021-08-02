@@ -1,8 +1,7 @@
 ruby2.4 --arch=amd64       --dist=dist/2.4 --master=master-2.4 trusty xenial
-ruby2.5 --arch=amd64       --dist=dist/2.5 --master=master-2.5 trusty xenial bionic       stretch
-ruby2.6 --arch=amd64       --dist=dist/2.6 --master=master-2.6        xenial bionic focal stretch buster
-ruby2.6 --arch=arm64       --dist=dist/2.6 --master=master-2.6               bionic focal         buster
-ruby2.7 --arch=amd64,arm64 --dist=dist/2.7                                   bionic focal         buster
+ruby2.5 --arch=amd64       --dist=dist/2.5 --master=master-2.5 trusty xenial bionic
+ruby2.6 --arch=amd64       --dist=dist/2.6 --master=master-2.6        xenial bionic focal         buster
+ruby2.7 --arch=amd64,arm64 --dist=dist/2.7 --master=master-2.7               bionic focal         buster
 ruby3.0 --arch=amd64,arm64 --dist=dist/3.0                                   bionic focal         buster
 ruby-defaults --arch=amd64,arm64                                             bionic focal         buster
 envchain --arch=amd64,arm64 bionic focal buster
