@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+require 'resolv'
+require 'ipaddr'
+
+dns = Resolv::DNS.new
+ip = IPAddr.new(ARGV[0], ARGV[0].include?(':') ? Socket::AF_INET6 : Socket::AF_INET)
+reverse = ip.reverse.sub(/\.(?:in-addr\.arpa|ip6\.int|ip6\.arpa)\z/, '')
+
+dns.getresource("#{reverse}.origin#{ip.ipv6? ? '6' : nil}.asn.cymru.com", Resolv::DNS::Resource::IN::TXT).strings.each do |origin_as|
+  asn = origin_as.split(' ').first
+  ass = dns.getresource("AS#{asn}.asn.cymru.com", Resolv::DNS::Resource::IN::TXT).strings
+  ass.each do |as|
+    puts "#{as} / #{origin_as}"
+  end
+end
