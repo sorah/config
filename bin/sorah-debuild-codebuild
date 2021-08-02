@@ -35,9 +35,9 @@ image, upstream_version = argv[0,2]
 unless image.include?(':')
   repo = case image
          when 'stretch', 'buster'
-           'debian'
+           'mirror.gcr.io/library/debian'
           else
-           'ubuntu'
+           'public.ecr.aws/ubuntu/ubuntu'
          end
   image = "#{repo}:#{image}"
 end
