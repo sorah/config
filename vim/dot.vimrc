@@ -516,10 +516,6 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 "push C-a to toggle spell check
 nnoremap <silent> <C-a> :setl spell!<Return>
 
-nnoremap ] :<C-u>set transparency=
-noremap <Up> :<C-u>set transparency+=5<Cr>
-noremap <Down> :<C-u>set transparency-=5<Cr>
-
 "key-mapping for edit vimrc
 nnoremap <silent> <Space>ev  :<C-u>tabedit $MYVIMRC<CR>
 nnoremap <silent> <Space>ee  :<C-u>edit $MYVIMRC<CR>
