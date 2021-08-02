@@ -400,6 +400,14 @@ set-git-author-private() {
   git config user.email 'her@sorah.jp'
 }
 
+main() {
+  local default
+  default="$(git symbolic-ref refs/remotes/origin/HEAD | sed -e 's|^.\+/||')"
+  echo "${default}"
+  git checkout "$@" "${default}"
+}
+alias master=main
+
 ### aws
 
 if [ "$(uname)" = "Darwin" ]; then
