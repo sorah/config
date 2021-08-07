@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'base64'
 require 'openssl'
 require 'json'
 
@@ -28,8 +29,8 @@ jwk = {
   kty: 'EC',
   crv: crv,
   kid: "",
-  x: [OpenSSL::BN.new([hex_x].pack('H*'), 2).to_s(2)].pack('m0').gsub(/\n|=/, ''),
-  y: [OpenSSL::BN.new([hex_y].pack('H*'), 2).to_s(2)].pack('m0').gsub(/\n|=/, ''),
+  x: Base64.urlsafe_encode64(OpenSSL::BN.new([hex_x].pack('H*'), 2).to_s(2)).gsub(/\n|=/, ''),
+  y: Base64.urlsafe_encode64(OpenSSL::BN.new([hex_y].pack('H*'), 2).to_s(2)).gsub(/\n|=/, ''),
 }.to_json
 
 puts jwk

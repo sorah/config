@@ -5,17 +5,20 @@ require 'ipaddr'
 @whois = Whois::Server::Adapters::Standard.new(nil, nil, "whois.radb.net")
 
 def as_set_members(query)
+  warn "as_set_members(#{query.inspect})"
   resp = @whois.lookup("-T as-set #{query}")
   resp.to_s.gsub(/\r?\n\s+/, ' ').each_line.grep(/^members:/).flat_map { |_| _.chomp.gsub(/^members:\s*/, '').split(/,\s*|\s+/) }
 end
 
 def as_set_asns(query, skip: [])
   return [] if skip.include?(query)
+  warn "as_set_asns(#{query.inspect})"
   as_sets, asns = as_set_members(query).partition { |_| _.start_with?('AS-') }
-  (asns + as_sets.map { |_| as_set_asns(_, skip: skip+asns) }).flatten.uniq
+  (asns + as_sets.map { |_| as_set_asns(_, skip: [query,*skip,*asns]) }).flatten.uniq
 end
 
 def as_routes(origin, family: nil)
+  #warn "as_routes(#{origin})"
   resp = @whois.lookup("-i origin #{origin}")
   resp.parts.flat_map do |part|
     part.body.each_line.grep(/^route6?:\s*/)
@@ -33,7 +36,7 @@ family = Socket::AF_INET6 if ARGV.delete('-6')
 
 asns = as_set_asns(ARGV[0])
 
-puts "define AS_SET_ROUTES_#{ARGV[0].gsub(/^AS-/,'')} = ["
+puts "define AS_SET_ROUTES_#{ARGV[0].gsub(/^AS-/,'').gsub(/-/,'_')} = ["
 asns.each do |asn|
   puts "  /* #{asn} */"
   as_routes(asn, family: family).each do |(prefix, prefixlen)|
