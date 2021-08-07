@@ -16,7 +16,7 @@ inspector_instance = instances.find { |_| _.instance_id == inspector_id }
 
 unless vol_id
   dev = target_instance.block_device_mappings.find { |_| _.device_name == '/dev/sda1' } ||
-        inspector_instance.block_device_mappings.find { |_| _.device_name == '/dev/sdf' }
+        inspector_instance.block_device_mappings.find { |_| _.device_name == '/dev/xvdf' }
   vol_id = dev.ebs.volume_id
 end
 
@@ -79,7 +79,7 @@ when :attached_to_target # move to inspector
   puts "=> Attaching to the inspector"
 
   puts
-  p ec2.attach_volume(volume_id: vol_id, instance_id: inspector_instance.instance_id, device: '/dev/sdf')
+  p ec2.attach_volume(volume_id: vol_id, instance_id: inspector_instance.instance_id, device: '/dev/xvdf')
   puts
 
   until vol.state == 'in-use'
