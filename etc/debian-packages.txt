@@ -6,3 +6,4 @@ ruby3.0 --arch=amd64,arm64 --dist=dist/3.0                                   bio
 ruby-defaults --arch=amd64,arm64                                             bionic focal         buster
 envchain --arch=amd64,arm64 bionic focal buster
 subsystemctl --arch=amd64,arm64 focal
+mitamae --arch=amd64,arm64 bionic focal buster
