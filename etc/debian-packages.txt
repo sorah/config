@@ -1,9 +1,11 @@
 ruby2.4 --arch=amd64       --dist=dist/2.4 --master=master-2.4 trusty xenial
 ruby2.5 --arch=amd64       --dist=dist/2.5 --master=master-2.5 trusty xenial bionic
-ruby2.6 --arch=amd64       --dist=dist/2.6 --master=master-2.6        xenial bionic focal         buster
-ruby2.7 --arch=amd64,arm64 --dist=dist/2.7 --master=master-2.7               bionic focal         buster
-ruby3.0 --arch=amd64,arm64 --dist=dist/3.0                                   bionic focal         buster
-ruby-defaults --arch=amd64,arm64                                             bionic focal         buster
-envchain --arch=amd64,arm64 bionic focal buster
-subsystemctl --arch=amd64,arm64 focal
-mitamae --arch=amd64,arm64 bionic focal buster
+ruby2.6 --arch=amd64       --dist=dist/2.6 --master=master-2.6        xenial bionic focal   buster
+ruby2.7 --arch=amd64,arm64 --dist=dist/2.7 --master=master-2.7               bionic focal   buster bullseye
+ruby3.0 --arch=amd64,arm64 --dist=dist/3.0 --master=master-3.0               bionic focal   buster bullseye
+ruby3.1 --arch=amd64,arm64 --dist=dist/3.1                                   bionic focal          bullseye
+ruby-defaults --arch=amd64,arm64                                             bionic focal          bullseye
+rubygems-integration --arch=amd64                                            bionic focal          bullseye
+envchain --arch=amd64,arm64 bionic focal buster bullseye
+subsystemctl --arch=amd64,arm64 focal bullseye
+mitamae --arch=amd64,arm64 bionic focal buster bullseye
