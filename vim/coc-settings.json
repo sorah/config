@@ -5,5 +5,6 @@
       "filetypes": ["terraform"],
       "initializationOptions": {}
     }
-  }
+  },
+  "coc.preferences.formatOnSaveFiletypes": ["typescript", "typescriptreact", "javascript", "javascriptreact"]
 }
