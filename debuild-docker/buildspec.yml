@@ -16,8 +16,9 @@ phases:
       # https://github.com/moby/moby/issues/35954
       - "( sed -e '/^::1/d' /etc/hosts > /etc/hosts2 && cp /etc/hosts2 /etc/hosts ) || :"
 
-      # Allow use of debhelper-compat 12 in backport
-      - 'if grep -q bionic /etc/apt/sources.list; then printf "Package: debhelper\nPin: release a=bionic-backports\nPin-Priority: 500\n" | tee -a /etc/apt/preferences; fi'
+      # Allow use of debhelper-compat 13 in backport
+      - 'if grep -q bionic /etc/apt/sources.list; then printf "Package: debhelper libdebhelper-perl dh-autoreconf dwz\nPin: release a=bionic-backports\nPin-Priority: 500\n\n" | tee -a /etc/apt/preferences; fi'
+      - 'if grep -q focal /etc/apt/sources.list; then printf "Package: debhelper libdebhelper-perl\nPin: release a=focal-backports\nPin-Priority: 500\n\n" | tee -a /etc/apt/preferences; fi'
 
       - apt-get update
       - apt-get install -y --no-install-recommends tzdata debhelper dh-make devscripts gnupg2 equivs lsb-release sudo
