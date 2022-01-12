@@ -2,7 +2,17 @@
 require 'shellwords'
 ARCH = ENV['ARCH'] || 'amd64'
 ARCH_FILTER = ENV['ARCH_FILTER']&.split(/,\s*/)
+DIST_FILTER = ENV['DIST_FILTER']&.split(/,\s*/)
 NO_MERGE = ENV['NO_MERGE']
+CHECK = ENV['CHECK']
+
+def debian_version(dist)
+  line = File.open("debian/changelog", "r", &:gets)
+  [
+    line.split(' ',2)[0],
+    line.match(/\((.+?)\)/)[1].sub(/~dist/, "~#{dist}").gsub(/\.(?=\.|$|lock$)/, ".#"),
+  ]
+end
 
 BuildOption = Struct.new(:distro, :arch, :dist, :master, keyword_init: true)
 config = File.read(File.expand_path('~/git/config/etc/debian-packages.txt'))
@@ -30,7 +40,11 @@ build_options = config.fetch(source)
 pp build_options
 sleep 3
 
+change_files = []
+
 build_options.each do |opt|
+  next if DIST_FILTER && !DIST_FILTER.include?(opt.distro)
+
   if opt.dist
     master = opt.master || 'master'
     system("git", "checkout", "#{opt.dist}/#{opt.distro}", exception: true)
@@ -40,11 +54,20 @@ build_options.each do |opt|
     end
   end
 
+  debname, debver = debian_version(opt.distro)
+
   archs = (opt.arch || ARCH).split(?,)
   archs.each do |arch|
     next if ARCH_FILTER && !ARCH_FILTER.include?(arch)
 
     puts "===> #{opt.inspect} @ #{arch}"
+
+    change_file = "debian/out/#{debname}_#{debver}_#{arch}.changes"
+    change_files << change_file
+    if File.exist?(change_file)
+      puts "skip (#{change_file})"
+      next
+    end
 
     cmd = case arch
     when ARCH
@@ -56,7 +79,7 @@ build_options.each do |opt|
     end
     puts "$ #{cmd.shelljoin}"
 
-    res = system(*cmd)
+    res = CHECK ? true : system(*cmd)
 
     unless res
       warn "!!!!!!!!!!!!!!!!! #{opt.inspect}; failed at #{opt.distro} @ #{arch}: #{cmd.shelljoin}"
@@ -64,4 +87,15 @@ build_options.each do |opt|
       $stdin.gets
     end
   end
+end
+
+if CHECK
+  puts "-------- check -------"
+  ok = true
+  change_files.each do |f|
+    e = File.exist?(f)
+    puts "* #{f} #{e ? '[ ok ]' : '[ MISSING ]'}"
+    ok &&= e
+  end
+  exit 1 unless ok
 end
