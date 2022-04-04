@@ -75,93 +75,17 @@ if [ "_$arch" = "_mac" ]; then
     brew install tmux
   fi
 
-  if ! which autossh 2>/dev/null; then
-    brew install autossh
-  fi
-
-  if ! which wget 2>/dev/null; then
-    brew install wget
-  fi
-
-  if ! which pyenv 2>/dev/null; then
-    brew install pyenv
-    pyenv install 2.7.11
-    pyenv global 2.7.11
-  fi
-
   if ! which gpg 2>/dev/null; then
     brew install gnupg2
     brew install pinentry-mac
   fi
 
-  eval "$(pyenv init -)"
+  #  pip install awscli
+  #  pyenv rehash
 
-  if ! which percol; then
-    pip install percol
-    pyenv rehash
-  fi
-
-  if ! which aws; then
-    pip install awscli
-    pyenv rehash
-  fi
-
-  if ! which aws-shell; then
-    pip install aws-shell
-    pyenv rehash
-  fi
-
-  if ! which circusd; then
-    pip install circus
-    pyenv rehash
-  fi
-
-  if [ ! -d ~/.nginx ]; then
-    mkdir ~/.nginx
-  fi
-
-  if ! which nginx; then
-    brew tap homebrew/nginx
-    brew install --devel nginx-full --with-auth-req --with-dav-ext-module --with-geoip --with-gunzip --with-gzip-static --with-headers-more-module --with-lua-module --with-mp4 --with-mp4-h264-module --with-pcre-jit --with-push-stream-module --with-realip --with-rtmp-module --with-spdy --with-status --with-sub --with-webdav
-  fi
-
-  if [ ! -e $(brew --prefix)/bin/ssh ]; then
-    brew install homebrew/dupes/openssh
-  fi
-
-  reload_launchd_nginx=0
-  if [[ ! -d /etc/nginx ]]; then
-    sudo mkdir /etc/nginx
-  fi
-  if [[ ! -e /etc/nginx/mime.types ]]; then
-    sudo cp $(brew --prefix)/etc/nginx/mime.types /etc/nginx/mime.types
-    reload_launchd_nginx=1
-  fi
-  if [[ ! -e /etc/nginx.conf ]] || [[ nginx/local.80.conf -nt /etc/nginx.conf ]]; then
-    sudo cp nginx/local.80.conf /etc/nginx.conf
-    sudo chown root:wheel /etc/nginx.conf
-    sudo chmod 644 /etc/nginx.conf
-    reload_launchd_nginx=1
-  fi
-  if [[ ! -e /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist ]] || [[ nginx/jp.sorah.launchagent.nginx.plist -nt /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist ]]; then
-    sudo cp nginx/jp.sorah.launchagent.nginx.plist /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist
-    sudo chown root:wheel /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist
-    sudo chmod 644 /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist
-    reload_launchd_nginx=1
-  fi
-  if [ "_${reload_launchd_nginx}" = "_1" ]; then
-    sudo launchctl unload -w /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist || :
-    sudo launchctl load -w /Library/LaunchDaemons/jp.sorah.launchagent.nginx.plist
-  fi
-
-  ln -sf `pwd`/circus/circus.ini ~/.circus.ini
-  if [ ! -d ~/.circus ]; then
-    mkdir ~/.circus
-  fi
-  for x in `pwd`/circus/*.ini; do
-    [ "${x##*/}" = "circus.ini" ] && continue
-    ln -sf $x ~/.circus/
-  done
+  #if [ ! -e $(brew --prefix)/bin/ssh ]; then
+  #  brew install homebrew/dupes/openssh
+  #fi
 fi
 
 if [[ "_$arch" = "_arch" ]]; then
