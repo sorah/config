@@ -110,6 +110,7 @@ let g:coc_global_extensions = [
   \   "coc-tag",
   \   "coc-tsserver",
   \   "coc-word",
+  \   "coc-prettier",
   \ ]
 
 filetype on
