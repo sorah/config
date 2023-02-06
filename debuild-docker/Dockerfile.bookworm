@@ -1,5 +1,5 @@
 # See also: https://github.com/sorah/config/blob/master/bin/sorah-debuild
-FROM public.ecr.aws/debian/debian:bullseye
+FROM public.ecr.aws/debian/debian:bookworm
 
 # just to invalidate cache
 ARG BUILDDATE=99999999

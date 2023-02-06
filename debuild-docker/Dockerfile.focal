@@ -1,5 +1,5 @@
 # See also: https://github.com/sorah/config/blob/master/bin/sorah-debuild
-FROM ubuntu:20.04
+FROM public.ecr.aws/ubuntu/ubuntu:20.04
 
 # just to invalidate cache
 ARG BUILDDATE=99999999

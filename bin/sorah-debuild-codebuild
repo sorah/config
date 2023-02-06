@@ -34,10 +34,12 @@ image, upstream_version = argv[0,2]
 
 unless image.include?(':')
   repo = case image
-         when 'stretch', 'buster', 'bullseye'
-           'mirror.gcr.io/library/debian'
-          else
+         when 'stretch', 'buster', 'bullseye', 'bookworm'
+           'public.ecr.aws/debian/debian'
+         when 'trusty', 'xenial', 'bionic', 'focal', 'jammy'
            'public.ecr.aws/ubuntu/ubuntu'
+         else
+           raise "Unknown shorthand to determine Docker image repository: #{image}"
          end
   image = "#{repo}:#{image}"
 end
