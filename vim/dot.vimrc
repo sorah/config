@@ -85,6 +85,7 @@ if dein#load_state('~/.vim-dein/state')
   call dein#add('PProvost/vim-ps1')
   call dein#add('cespare/vim-toml')
   call dein#add('momota/junos.vim')
+  call dein#add('vim-scripts/Bird-Syntax')
 
   if has('nvim')
     "call dein#add('mhartington/nvim-typescript', { 'build' : './install.sh' })
