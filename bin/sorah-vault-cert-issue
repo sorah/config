@@ -44,5 +44,4 @@ File.rename("#{key_file}.new", key_file)
 end
 
 puts "serial=#{data.fetch(:serial_number)}"
-
-
+puts Dir["#{Dir.pwd}/*"]
