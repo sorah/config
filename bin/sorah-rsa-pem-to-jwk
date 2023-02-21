@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+require 'base64'
+require 'openssl'
+require 'json'
+
+data = ARGF.read.yield_self{ |_| _.start_with?('-----') ? _ : _.unpack1('m*') }
+key = OpenSSL::PKey::RSA.new(data, '')
+
+# https://cs.github.com/kubernetes/kubernetes/blob/4dba52cdf4684ad47ee55e5bf251d742f39f11a3/pkg/serviceaccount/jwt.go#L98
+kid = Base64.urlsafe_encode64(OpenSSL::Digest.digest('sha256', key.to_der)).gsub(/=+$/,'')
+
+jwk = {
+  use: "sig",
+  kty: 'RSA',
+  kid: kid,
+  n: Base64.urlsafe_encode64(key.n.to_s(2)).gsub(/=+/,''),
+  e: Base64.urlsafe_encode64(key.e.to_s(2)).gsub(/=+/,''),
+}.to_json
+
+puts jwk
