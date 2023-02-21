@@ -491,6 +491,8 @@ if which kubectl >/dev/null 2>/dev/null; then
   complete -F __start_kubectl k
 fi
 
+alias tf=terraform
+
 #====================
 # powerup your emacs
 #====================
