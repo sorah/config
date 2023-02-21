@@ -145,11 +145,11 @@ when 'nkmi-arch'
 when 'isuxf-ci'
   ec2.images(owners: %w(self), filters: [name: 'name', values: %w(isucon10f-amd64-ci-*)]).sort_by {|_| Time.parse(_.creation_date) }.last
 when /\Aubuntu-(.+)/
-  image_id = open("https://cloud-images.ubuntu.com/query/#{$1}/server/released.current.txt",&:read).each_line.lazy.map { |_|
+  image_id = URI.open("https://cloud-images.ubuntu.com/query/#{$1}/server/released.current.txt",&:read).each_line.lazy.map { |_|
     name,_,_,release,type,arch,iregion,image_id,_,_,vt = _.chomp.split(?\t)
     {name: name, release: release, type: type, arch: arch, region: iregion, image_id: image_id, virtualization_type: vt}
   }.find { |release|
-    release[:name] == $1 && release[:region] == region && release[:virtualization_type] == 'hvm' && release[:type] == 'ebs-ssd'
+    release[:name] == $1 && release[:region] == region && release[:virtualization_type] == 'hvm' && release[:type] == 'ebs-ssd' && release[:arch] == 'amd64'
   }[:image_id]
   ec2.image(image_id)
 #when /\A{/
