@@ -1,0 +1,32 @@
+#!/usr/bin/ruby
+# https://wiki.debian.org/Teams/RustPackaging/Policy
+# The main binary package must also ship a .cargo-checksum.json file in that directory. This file must include a key "package", whose value provides the SHA256 checksum of the corresponding upstream .crate file, as an ASCII hex lowercase string. This file must also include a key "files", with either the value {}, or a value providing checksums of the source files in the package in the format expected for a Cargo directory registry. dh-cargo expects the source package to contain this file as debian/cargo-checksum.json.
+
+require 'fileutils'
+require 'digest/sha2'
+require 'json'
+
+crate,version = ARGV[0,2]
+unless crate && version
+  abort "Usage: #$0 crate_name version"
+end
+
+workdir =  "/tmp/cargocksum-#{crate}-#{version}"
+FileUtils.mkdir_p File.join(workdir, "pkg")
+Dir.chdir workdir
+
+system "curl", "-LSsf", "-o", "./crate.tar.gz", "https://crates.io/api/v1/crates/#{crate}/#{version}/download", exception: true
+system "tar", "xf", "crate.tar.gz", "-C", "pkg", "--strip-components", "1", exception: true
+
+out = {
+  files: Dir["./pkg/**/*"].map do |path|
+    if File.file?(path)
+      [path.sub(%r{^./pkg/}, ''), Digest::SHA2.file(path)]
+    else
+      nil
+    end
+  end.compact.sort_by(&:first).to_h,
+  package: Digest::SHA2.file('crate.tar.gz'),
+}
+
+puts JSON.pretty_generate(out)
