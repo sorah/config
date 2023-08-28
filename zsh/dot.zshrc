@@ -81,6 +81,10 @@ rbenv_uninit_path=$PATH
 eval "$(rbenv init --no-rehash -)"
 export PATH=$rbenv_uninit_path
 
+if [[ -e /opt/asdf-vm/asdf.sh ]]; then
+  . /opt/asdf-vm/asdf.sh
+fi
+
 export PATH=~/.cargo/bin:$PATH
 
 export PATH=~/.plenv/bin:$PATH
