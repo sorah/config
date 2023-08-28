@@ -8,9 +8,11 @@ unless pki && role && name && cn
   abort "usage: #$0 pki role localname cn"
 end
 
-FileUtils.mkdir_p '/dev/shm/sorah/vault-cert'
-File.chmod 0700, '/dev/shm/sorah/vault-cert'
-Dir.chdir '/dev/shm/sorah/vault-cert'
+outdir = File.join(File.exist?('/dev/shm') ? "/dev/shm" : "/tmp", "#{ENV.fetch('USER') { Process.euid.to_s }}", 'vault-cert')
+
+FileUtils.mkdir_p outdir
+File.chmod 0700, outdir
+Dir.chdir outdir
 
 args = ["#{pki}/issue/#{role}"]
 args << "common_name=#{cn}"
