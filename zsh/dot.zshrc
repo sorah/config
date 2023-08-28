@@ -267,7 +267,8 @@ sorah-compact-off() {
   SORAH_COMPACT=0
 }
 
-autoload -U compinit; compinit
+autoload -U +X bashcompinit && bashcompinit
+autoload -U +X compinit && compinit
 setopt auto_pushd
 setopt ALWAYS_TO_END
 setopt AUTO_LIST
