@@ -24,6 +24,7 @@ else
   $conf --enable-shared \
         --with-out-ext=tk,tk/* \
         --with-valgrind \
+        --enable-yjit=stats \
         "$@" \
         optflags="${optflags}" \
         debugflags="${debugflags}"
