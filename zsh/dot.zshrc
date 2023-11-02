@@ -68,7 +68,7 @@ export PATH=$HOME/git/config/bin:$PATH
 export PATH=/usr/local/bin:$PATH
 export PATH=/usr/local/share/npm/bin:$PATH
 export PATH="$HOME/.yarn/bin:$PATH"
-export PATH=/usr/share/nodebrew/current/bin:$HOME/.nodebrew/current/bin:$PATH
+#export PATH=/usr/share/nodebrew/current/bin:$HOME/.nodebrew/current/bin:$PATH
 alias npm-exec='PATH=$(npm bin):$PATH'
 alias ne='PATH=$(npm bin):$PATH'
 
