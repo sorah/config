@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+require 'aws-sdk-ecrpublic'
+
+@ecr = Aws::ECRPublic::Client.new(region: 'us-east-1')
+
+dry_run = ARGV.delete('--dry-run')
+repository_name = ARGV[0] or abort "usage #$0 REPOSITORY"
+
+@ecr.describe_images(repository_name:).each do |page|
+  image_ids = page.image_details.filter_map do |i|
+    if i.image_tags && !i.image_tags.empty?
+      nil
+    else
+      p i
+      {
+        image_digest: i.image_digest
+      }
+    end
+  end
+
+  unless dry_run
+    @ecr.batch_delete_image(
+      repository_name:,
+      image_ids:,
+    )
+  end
+end
