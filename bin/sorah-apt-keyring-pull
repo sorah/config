@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+# This script helps retrieving key from ubuntu keyserver and dearmor for signed-by usage.
+
+require 'open-uri'
+require 'fileutils'
+require 'open3'
+
+force = ARGV.delete('--force')
+abort "aborting because stdout is tty (or ignore with --force)" if !force && $stdout.tty?
+
+keyid = ARGV[0]
+abort "Usage: #{$0} keyid\ne.g. #{$0} 6DC3636DAE534049C8B94623A122542AB04F24E3" unless keyid
+
+url = keyid.start_with?('https://') ? keyid : "https://keyserver.ubuntu.com/pks/lookup?search=0x#{keyid}&exact=on&options=mr&op=get"
+armored = URI.open(url, 'r', &:read)
+dearmored, status = Open3.capture2("gpg", "--dearmor", stdin_data: armored)
+raise unless status.success?
+
+$stdout.write dearmored
