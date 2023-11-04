@@ -12,3 +12,4 @@ subsystemctl --arch=amd64,arm64 focal bullseye
 mitamae --arch=amd64,arm64 bionic focal jammy buster bullseye bookworm
 prometheus-exporter-proxy --arch=amd64,arm64 focal jammy
 cfssl --arch=amd64,arm64 jammy
+needroleshere --arch=amd64,arm64 focal jammy
