@@ -25,9 +25,6 @@ Plug 'mattn/webapi-vim'
 Plug 'tpope/vim-rails'
 Plug 'plasticboy/vim-markdown'
 Plug 'thinca/vim-quickrun'
-Plug 'ujihisa/unite-gem'
-Plug 'Shougo/unite-outline'
-Plug 'Shougo/unite.vim'
 Plug 'kchmck/vim-coffee-script'
 Plug 'kana/vim-metarw'
 Plug 'kana/vim-metarw-git'
@@ -37,7 +34,6 @@ Plug 'Shougo/vimproc', { 'build': 'make' }
 Plug 'godlygeek/csapprox'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'tpope/vim-haml'
-Plug 'taka84u9/unite-git'
 Plug 'thinca/vim-scouter'
 Plug 'altercation/vim-colors-solarized'
 Plug 'tyru/eskk.vim'
@@ -54,8 +50,6 @@ Plug 'Lokaltog/vim-distinguished'
 Plug 'tomasr/molokai'
 Plug 'jonathanfilip/vim-lucius'
 Plug 'w0ng/vim-hybrid'
-Plug 'sorah/unite-ghq'
-Plug 'sorah/unite-bundler'
 Plug 'eagletmt/vim-ruby_namespace'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
@@ -75,6 +69,10 @@ Plug 'PProvost/vim-ps1'
 Plug 'cespare/vim-toml'
 Plug 'momota/junos.vim'
 Plug 'vim-scripts/Bird-Syntax'
+Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
+Plug 'nvim-telescope/telescope-ghq.nvim'
 if has('nvim')
   Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 endif
@@ -296,13 +294,6 @@ augroup SorahRuby
 augroup END
 "}}}
 
-" unite.vim {{{
-augroup MyUniteVim
-  autocmd!
-  autocmd FileType unite nmap <buffer> u <Plug>(unite_redraw)
-augroup END
-"}}}
-
 "vimrc auto update {{{
 augroup MyAutoCmd
   autocmd!
@@ -356,6 +347,22 @@ augroup TerraformFt
   autocmd BufWinEnter,BufNewFile *.tf setf terraform
 augroup END
 "}}}
+
+"treesitter
+lua << EOL
+require('nvim-treesitter.configs').setup({
+  highlight = {
+    enable = true,
+    disable = function(lang, bufnr)
+      -- including vim for the sake of Lua blocks inside VimL
+      if lang == "vim" or lang == "lua" then
+        return false
+      end
+      return true
+    end,
+  },
+})
+EOL
 
 "coc.nvim
 if has('nvim')
@@ -467,39 +474,6 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-""deoplete
-"let g:deoplete#enable_at_startup = 1
-"
-""neocomplcache settings
-"call deoplete#custom#option('camel_case', v:true)
-"call deoplete#custom#option('smartcase', v:false)
-"
-"let g:deoplete#omni_patterns = {}
-"call deoplete#custom#option('omni_patterns', {
-"\ 'complete_method': 'omnifunc',
-"\ 'terraform': '[^ *\t"{=$]\w*',
-"\})
-"
-"let g:deoplete#sources#rust#racer_binary = $HOME . "/.cargo/bin/racer"
-"let g:deoplete#sources#rust#rust_source_path = $HOME . "/git/github.com/rust-lang/rust"
-"
-""lsp
-"if executable('terraform-lsp')
-"    au User lsp_setup call lsp#register_server({
-"        \ 'name': 'terraform-ls',
-"        \ 'cmd': {server_info->['terraform-ls']},
-"        \ 'whitelist': ['terraform'],
-"        \ })
-"endif
-"if executable('gopls')
-"    au User lsp_setup call lsp#register_server({
-"        \ 'name': 'gopls',
-"        \ 'cmd': {server_info->['gopls']},
-"        \ 'whitelist': ['go'],
-"        \ })
-"endif
-
-
 "push C-a to toggle spell check
 nnoremap <silent> <C-a> :setl spell!<Return>
 
@@ -597,73 +571,59 @@ map ,e  <Plug>(smartword-e)
 map ,ge <Plug>(smartword-ge)
 
 " unite.vim {{{
-function! s:SorahFileRec()
-  if match(system("git show-ref HEAD"), "^fatal: Not a git repository") == 0
-    Unite -start-insert file_rec
-  else
-    Unite -start-insert file_rec/git
-  endif
-endfunction
+" " until this issue solved: https://github.com/neovim/neovim/issues/20456
+if has('nvim')
+lua << EOL
+require('telescope').setup{
+  defaults = {
+    mappings = {
+      n = {
+        ["x"] = require('telescope.actions').toggle_selection,
+        ["Q"] = require('telescope.actions').close,
+        ["<Tab>"] = require('telescope.actions').select_horizontal,
+      },
+      i = {
+        ["<Tab>"] = require('telescope.actions').select_horizontal,
+      },
+    },
+    borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+  },
+  pickers = {
+    ghq = {
+      mappings = {
+        i = {
+          ["<Cr>"] = require('telescope.actions').select_horizontal,
+          ["<Tab>"] = require('telescope.actions').select_vertical,
+        },
+        n = {
+          ["<Cr>"] = require('telescope.actions').select_horizontal,
+          ["<Tab>"] = require('telescope.actions').select_vertical,
+        },
+      },
+    },
+  },
+}
+require("telescope").load_extension("ghq")
+EOL
+endif
 
-nnoremap <C-z> :<C-u>call <SID>SorahFileRec()<Cr>
-nnoremap <C-x> :<C-u>Unite -start-insert outline<Cr>
-nnoremap <C-s> :<C-u>Unite -start-insert tab<Cr>
-nnoremap <C-c> :<C-u>Unite -start-insert ghq<Cr>
-command! Gcd Unite -start-insert ghq
+if has('nvim')
+  function! s:SorahFileRec()
+    if match(system("git show-ref HEAD"), "^fatal: Not a git repository") == 0
+      Telescope find_files theme=ivy
+    else
+      Telescope git_files theme=ivy
+    endif
+  endfunction
 
-" unite-neco {{{
-let s:unite_source = {'name': 'neco'}
+  nnoremap <C-z> :<C-u>call <SID>SorahFileRec()<Cr>
+  nnoremap <C-p> :<C-u>call <SID>SorahFileRec()<Cr>
+  nnoremap <C-s> :<C-u>Telescope live_grep theme=ivy<Cr>
+  nnoremap <C-c> :<C-u>Telescope ghq theme=ivy<Cr>
 
-function! s:unite_source.gather_candidates(args, context)
-  let necos = [
-        \ "~(-'_'-) goes right",
-        \ "~(-'_'-) goes right and left",
-        \ "~(-'_'-) goes right quickly",
-        \ "~(-'_'-) skips right",
-        \ "~(-'_'-)  -8(*'_'*) go right and left",
-        \ "(=' .' ) ~w",
-        \ ]
-  return map(necos, '{
-        \ "word": v:val,
-        \ "source": "neco",
-        \ "kind": "command",
-        \ "action__command": "Neco " . v:key,
-        \ }')
-endfunction
-
-"function! unite#sources#locate#define()
-"  return executable('locate') ? s:unite_source : []
-"endfunction
-call unite#define_source(s:unite_source)
-" }}}
-
-" unite-evalruby {{{
-let s:unite_source = {
-      \ 'name': 'evalruby',
-      \ 'is_volatile': 1,
-      \ 'required_pattern_length': 1,
-      \ 'max_candidates': 30,
-      \ }
-
-function! s:unite_source.gather_candidates(args, context)
-  if a:context.input[-1:] == '.'
-    let methods = split(
-          \ unite#util#system(printf('ruby -e "puts %s.methods"', a:context.input[:-2])),
-          \ "\n")
-    call map(methods, printf("'%s' . v:val", a:context.input))
-  else
-    let methods = [a:context.input]
-  endif
-  return map(methods, '{
-        \ "word": v:val,
-        \ "source": "evalruby",
-        \ "kind": "command",
-        \ "action__command": printf("!ruby -e \"p %s\"", v:val),
-        \ }')
-endfunction
-
-call unite#define_source(s:unite_source)
-"}}}
+  nnoremap <C-x> :<C-u>Telescope treesitter theme=ivy<Cr>
+  "noremap <C-s> :<C-u>Unite -start-insert tab<Cr>
+endif
 
 " }}}
 

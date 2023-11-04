@@ -128,6 +128,7 @@ EOF
     keychain \
     osquery-bin \
     envchain \
+    ripgrep \
     amazon-ecr-credential-helper
 fi
 
