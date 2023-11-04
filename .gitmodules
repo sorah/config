@@ -1,9 +1,9 @@
-[submodule "vim/dot.vim/neobundle.vim"]
-	path = vim/dot.vim/neobundle.vim
-	url = https://github.com/Shougo/neobundle.vim.git
 [submodule "script/cdd"]
 	path = script/cdd
 	url = https://github.com/m4i/cdd.git
 [submodule "third_party/nlnog-ring"]
 	path = third_party/nlnog-ring
 	url = https://github.com/NLNOG/nlnog-ring
+[submodule "vim/dot.vim/vim-plug"]
+	path = vim/dot.vim/vim-plug
+	url = https://github.com/junegunn/vim-plug

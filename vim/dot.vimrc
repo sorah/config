@@ -19,82 +19,66 @@ endif
 
 " Bundle {{{
 filetype off
-set runtimepath+=~/.vim-dein/cache/repos/github.com/Shougo/dein.vim
-if dein#load_state('~/.vim-dein/state')
-  call dein#begin('~/.vim-dein/state')
-  "NeoBundle 'mrkn/mrkn256.vim'
-  call dein#add('mattn/webapi-vim')
-  call dein#add('tpope/vim-rails')
-  call dein#add('plasticboy/vim-markdown')
-  call dein#add('motemen/git-vim')
-  call dein#add('thinca/vim-quickrun')
-  "all dein#add('Shougo/neocomplcache')
-  call dein#add('ujihisa/unite-gem')
-  call dein#add('Shougo/unite-outline')
-  call dein#add('Shougo/unite.vim')
-  call dein#add('kchmck/vim-coffee-script')
-  call dein#add('kana/vim-metarw')
-  call dein#add('kana/vim-metarw-git')
-  call dein#add('thinca/vim-ref')
-  call dein#add('taka84u9/vim-ref-ri')
-  call dein#add('Shougo/vimproc', { 'build': 'make' })
-  call dein#add('godlygeek/csapprox')
-  call dein#add('ujihisa/shadow.vim')
-  call dein#add('cakebaker/scss-syntax.vim')
-  call dein#add('tpope/vim-haml')
-  "call dein#add('Shougo/neosnippet')
-  call dein#add('taka84u9/unite-git')
-  call dein#add('thinca/vim-scouter')
-  call dein#add('altercation/vim-colors-solarized')
-  call dein#add('tyru/eskk.vim')
-  call dein#add('tyru/skkdict.vim')
-  call dein#add('kana/vim-textobj-user')
-  call dein#add('kana/vim-smartword')
-  call dein#add('nelstrom/vim-textobj-rubyblock')
-  call dein#add('nathanaelkane/vim-indent-guides')
-  call dein#add('kana/vim-smartchr')
-  call dein#add('kana/vim-smartinput')
-  call dein#add('sgur/unite-git_grep')
-  call dein#add('sorah/puppet.vim')
-  call dein#add('noprompt/vim-yardoc')
-  call dein#add('nanotech/jellybeans.vim')
-  call dein#add('Lokaltog/vim-distinguished')
-  call dein#add('tomasr/molokai')
-  call dein#add('jonathanfilip/vim-lucius')
-  call dein#add('w0ng/vim-hybrid')
-  call dein#add('nginx/nginx', {'rtp': 'contrib/vim/'})
-  call dein#add('sorah/unite-ghq')
-  call dein#add('sorah/unite-bundler')
-  call dein#add('eagletmt/vim-ruby_namespace')
-  call dein#add('sorah/unite-outline-piculet')
-  call dein#add('pangloss/vim-javascript')
-  call dein#add('mxw/vim-jsx')
-  call dein#add('vim-scripts/rfc-syntax')
-  call dein#add('smerrill/vcl-vim-plugin')
-  call dein#add('posva/vim-vue')
-  call dein#add('nfnty/vim-nftables')
-  call dein#add('zimbatm/haproxy.vim')
-  call dein#add('dense-analysis/ale')
-  call dein#add('rust-lang/rust.vim')
-  call dein#add('racer-rust/vim-racer')
-  call dein#add('google/vim-jsonnet')
-  call dein#add('hashivim/vim-hashicorp-tools')
-  call dein#add('hashivim/vim-terraform')
-  call dein#add('HerringtonDarkholme/yats.vim')
-  call dein#add('kevinoid/vim-jsonc')
-  call dein#add('PProvost/vim-ps1')
-  call dein#add('cespare/vim-toml')
-  call dein#add('momota/junos.vim')
-  call dein#add('vim-scripts/Bird-Syntax')
 
-  if has('nvim')
-    "call dein#add('mhartington/nvim-typescript', { 'build' : './install.sh' })
-    call dein#add('neoclide/coc.nvim', { 'rev': 'release' })
-  endif
-
-  call dein#end()
-  call dein#save_state()
+call plug#begin()
+Plug 'mattn/webapi-vim'
+Plug 'tpope/vim-rails'
+Plug 'plasticboy/vim-markdown'
+Plug 'thinca/vim-quickrun'
+Plug 'ujihisa/unite-gem'
+Plug 'Shougo/unite-outline'
+Plug 'Shougo/unite.vim'
+Plug 'kchmck/vim-coffee-script'
+Plug 'kana/vim-metarw'
+Plug 'kana/vim-metarw-git'
+Plug 'thinca/vim-ref'
+Plug 'taka84u9/vim-ref-ri'
+Plug 'Shougo/vimproc', { 'build': 'make' }
+Plug 'godlygeek/csapprox'
+Plug 'cakebaker/scss-syntax.vim'
+Plug 'tpope/vim-haml'
+Plug 'taka84u9/unite-git'
+Plug 'thinca/vim-scouter'
+Plug 'altercation/vim-colors-solarized'
+Plug 'tyru/eskk.vim'
+Plug 'tyru/skkdict.vim'
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-smartword'
+Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'kana/vim-smartchr'
+Plug 'kana/vim-smartinput'
+Plug 'noprompt/vim-yardoc'
+Plug 'nanotech/jellybeans.vim'
+Plug 'Lokaltog/vim-distinguished'
+Plug 'tomasr/molokai'
+Plug 'jonathanfilip/vim-lucius'
+Plug 'w0ng/vim-hybrid'
+Plug 'sorah/unite-ghq'
+Plug 'sorah/unite-bundler'
+Plug 'eagletmt/vim-ruby_namespace'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'vim-scripts/rfc-syntax'
+Plug 'smerrill/vcl-vim-plugin'
+Plug 'posva/vim-vue'
+Plug 'nfnty/vim-nftables'
+Plug 'zimbatm/haproxy.vim'
+Plug 'dense-analysis/ale'
+Plug 'rust-lang/rust.vim'
+Plug 'google/vim-jsonnet'
+Plug 'hashivim/vim-hashicorp-tools'
+Plug 'hashivim/vim-terraform'
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'kevinoid/vim-jsonc'
+Plug 'PProvost/vim-ps1'
+Plug 'cespare/vim-toml'
+Plug 'momota/junos.vim'
+Plug 'vim-scripts/Bird-Syntax'
+if has('nvim')
+  Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 endif
+call plug#end()
 
 let g:coc_global_extensions = [
   \   "coc-clangd",

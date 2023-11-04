@@ -19,6 +19,7 @@ shopt -s nullglob
 
 
 ln -sfn `pwd`/vim/dot.vim ~/.vim
+ln -s `pwd`/vim/dot.vim ~/.local/share/nvim/site
 ln -sf `pwd`/vim/dot.vimrc ~/.vimrc
 mkdir -p ~/.config/nvim
 ln -sf `pwd`/vim/dot.vimrc ~/.config/nvim/init.vim
@@ -48,19 +49,20 @@ fi
 git config --global ghq.root $HOME/git
 git config --global ui.color auto
 git config --global push.default simple
-
-if [ ! -d ~/.vim-dein ]; then
-  mkdir -p ~/.vim-dein/cache/repos/github.com/Shougo
-  git clone https://github.com/Shougo/dein.vim ~/.vim-dein/cache/repos/github.com/Shougo/dein.vim
-fi
+git config --global user.name 'Sorah Fukumori'
+git config --global commit.gpgsign true
+git config --global sendemail.smtpencryption tls
+git config --global sendemail.smtpserver smtp.sorah.jp
+git config --global sendemail.smtpuser sorah@sorah.jp
+git config --global sendemail.smtpserverport 587
+git config --global pull.ff only
+git config --global pull.rebase true
+git config --global merge.conflictStyle diff3
+git config --global init.defaultBranch main
 
 if [ "_$arch" = "_mac" ]; then
   if ! which gsed 2>/dev/null; then
     brew install gnu-sed
-  fi
-
-  if ! which hg 2>/dev/null; then
-    brew install mercurial
   fi
 
   if ! which jq 2>/dev/null; then
@@ -98,16 +100,6 @@ SigLevel = Required
 Server = https://arch.sorah.jp/$repo/os/$arch
 EOF
   fi
-  if ! grep -q aur-eagletmt /etc/pacman.conf; then
-    curl https://wanko.cc/gpg-key.txt | sudo pacman-key -a -
-    sudo pacman-key --lsign-key C48DBD97
-    sudo tee -a /etc/pacman.conf <<-'EOF'
-[aur-eagletmt]
-SigLevel = Required
-Server = http://arch.wanko.cc/$repo/os/$arch
-EOF
-  fi
-
 
   sudo pacman --needed --noconfirm -Syyu \
     base-devel \
@@ -134,11 +126,10 @@ EOF
     python-pip \
     aws-cli \
     keychain \
-    ffmpeg \
     osquery-bin \
     envchain \
     amazon-ecr-credential-helper
-  fi
+fi
 
 if which go 2>/dev/null >/dev/null; then
   [ ! -d ~/.gopath ] && mkdir ~/.gopath
@@ -154,19 +145,10 @@ if which go 2>/dev/null >/dev/null; then
     go get golang.org/x/tools/...
   fi
 
-  if ! which godef; then
-    go get code.google.com/p/rog-go/exp/cmd/godef
-  fi
-
   if ! which peco; then
     go get github.com/peco/peco/cmd/peco
   fi
 fi
-
-mkdir -p $HOME/.docker-compose
-for x in `pwd`/docker-compose/*; do
-  ln -sf "${x}" ~/.docker-compose/
-done
 
 if systemctl --version 2>/dev/null >/dev/null; then
   mkdir -p $HOME/.config/systemd/user

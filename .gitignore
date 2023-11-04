@@ -4,3 +4,4 @@ vim/dot.vim/autoload/*.so
 vim/dot.vim/.netrwhist
 vim/dot.vim/other/private.vim
 .bundle/
+vim/dot.vim/view
