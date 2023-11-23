@@ -26,16 +26,17 @@ config.colors = {
   background = "#0c0c0c",
   foreground = "#d8d8d8",
 }
-config.window_background_opacity = 0.84
+config.window_background_opacity = 0.90
 
 config.window_frame = {
   font = wezterm.font_with_fallback{
+    { family = 'Source Sans 3', assume_emoji_presentation = false },
     { family = 'Source Sans Pro', assume_emoji_presentation = false },
     { family = 'Noto Sans CJK JP', weight = 'Medium' },
     { family = 'Noto Sans JP', weight = 'Medium' },
     { family = 'Noto Sans', weight = 'Medium' },
   },
-  font_size = 9,
+  font_size = 8,
 }
 config.command_palette_font_size = 10.0
 config.char_select_font_size = 12.0
