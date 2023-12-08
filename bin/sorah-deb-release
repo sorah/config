@@ -243,14 +243,20 @@ end.each do |tag, changes|
   end
 
   changes.each do |c|
-    raise "#{c.change_arch} already released" if description.changes_by_arch[c.change_arch]
+    if description.changes_by_arch[c.change_arch]
+      warn "!!!!! #{c.change_arch} already released" 
+      next
+    end
     description.changes_by_arch[c.change_arch] = c.changes
   end
 
   dsc = changes.map(&:dsc).find(&:itself)
   if dsc
-    raise "source package already released" if description.dsc
-    description.dsc = dsc
+    if description.dsc
+      warn "!!!!! source package already released"
+    else
+      description.dsc = dsc
+    end
   end
 
   puts "=> Releasing to GitHub #{repo}: #{tag}"
