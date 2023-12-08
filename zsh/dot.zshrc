@@ -189,6 +189,10 @@ brm() {
 }
 
 export RUBY=`which ruby`
+if [[ -d "$(rbenv root 2>/dev/null)" ]]; then
+  export RUBY="zsorah-ruby"
+fi
+zsorah-ruby() { RBENV_DIR=$HOME RBENV_VERSION="$(rbenv global)" ruby "$@" }
 
 # Prompt
 autoload -U colors
