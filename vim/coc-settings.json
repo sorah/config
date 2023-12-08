@@ -10,6 +10,12 @@
       "command": "ruby-lsp",
       "filetypes": ["ruby"],
       "initializationOptions": {}
+    },
+    "jsonnet": {
+      "command": "jsonnet-language-server",
+      "args": [],
+      "filetypes": ["jsonnet"],
+      "initializationOptions": {}
     }
   },
   "[typescript][typescriptreact][javascript][javascriptreact]": {
