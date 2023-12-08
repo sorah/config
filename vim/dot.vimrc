@@ -538,12 +538,6 @@ nnoremap q <C-o>
 nnoremap } <C-]>
 nnoremap ' <C-]>
 
-"super jump
-nnoremap H 5h
-nnoremap L 5l
-nnoremap J <C-f>
-nnoremap K <C-b>
-
 "C-r U"
 nnoremap U <C-r>
 
