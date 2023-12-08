@@ -300,6 +300,14 @@ end.each do |tag, changes|
 
       asset = begin
         octo.upload_asset(release.url, file, content_type: content_type, name: name)
+      rescue Faraday::ConnectionFailed => e
+        puts " * asset: #{name} (Retrying due to #{e.class})"
+        sleep 3
+        retry
+      rescue Octokit::BadGateway => e
+        puts " * asset: #{name} (Retrying due to #{e.class} #{e.errors.inspect})"
+        sleep 3
+        retry
       rescue Octokit::UnprocessableEntity => e
         if e.errors[0][:code] == 'already_exists'
           puts " * asset: #{name} (Skipped due to #{e.class} #{e.errors.inspect})"
