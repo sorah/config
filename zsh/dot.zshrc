@@ -16,10 +16,10 @@ elif [ ! -L "$SSH_AUTH_SOCK" ]; then
 fi
 
 run_tmux=1
-[ -n "$TMUX" ] && run_tmux=0
-[ -n "$WINDOW" ] && run_tmux=0
-[ -n "$VIMSHELL" ] && run_tmux=0
-[ "_$TERM" = "_linux" ] && run_tmux=0
+[[ -n "$NOTMUX" ]] && run_tmux=0
+[[ -n "$TMUX" ]] && run_tmux=0
+[[ -n "$WINDOW" ]] && run_tmux=0
+[[ "_$TERM" = "_linux" ]] && run_tmux=0
 
 if [ "_$run_tmux" = "_1" ]; then
   # minimal path
@@ -130,31 +130,12 @@ nkmish() {
   shift
   tmux new-window -n $name "ssh $* ${name}.c.nkmi.me"
 }
-nkmish-r() {
-  name=$1
-  shift
-  tmux new-window -n $name "ssh -t $* ${name}.c.nkmi.me env TMUX=1 zsh"
-}
 nkmish-i() {
   name=$1
   shift
   ssh "$@" ${name}.c.nkmi.me
 }
-nmkish-ri() {
-  name=$1
-  shift
-  ssh -t "$@" ${name}.c.nkmi.me env TMUX=1 zsh
-}
-nkmish-b() {
-  name=$1
-  shift
-  tmux new-window -n $name "ssh -t $* ${name}.c.nkmi.me bash"
-}
-nkmish-bi() {
-  name=$1
-  shift
-  ssh -t "$@" ${name}.c.nkmi.me bash
-}
+
 
 alias e="envchain"
 eb() {
@@ -165,13 +146,7 @@ eb() {
 }
 
 alias ms="nkmish"
-alias n="nkmish"
-alias ni="nkmish-i"
-alias nri="nkmish-ri"
-alias nb="nkmish-b"
-alias nbi="nkmish-bi"
-
-new-ssh() { tmux new-window -n $1 "ssh $*" }
+alias msi="nkmish-i"
 
 alias be="bundle exec"
 alias bi="bundle install"
