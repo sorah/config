@@ -73,6 +73,7 @@ Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
 Plug 'nvim-telescope/telescope-ghq.nvim'
+Plug 'RRethy/vim-illuminate'
 if has('nvim')
   Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 endif
