@@ -5,6 +5,11 @@
       "args": ["serve"],
       "filetypes": ["terraform", "tf"],
       "initializationOptions": {}
+    },
+    "ruby": {
+      "command": "ruby-lsp",
+      "filetypes": ["ruby"],
+      "initializationOptions": {}
     }
   },
   "coc.preferences.formatOnSaveFiletypes": ["typescript", "typescriptreact", "javascript", "javascriptreact"]
