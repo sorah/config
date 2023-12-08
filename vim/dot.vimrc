@@ -355,7 +355,7 @@ require('nvim-treesitter.configs').setup({
     enable = true,
     disable = function(lang, bufnr)
       -- including vim for the sake of Lua blocks inside VimL
-      if lang == "vim" or lang == "lua" then
+      if lang == "vim" or lang == "lua" or lang == "typescriptreact" or lang == "typescript" then
         return false
       end
       return true
