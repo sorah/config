@@ -291,8 +291,7 @@ if [[ -s ~/git/config/script/cdd/cdd ]] then
 fi
 
 # change_window_title() { echo -ne "\ek$1\e\\" }
-TMUX_WINDOW=`tmux display -p '#I'`
-change_window_title() { tmux rename-window -t $TMUX_WINDOW "$*" }
+change_window_title() { tmux rename-window -t "$TMUX_PANE" "$*" }
 
 OKO_COUNT=0
 
@@ -312,16 +311,16 @@ precmd() {
     set_prompt
 
     # pwd & cmd @ screen
-    if [[ -n "$WINDOW" || -n "$TMUX" ]]; then
-      change_window_title `$RUBY --disable-gems ~/git/config/script/cdd_title.rb`
+    if [[ -n "$TMUX" ]]; then
+      change_window_title "$($RUBY --disable-gems ~/git/config/script/cdd_title.rb)"
     fi
   fi
 }
 
 function preexec() {
   if [[ "_${SORAH_ZSHRC_LOADED}" = "_1" ]]; then
-    if [[ -n "$WINDOW" || -n "$TMUX" ]]; then
-      change_window_title `$RUBY --disable-gems ~/git/config/script/cdd_title.rb`:`echo "$1"|cut -d' ' -f 1`
+    if [[ -n "$TMUX" ]]; then
+      change_window_title "$($RUBY --disable-gems ~/git/config/script/cdd_title.rb):$(echo "$1"|cut -d' ' -f 1)"
     fi
   fi
 }
