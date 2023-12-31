@@ -46,7 +46,9 @@ phases:
     # run-as: buildbot
     commands:
       - 'cd "${CODEBUILD_SRC_DIR}/${DEBUILD_CODEBUILD_SOURCE}"'
-      - 'sudo -u buildbot -H debuild --no-sign --build=${DEBUILD_CODEBUILD_BUILD}'
+      # Case 170406024301505
+      - |
+          perl -e '$SIG{"INT"} = "DEFAULT"; exec @ARGV' -- sudo -u buildbot -H debuild --no-sign --build=${DEBUILD_CODEBUILD_BUILD}
       - 'ls -la "${CODEBUILD_SRC_DIR}"'
 
   post_build:
