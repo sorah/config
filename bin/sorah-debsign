@@ -3,7 +3,7 @@ if which apt-get >/dev/null 2>/dev/null; then
   exec debsign "$@"
 fi
 if [[ -z "$(docker image ls -q devscripts)" ]]; then
-  docker build -t devscripts -f ~/git/config/docker/Dockerfile.devscripts ~/git/config/docker
+  docker buildx build --load -t devscripts -f ~/git/config/docker/Dockerfile.devscripts ~/git/config/docker
 fi
 #docker run --rm devscripts debsign "$@"
 
