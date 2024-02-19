@@ -479,6 +479,10 @@ if which kubectl >/dev/null 2>/dev/null; then
 fi
 
 alias tf=terraform
+export TF_PLUGIN_CACHE_DIR=$HOME/.terraform.d/plugin-cache
+if [[ ! -e "$TF_PLUGIN_CACHE_DIR" ]]; then
+  mkdir -p $TF_PLUGIN_CACHE_DIR
+fi
 
 #====================
 # powerup your emacs
