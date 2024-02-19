@@ -137,7 +137,7 @@ nkmish-i() {
 }
 
 
-alias e="envchain"
+alias e="envchain "
 eb() {
   local ns
   ns=$1
@@ -148,8 +148,8 @@ eb() {
 alias ms="nkmish"
 alias msi="nkmish-i"
 
-alias be="bundle exec"
-alias bi="bundle install"
+alias be="bundle exec "
+alias bi="bundle install "
 alias d="git diff"
 alias dc="git diff --cached"
 alias s="git status -sb"
