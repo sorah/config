@@ -190,9 +190,9 @@ brm() {
   done
 }
 
-export RUBY=`which ruby`
+zsorah_ruby_path=`which ruby`
 if [[ -d "$(rbenv root 2>/dev/null)" ]]; then
-  export RUBY="zsorah-ruby"
+  zsorah_ruby_path="zsorah-ruby"
 fi
 zsorah-ruby() { RBENV_DIR=$HOME RBENV_VERSION="$(rbenv global)" ruby "$@" }
 
@@ -314,7 +314,7 @@ precmd() {
 
     # pwd & cmd @ screen
     if [[ -n "$TMUX" ]]; then
-      change_window_title "$($RUBY --disable-gems ~/git/config/script/cdd_title.rb)"
+      change_window_title "$($zsorah_ruby_path --disable-gems ~/git/config/script/cdd_title.rb)"
     fi
   fi
 }
@@ -322,7 +322,7 @@ precmd() {
 function preexec() {
   if [[ "_${SORAH_ZSHRC_LOADED}" = "_1" ]]; then
     if [[ -n "$TMUX" ]]; then
-      change_window_title "$($RUBY --disable-gems ~/git/config/script/cdd_title.rb):$(echo "$1"|cut -d' ' -f 1)"
+      change_window_title "$($zsorah_ruby_path --disable-gems ~/git/config/script/cdd_title.rb):$(echo "$1"|cut -d' ' -f 1)"
     fi
   fi
 }
