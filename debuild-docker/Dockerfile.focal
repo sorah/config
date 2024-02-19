@@ -4,6 +4,10 @@ FROM public.ecr.aws/ubuntu/ubuntu:20.04
 # just to invalidate cache
 ARG BUILDDATE=99999999
 
+# Allow use of debhelper-compat 13 in backport
+# https://help.ubuntu.com/community/UbuntuBackports
+RUN /bin/echo -e "Package: debhelper libdebhelper-perl dh-autoreconf dwz\nPin: release a=focal-backports\nPin-Priority: 500\n" | tee -a /etc/apt/preferences
+
 ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir -p /build \
   && apt-get update \
