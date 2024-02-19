@@ -145,6 +145,8 @@ eb() {
   envchain "${ns}" bundle exec "$@"
 }
 
+alias rka="mairu exec --server rubykaigi 'arn:aws:iam::005216166247:role/OrgzAdmin' "
+
 alias ms="nkmish"
 alias msi="nkmish-i"
 
