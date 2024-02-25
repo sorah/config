@@ -103,6 +103,10 @@ export BUNDLE_JOBS=300
 export BUNDLE_FORCE_RUBY_PLATFORM=true
 
 if which pyenv > /dev/null; then eval "$(pyenv init --no-rehash -)"; fi
+if [[ -e  "$HOME/.rye/env" ]]; then
+  export RYE_NO_AUTO_INSTALL=1
+  source "$HOME/.rye/env"
+fi
 
 export PATH=~/.gopath/bin:$PATH
 
