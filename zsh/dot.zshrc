@@ -460,7 +460,10 @@ cop() {
     range="${base}...HEAD"
   fi
   echo "${range}"
-  git diff --name-only "${range}" -- '*.rb' | xargs bundle exec rubocop --auto-correct   
+  ( 
+    set -x
+    git diff --name-only --diff-filter=d "${range}" -- '*.rb' '*.iam' | xargs bundle exec rubocop --auto-correct   
+  )
 }
 
 yaml2json() {
