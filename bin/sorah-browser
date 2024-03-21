@@ -11,5 +11,6 @@ $1
 EOF
 
 if [[ -n "$TMUX" ]]; then
+  echo -n "$1" | tmux load-buffer -w -
   tmux display-message -d 30000 "$1"
 fi
