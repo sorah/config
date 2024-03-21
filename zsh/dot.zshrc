@@ -497,7 +497,7 @@ fi
 # powerup your emacs
 #====================
 alias emacs='vim'
-alias vim='nvim'
+alias vim='DISPLAY= nvim'
 
 timecurl() {
   curl -w "@$HOME/git/config/etc/curl-timing.txt" "$@"
