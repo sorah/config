@@ -1,0 +1,15 @@
+#!/bin/bash
+file="${XDG_RUNTIME_DIR:-$HOME/tmp}/sorah-browser.txt" 
+
+if [[ -z "$1" ]]; then
+  cat "${file}"
+  exit
+fi
+
+cat >$file <<-EOF
+$1
+EOF
+
+if [[ -n "$TMUX" ]]; then
+  tmux display-message -d 30000 "$1"
+fi

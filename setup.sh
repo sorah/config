@@ -31,6 +31,9 @@ ln -sf `pwd`/misc/dot.irbrc ~/.irbrc
 ln -sf `pwd`/misc/dot.gemrc ~/.gemrc
 ln -sfn `pwd`/peco ~/.peco
 
+mkdir -p ~/.local/share/applications
+ln -s $(pwd)/dot.local/share/applications/sorah-browser.desktop ~/.local/share/applications/
+
 if [ "_$arch" = "_mac" ]; then
   if ! which reattach-to-user-namespace; then
     brew install reattach-to-user-namespace

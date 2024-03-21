@@ -121,6 +121,8 @@ export CLOUDSDK_PYTHON=/usr/bin/python
 
 #export RUST_SRC_PATH=$(rustc --print sysroot 2>/dev/null)/lib/rustlib/src/rust/src
 
+export BROWSER=$HOME/git/config/bin/sorah-browser
+
 # Other env-vars
 export LESS='-R'
 
