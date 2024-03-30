@@ -152,6 +152,7 @@ eb() {
 }
 
 alias rka="mairu exec --server rubykaigi 'arn:aws:iam::005216166247:role/OrgzAdmin' "
+export MAIRU_AGENT_LOG=mairu=debug
 
 alias ms="nkmish"
 alias msi="nkmish-i"
