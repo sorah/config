@@ -36,7 +36,7 @@ unless image.include?(':')
   repo = case image
          when 'stretch', 'buster', 'bullseye', 'bookworm'
            'public.ecr.aws/debian/debian'
-         when 'trusty', 'xenial', 'bionic', 'focal', 'jammy'
+         when 'trusty', 'xenial', 'bionic', 'focal', 'jammy', 'noble'
            'public.ecr.aws/ubuntu/ubuntu'
          else
            raise "Unknown shorthand to determine Docker image repository: #{image}"

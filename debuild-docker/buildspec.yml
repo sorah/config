@@ -19,10 +19,14 @@ phases:
       # Allow use of debhelper-compat 13 in backport
       - 'if grep -q bionic /etc/apt/sources.list; then printf "Package: debhelper libdebhelper-perl dh-autoreconf dwz\nPin: release a=bionic-backports\nPin-Priority: 500\n\n" | tee -a /etc/apt/preferences; fi'
       - 'if grep -q focal /etc/apt/sources.list; then printf "Package: debhelper libdebhelper-perl\nPin: release a=focal-backports\nPin-Priority: 500\n\n" | tee -a /etc/apt/preferences; fi'
+      # /etc/apt/sources.list.d/debian.sources
+
+      - "if [[ -e /etc/apt/sources.list.d/ubuntu.sources ]]; then sed -i -e 's|archive\\.ubuntu\\.com/ubuntu|ap-northeast-1.ec2.archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources; fi"
       - "if [[ -e /etc/apt/sources.list ]]; then sed -i -e 's|archive\\.ubuntu\\.com/ubuntu|ap-northeast-1.ec2.archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list; fi"
 
       - apt-get update
       - apt-get install -y --no-install-recommends tzdata debhelper dh-make devscripts gnupg2 equivs lsb-release sudo
+      - 'apt-get install -y --no-install-recommends fakeroot || :'
 
   pre_build:
     commands:

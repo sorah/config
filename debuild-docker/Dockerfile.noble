@@ -1,0 +1,14 @@
+# See also: https://github.com/sorah/config/blob/master/bin/sorah-debuild
+FROM public.ecr.aws/ubuntu/ubuntu:24.04
+
+# just to invalidate cache
+ARG BUILDDATE=99999999
+
+RUN sed -i -e 's|archive\.ubuntu\.com/ubuntu|ap-northeast-1.ec2.archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN mkdir -p /build \
+  && apt-get update \
+  && apt-get install -y tzdata debhelper dh-make devscripts gnupg2 vim equivs
+RUN mkdir -p -m700 /root/.gnupg
+
