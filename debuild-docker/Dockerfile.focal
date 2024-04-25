@@ -8,6 +8,8 @@ ARG BUILDDATE=99999999
 # https://help.ubuntu.com/community/UbuntuBackports
 RUN /bin/echo -e "Package: debhelper libdebhelper-perl dh-autoreconf dwz\nPin: release a=focal-backports\nPin-Priority: 500\n" | tee -a /etc/apt/preferences
 
+RUN sed -i -e 's|archive\.ubuntu\.com/ubuntu|ap-northeast-1.ec2.archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list
+
 ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir -p /build \
   && apt-get update \

@@ -4,6 +4,8 @@ FROM public.ecr.aws/ubuntu/ubuntu:22.04
 # just to invalidate cache
 ARG BUILDDATE=99999999
 
+RUN sed -i -e 's|archive\.ubuntu\.com/ubuntu|ap-northeast-1.ec2.archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list
+
 ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir -p /build \
   && apt-get update \
