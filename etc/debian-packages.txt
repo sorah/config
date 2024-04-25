@@ -1,17 +1,17 @@
 ruby2.4 --arch=amd64       --dist=dist/2.4 --master=master-2.4 trusty xenial
 ruby2.5 --arch=amd64       --dist=dist/2.5 --master=master-2.5 trusty xenial bionic
-ruby2.6 --arch=amd64       --dist=dist/2.6 --master=master-2.6        xenial bionic focal        buster
-ruby2.7 --arch=amd64,arm64 --dist=dist/2.7 --master=master-2.7               bionic focal        buster bullseye
-ruby3.0 --arch=amd64,arm64 --dist=dist/3.0 --master=master-3.0               bionic focal jammy  buster bullseye
-ruby3.1 --arch=amd64,arm64 --dist=dist/3.1 --master=master-3.1               bionic focal jammy         bullseye
-ruby3.2 --arch=amd64,arm64 --dist=dist/3.2 --master=master-3.2                      focal jammy         bullseye bookworm
-ruby3.3 --arch=amd64,arm64 --dist=dist/3.3                                          focal jammy         bullseye bookworm
-ruby-defaults --arch=amd64,arm64                                                    focal jammy         bullseye bookworm
-rubygems-integration --arch=amd64                                            bionic focal jammy         bullseye bookworm
-envchain --arch=amd64,arm64 bionic focal jammy buster bullseye
+ruby2.6 --arch=amd64       --dist=dist/2.6 --master=master-2.6        xenial bionic focal              buster
+ruby2.7 --arch=amd64,arm64 --dist=dist/2.7 --master=master-2.7               bionic focal              buster bullseye
+ruby3.0 --arch=amd64,arm64 --dist=dist/3.0 --master=master-3.0               bionic focal jammy        buster bullseye
+ruby3.1 --arch=amd64,arm64 --dist=dist/3.1 --master=master-3.1               bionic focal jammy               bullseye
+ruby3.2 --arch=amd64,arm64 --dist=dist/3.2 --master=master-3.2                      focal jammy noble         bullseye bookworm
+ruby3.3 --arch=amd64,arm64 --dist=dist/3.3                                          focal jammy noble         bullseye bookworm
+ruby-defaults --arch=amd64,arm64                                                    focal jammy noble         bullseye bookworm
+rubygems-integration --arch=amd64                                                   focal jammy noble         bullseye bookworm
+envchain --arch=amd64,arm64 focal jammy noble bullseye
 subsystemctl --arch=amd64,arm64 focal bullseye
-mitamae --arch=amd64,arm64 bionic focal jammy buster bullseye bookworm
-prometheus-exporter-proxy --arch=amd64,arm64 focal jammy
-cfssl --arch=amd64,arm64 jammy
-needroleshere --arch=amd64,arm64 focal jammy
+mitamae --arch=amd64,arm64 focal jammy noble bullseye bookworm
+prometheus-exporter-proxy --arch=amd64,arm64 focal jammy noble
+cfssl --arch=amd64,arm64 jammy noble
+needroleshere --arch=amd64,arm64 focal jammy noble
 bird2 --arch=amd64,arm64 jammy
