@@ -50,6 +50,8 @@ fi
 bootstrap_cmds=$(mktemp)
 cat >${bootstrap_cmds} <<-EOF
 useradd -u $(id -u) -m buildbot
+rm -fv /var/log/lastlog
+ln -sf /dev/null /var/log/lastlog
 chown buildbot:buildbot /build
 chown buildbot:buildbot /home/buildbot
 cp /run.sh /run2.sh
