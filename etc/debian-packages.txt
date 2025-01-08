@@ -5,8 +5,9 @@ ruby2.7 --arch=amd64,arm64 --dist=dist/2.7 --master=master-2.7               bio
 ruby3.0 --arch=amd64,arm64 --dist=dist/3.0 --master=master-3.0               bionic focal jammy        buster bullseye
 ruby3.1 --arch=amd64,arm64 --dist=dist/3.1 --master=master-3.1               bionic focal jammy               bullseye
 ruby3.2 --arch=amd64,arm64 --dist=dist/3.2 --master=master-3.2                      focal jammy noble         bullseye bookworm
-ruby3.3 --arch=amd64,arm64 --dist=dist/3.3                                          focal jammy noble         bullseye bookworm
-ruby-defaults --arch=amd64,arm64                                                    focal jammy noble         bullseye bookworm
+ruby3.3 --arch=amd64,arm64 --dist=dist/3.3 --master=master-3.3                      focal jammy noble         bullseye bookworm
+ruby3.4 --arch=amd64,arm64 --dist=dist/3.4                                                jammy noble                  bookworm
+ruby-defaults --arch=amd64,arm64                                                          jammy noble                  bookworm
 rubygems-integration --arch=amd64                                                   focal jammy noble         bullseye bookworm
 envchain --arch=amd64,arm64 focal jammy noble bullseye
 subsystemctl --arch=amd64,arm64 focal bullseye
