@@ -12,6 +12,7 @@ if [ -d ${RBENV_ROOT}/sources/trunk/ruby ]; then
 else
   git clone https://github.com/ruby/ruby ${RBENV_ROOT}/sources/trunk/ruby
   cd ${RBENV_ROOT}/sources/trunk/ruby
+  ruby tool/downloader.rb -d tool -e gnu config.guess config.sub
   autoconf
 fi
 
