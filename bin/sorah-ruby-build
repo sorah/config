@@ -3,20 +3,22 @@ set -e
 set -x
 
 newver=$1
-newabi=$2
-headof=$3
 
-if [[ ( -z "$1" ) || ( -z "$2" ) ]]; then
-  echo "Usage: $0 newver newabi [headof]"
+if [[ -z "$1" ]]; then
+  echo "Usage: $0 newver"
 fi
 
+newabi="$(echo -n $newver|sed -e 's/\.[0-9]*$/.0/')"
+headof="$(echo -n $newver|sed -e 's/\.[0-9]*$//')"
+
 eval "$(rbenv init -)"
+
+git -C /home/sorah/.rbenv/plugins/ruby-build pull
 
 if [ "$(uname)" = "Darwin" ]; then
   export RUBY_CONFIGURE_OPTS=" \
     --enable-shared \
     --with-gcc=clang CXX=clang++ \
-    --with-arch=x86_64 \
     --with-out-ext=tk,tk/* \
     --with-valgrind \
     --with-readline-dir=$(brew --prefix readline) \
@@ -31,7 +33,8 @@ else
   export RUBY_CONFIGURE_OPTS=" \
     --enable-shared \
     --with-out-ext=tk,tk/* \
-    --with-valgrind"
+    --with-valgrind \
+    --enable-yjit=stats"
 
   export optflags="-O0 -ggdb3"
   export RUBY_CFLAGS="${optflags} ${debugflags}"
