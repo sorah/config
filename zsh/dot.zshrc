@@ -84,6 +84,9 @@ export PATH=$rbenv_uninit_path
 if [[ -e /opt/asdf-vm/asdf.sh ]]; then
   . /opt/asdf-vm/asdf.sh
 fi
+if [[ -e $HOME/.local/bin/mise ]]; then
+  eval "$($HOME/.local/bin/mise activate zsh)"
+fi
 
 export PATH=~/.cargo/bin:$PATH
 
