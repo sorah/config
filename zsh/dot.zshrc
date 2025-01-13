@@ -124,6 +124,11 @@ export CLOUDSDK_PYTHON=/usr/bin/python
 export BROWSER=$HOME/git/config/bin/sorah-browser
 
 export FZF_DEFAULT_OPTS='--layout=reverse'
+if [[ -e /usr/share/fzf/key-bindings.zsh ]]; then
+  . /usr/share/fzf/key-bindings.zsh
+elif [[ -e /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
+  . /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+fi
 
 # Other env-vars
 export LESS='-R'
