@@ -1,0 +1,22 @@
+# vim: ft=gitconfig
+[ui]
+	color = auto
+[push]
+	default = simple
+[user]
+	name = Sorah Fukumori
+  #email = her@sorah.jp
+  #signingkey = F4C0895C
+[commit]
+	gpgsign = true
+[sendemail]
+	smtpencryption = tls
+	smtpserver = smtp.sorah.jp
+  smtpuser = sorah@sorah.jp
+  smtpserverport = 587
+[pull]
+	ff = only
+[merge]
+	conflictStyle = diff3
+[init]
+	defaultBranch = main
