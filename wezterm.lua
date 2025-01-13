@@ -13,8 +13,8 @@ config.font = wezterm.font_with_fallback{
     weight = 'Regular',
     assume_emoji_presentation = false,
    },
-  'Noto Sans JP',
   'Noto Sans CJK JP',
+  'Noto Sans JP',
 }
 config.cell_width = 0.8
 config.line_height = 1.0
