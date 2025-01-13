@@ -71,6 +71,11 @@ if [ "_$arch" = "_mac" ]; then
   mise use --global node@lts
   mise use --global github-cli@latest
 
+  mise use --global python@latest
+  if ! which pipx 2>/dev/null; then
+    pip install --user pipx
+  fi
+
   if ! which gsed 2>/dev/null; then
     brew install gnu-sed
   fi
@@ -111,6 +116,10 @@ if [ "_$arch" = "_mac" ]; then
   if ! which neovim 2>/dev/null; then
     brew install neovim
   fi
+
+  if ! which cloudflared 2>/dev/null; then
+    brew install cloudflared
+  fi
 fi
 
 if [[ "_$arch" = "_arch" ]]; then
@@ -149,6 +158,7 @@ EOF
     imagemagick \
     ruby \
     python-pip \
+    python-pipx \
     keychain \
     fzf \
     envchain \
@@ -156,9 +166,21 @@ EOF
     ghq \
     github-cli \
     protobuf \
+    patatt \
+    mold \
     amazon-ecr-credential-helper
-  yay -Sy baselisk-bin
+  yay -Sy baselisk-bin cloudflared-bin \
+    perl-file-rename \
+    aws-session-manager-plugin \
+    pristine-tar \
+    terraform-ls \
+    debianutils \
+    devscripts \
+    git-buildpackage \
+    jsonnet-language-server-bin
 fi
+
+mise use --global pipx:aws-sam-cli
 
 if which go 2>/dev/null >/dev/null; then
   [ ! -d ~/.gopath ] && mkdir ~/.gopath
