@@ -126,6 +126,8 @@ export CLOUDSDK_PYTHON=/usr/bin/python
 
 export BROWSER=$HOME/git/config/bin/sorah-browser
 
+export FZF_DEFAULT_OPTS='--layout=reverse'
+
 # Other env-vars
 export LESS='-R'
 
@@ -261,6 +263,7 @@ sorah-compact-off() {
   SORAH_COMPACT=0
 }
 
+fpath+=~/.zfunc
 autoload -U +X bashcompinit && bashcompinit
 autoload -U +X compinit && compinit
 setopt auto_pushd
@@ -369,7 +372,7 @@ gcd() {
     [[ ! -d "$candidate" ]] && candidate=~/git/github.com/$1
     cd $candidate
   else
-    candidate=$(ghq list | peco)
+    candidate=$(ghq list | fzf)
     [[ -z "${candidate}" ]] && return 1
     cd ~/git/${candidate}
   fi
