@@ -54,6 +54,7 @@ mise settings paranoid=1
 
 mise use --global terraform@latest
 mise use --global aws-cli@latest
+mise use --global gcloud@latest
 mise use --global aqua:astral-sh/rye
 mise use --global aqua:astral-sh/uv
 
@@ -64,6 +65,12 @@ mkdir -p ~/.zfunc
 rustup completions zsh > ~/.zfunc/_rustup
 
 if [ "_$arch" = "_mac" ]; then
+  defaults write com.apple.dock workspaces-auto-swoosh -bool NO
+  killall Dock
+
+  mise use --global node@lts
+  mise use --global github-cli@latest
+
   if ! which gsed 2>/dev/null; then
     brew install gnu-sed
   fi
@@ -96,6 +103,14 @@ if [ "_$arch" = "_mac" ]; then
   if ! which ghq 2>/dev/null; then
     brew install ghq
   fi
+
+  if ! which protoc 2>/dev/null; then
+    brew install protobuf
+  fi
+
+  if ! which neovim 2>/dev/null; then
+    brew install neovim
+  fi
 fi
 
 if [[ "_$arch" = "_arch" ]]; then
@@ -116,6 +131,7 @@ EOF
     gnupg pinentry \
     jq \
     screen tmux zsh \
+    neovim \
     git \
     strace \
     git mercurial subversion \
@@ -138,6 +154,8 @@ EOF
     envchain \
     ripgrep \
     ghq \
+    github-cli \
+    protobuf \
     amazon-ecr-credential-helper
   yay -Sy baselisk-bin
 fi
