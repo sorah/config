@@ -46,9 +46,6 @@ if [ "_$run_tmux" = "_1" ]; then
   fi
 fi
 
-if [ "$WINDOW" -o "$TMUX" ]; then
-  export TERM=screen-256color
-fi
 [ ! -d ~/.gopath ] && mkdir ~/.gopath
 [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
 export GOPATH=$HOME/.gopath
