@@ -18,6 +18,8 @@ repository_name = ARGV[0] or abort "usage #$0 REPOSITORY"
     end
   end
 
+  next if image_ids.empty?
+
   unless dry_run
     @ecr.batch_delete_image(
       repository_name:,
