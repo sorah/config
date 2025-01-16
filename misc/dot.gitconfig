@@ -18,5 +18,13 @@
 	ff = only
 [merge]
 	conflictStyle = diff3
+[core]
+  preloadindex = true
+  editor = nvim
 [init]
 	defaultBranch = main
+[feature]
+  manyFiles = false
+[merge "dpkg-mergechangelogs"]
+   name = debian/changelog merge driver
+   driver = dpkg-mergechangelogs -m %O %A %B %A
