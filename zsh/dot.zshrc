@@ -347,7 +347,7 @@ function preexec() {
 
 # gnupg send keys
 gpg-send() {
-for srv in pgp.mit.edu pgp.nic.ad.jp; do
+for srv in pgp.mit.edu keyserver.ubuntu.com keys.gnupg.net; do
   for keyid in 73E3B6AC 31604EB9 F4C0895C 3F0F56A8; do
     gpg --keyserver $srv --send-keys $keyid
   done
