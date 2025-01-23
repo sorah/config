@@ -979,7 +979,7 @@ let g:terraform_fmt_on_save=1
 
 " Syntastic/Ale
 let g:ale_linters_ignore = {
-\  'ruby': ['rubocop'],
+\  'ruby': ['rubocop', 'solargraph'],
 \ }
 
 let g:tsuquyomi_disable_quickfix = 1
