@@ -506,6 +506,10 @@ if [[ ! -e "$TF_PLUGIN_CACHE_DIR" ]]; then
   mkdir -p $TF_PLUGIN_CACHE_DIR
 fi
 
+if which aws_completer >/dev/null 2>/dev/null; then
+  complete -C "$(which aws_completer)" aws
+fi
+
 #====================
 # powerup your emacs
 #====================
