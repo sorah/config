@@ -74,6 +74,7 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
 Plug 'nvim-telescope/telescope-ghq.nvim'
 Plug 'RRethy/vim-illuminate'
+Plug 'github/copilot.vim'
 if has('nvim')
   Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 endif
@@ -95,6 +96,7 @@ let g:coc_global_extensions = [
   \   "coc-tsserver",
   \   "coc-word",
   \   "coc-prettier",
+  \   "@hexuhua/coc-copilot",
   \ ]
 
 filetype on
