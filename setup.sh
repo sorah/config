@@ -30,6 +30,8 @@ ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf
 ln -sf `pwd`/misc/dot.irbrc ~/.irbrc
 ln -sf `pwd`/misc/dot.gemrc ~/.gemrc
 
+mkdir -p ~/.config/wezterm; ln -sf `pwd`/wezterm.lua ~/.config/wezterm/wezterm.lua
+
 mkdir -p ~/.local/share/applications
 ln -s $(pwd)/dot.local/share/applications/sorah-browser.desktop ~/.local/share/applications/
 
@@ -65,6 +67,9 @@ mkdir -p ~/.zfunc
 rustup completions zsh > ~/.zfunc/_rustup
 
 if [ "_$arch" = "_mac" ]; then
+  mkdir -p `pwd`/mac/dot.config/karabiner
+  ln -sf `pwd`/mac/dot.config/karabiner/karabiner.json ~/.config/karabiner/karabiner.json
+
   defaults write com.apple.dock workspaces-auto-swoosh -bool NO
   killall Dock
 
