@@ -81,11 +81,11 @@ if [ "_$arch" = "_mac" ]; then
   fi
 
   if ! which jq 2>/dev/null; then
-    brew install jq
+    mise use --global aqua:jqlang/jq
   fi
 
   if ! which go 2>/dev/null; then
-    brew install go
+    mise use --global core:go
   fi
 
   if ! which tmux 2>/dev/null; then
@@ -98,27 +98,27 @@ if [ "_$arch" = "_mac" ]; then
   fi
 
   if ! which fzf 2>/dev/null; then
-    brew install fzf
+    mise use --global aqua:junegunn/fzf@latest
   fi
 
   if ! which rg 2>/dev/null; then
-    brew install ripgrep
+    mise use --global aqua:BurntSushi/ripgrep
   fi
 
   if ! which ghq 2>/dev/null; then
-    brew install ghq
+    mise use --global aqua:x-motemen/ghq
   fi
 
   if ! which protoc 2>/dev/null; then
-    brew install protobuf
+    mise use --global aqua:protocolbuffers/protobuf/protoc
   fi
 
   if ! which neovim 2>/dev/null; then
-    brew install neovim
+    mise use --global aqua:neovim/neovim
   fi
 
   if ! which cloudflared 2>/dev/null; then
-    brew install cloudflared
+    mise use --global aqua:cloudflare/cloudflared
   fi
 fi
 
