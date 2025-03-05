@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=sorah-browser
+Exec=sorah-browser %u
+Type=Application
+Terminal=false
+X-MultipleArgs=false
+Categories=Network;WebBrowser;
+MimeType=x-scheme-handler/http;x-scheme-handler/https
