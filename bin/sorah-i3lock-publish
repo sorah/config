@@ -1,5 +1,5 @@
 #!/bin/bash
-
+exit 0
 (
   echo "<ul>"
   for url in $(tail -n3 ~/tmp/sorah-i3lock-image.log|sed -r -e 's|^.+/(.+)_([0-9]+)\..+$|http://\1.tumblr.com/post/\2|'); do
