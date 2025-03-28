@@ -247,6 +247,7 @@ endif
 
 let g:hybrid_custom_term_colors = 0
 let g:hybrid_reduced_contrast = 0
+let g:hybrid_transparent_background = 1
 set background=dark
 colorscheme hybrid
 hi Normal ctermbg=none
