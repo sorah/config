@@ -9,9 +9,11 @@ gemfile do
   gem 'aws-sdk-ecs'
   gem 'aws-sdk-ecr'
   gem 'aws-sdk-iam'
+  gem 'aws-sdk-rds'
   gem 'aws-sdk-ecrpublic'
   gem 'aws-sdk-codebuild'
   gem 'solargraph'
   gem 'ruby-lsp'
+  gem 'httpx'
 end
 puts 'done'
