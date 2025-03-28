@@ -1,19 +1,4 @@
 # vim: ft=zsh
-export PATHTOVIM=/Applications/MacVim.app/Contents/MacOS/Vim
-export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
-
-vim() {
-  local a
-  a=(${(s.:.)1})
-  /Applications/MacVim.app/Contents/MacOS/Vim -g --remote-tab $a[1] 2>/dev/null >/dev/null
-  [ "$a[2]" != "" ] && /Applications/MacVim.app/Contents/MacOS/Vim -g --remote-expr 'setpos(".", [0, '$a[2]', 1, 1])' 2>/dev/null >/dev/null
-}
-alias Vim='vim'
-alias -g vim='/Applications/MacVim.app/Contents/MacOS/Vim'
-alias -g view='/Applications/MacVim.app/Contents/MacOS/Vim -R'
-
-alias ls='ls -G'
-
 if [[ -n "${TMUX}" ]]; then
   goprefix="${SORAH_GOPREFIX}"
 fi

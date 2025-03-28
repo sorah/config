@@ -18,6 +18,7 @@ fi
 run_tmux=1
 [[ "_$TERM_PROGRAM" = "_vscode" ]] && run_tmux=0
 [[ -n "$NOTMUX" ]] && run_tmux=0
+[[ -e ~/.notmux ]] && run_tmux=0
 [[ -n "$TMUX" ]] && run_tmux=0
 [[ -n "$WINDOW" ]] && run_tmux=0
 [[ "_$TERM" = "_linux" ]] && run_tmux=0

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 set -e
 set -x
 
@@ -13,7 +13,9 @@ headof="$(echo -n $newver|sed -e 's/\.[0-9]*$//')"
 
 eval "$(rbenv init -)"
 
-git -C /home/sorah/.rbenv/plugins/ruby-build pull
+if [[ -e ~/.rbenv/plugins/ruby-build ]]; then
+  git -C ~/.rbenv/plugins/ruby-build pull
+fi
 
 if [ "$(uname)" = "Darwin" ]; then
   export RUBY_CONFIGURE_OPTS=" \
@@ -22,7 +24,8 @@ if [ "$(uname)" = "Darwin" ]; then
     --with-out-ext=tk,tk/* \
     --with-valgrind \
     --with-readline-dir=$(brew --prefix readline) \
-    --with-openssl-dir=$(brew --prefix openssl)"
+    --with-openssl-dir=$(brew --prefix openssl) \
+    --enable-yjit=stats"
 
   export optflags="-O0 -ggdb3"
   export RUBY_CFLAGS="${optflags} ${debugflags}"
@@ -53,5 +56,10 @@ sorah-ruby-ensure-gems
 rbenv rehash
 
 if [[ ( ! -z $headof ) ]]; then
-  ln -sfT $newver $RBENV_ROOT/versions/$headof
+  if [ "$(uname)" = "Darwin" ]; then
+    ln -sf $newver $RBENV_ROOT/versions/$headof.new
+    mv $RBENV_ROOT/versions/$headof{.new,}
+  else
+    ln -sfT $newver $RBENV_ROOT/versions/$headof
+  fi
 fi
