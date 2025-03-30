@@ -71,6 +71,7 @@ if [ "_$arch" = "_mac" ]; then
   ln -sf `pwd`/mac/dot.config/karabiner/karabiner.json ~/.config/karabiner/karabiner.json
 
   defaults write com.apple.dock workspaces-auto-swoosh -bool NO
+  defaults write com.apple.dock autohide-time-modifier -float 0.5
   killall Dock
 
   mise use --global node@lts
