@@ -9,6 +9,11 @@ fi
 
 [ -n "$goprefix" ] && export PATH=${goprefix}/libexec/bin:$PATH
 
+if [[ ! -e /tmp/$USER.ssh-keychain-loaded ]]; then
+  ssh-add --apple-load-keychain
+  touch /tmp/$USER.ssh-keychain-loaded 
+fi
+
 # homebrew
 
 sorah_brew_prefix="$(brew --prefix)"
