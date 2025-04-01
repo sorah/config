@@ -55,8 +55,6 @@ fi
 mise settings paranoid=1
 
 mise use --global terraform@latest
-mise use --global aws-cli@latest
-mise use --global gcloud@latest
 mise use --global aqua:astral-sh/rye
 mise use --global aqua:astral-sh/uv
 
@@ -76,7 +74,6 @@ if [ "_$arch" = "_mac" ]; then
 
   mise use --global node@lts
   mise use --global github-cli@latest
-
   mise use --global python@latest
   if ! which pipx 2>/dev/null; then
     pip install --user pipx
@@ -127,6 +124,11 @@ if [ "_$arch" = "_mac" ]; then
     mise use --global aqua:cloudflare/cloudflared
   fi
 fi
+
+# (prioritize python installed above in macOS)
+mise use --global aws-cli@latest
+mise use --global gcloud@latest
+
 
 if [[ "_$arch" = "_arch" ]]; then
   if ! grep -q aur-sorah /etc/pacman.conf; then
