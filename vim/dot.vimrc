@@ -50,6 +50,7 @@ Plug 'Lokaltog/vim-distinguished'
 Plug 'tomasr/molokai'
 Plug 'jonathanfilip/vim-lucius'
 Plug 'w0ng/vim-hybrid'
+Plug 'kristijanhusak/vim-hybrid-material'
 Plug 'eagletmt/vim-ruby_namespace'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
@@ -249,7 +250,7 @@ let g:hybrid_custom_term_colors = 0
 let g:hybrid_reduced_contrast = 0
 let g:hybrid_transparent_background = 1
 set background=dark
-colorscheme hybrid
+colorscheme hybrid_reverse
 hi Normal ctermbg=none
 
 "}}}
