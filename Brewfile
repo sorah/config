@@ -1,7 +1,7 @@
 # vim: ft=ruby
 cask '1password'
-cask 'firefox@developer-edition'
 cask 'google-chrome@dev'
+cask 'firefox@developer-edition'
 cask 'google-drive'
 cask 'aquaskk'
 cask 'karabiner-elements'
@@ -18,6 +18,19 @@ cask 'discord@ptb'
 cask 'slack'
 cask 'spotify'
 cask 'vlc'
+cask 'wireshark'
+cask 'figma'
 
 mas 'Dictionaries', id: 1380563956
 mas 'Ivory', id: 6444602274
+
+tap 'jorgelbg/tap'
+
+brew 'gnupg'
+brew 'gnu-sed'
+brew 'pinentry-touchid'
+brew 'pinentry-mac'
+brew 'rbenv'
+brew 'ruby-build'
+brew 'tmux'
+brew 'mtr'
