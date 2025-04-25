@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Protocol</key>
+    <string>s3</string>
+    <key>Vendor</key>
+    <string>nkmi-s3</string>
+    <key>Description</key>
+    <string>nkmi-s3</string>
+    <key>Default Nickname</key>
+    <string>nkmi-s3</string>
+    <key>OAuth Authorization Url</key>
+    <string>https://login.microsoftonline.com/ede2c435-85f7-4b12-af38-11cf031513d3/oauth2/v2.0/authorize</string>
+    <key>OAuth Token Url</key>
+    <string>https://login.microsoftonline.com/ede2c435-85f7-4b12-af38-11cf031513d3/oauth2/v2.0/token</string>
+    <key>OAuth Client ID</key>
+    <string>001c7a02-1349-4190-977e-2273bb70075e</string>
+    <key>OAuth Client Secret</key>
+    <string/>
+    <key>OAuth Redirect Url</key>
+    <string>${oauth.handler.scheme}://oauth</string>
+    <key>Scopes</key>
+    <array>
+      <string>profile</string>
+      <string>email</string>
+      <string>openid</string>
+    </array>
+    <key>STS Endpoint</key>
+    <string>https://sts.ap-northeast-1.amazonaws.com/</string>
+    <key>Authorization</key>
+    <string>AuthorizationCode</string>
+    <key>Password Configurable</key>
+    <false/>
+    <key>Username Configurable</key>
+    <false/>
+    <key>Username Placeholder</key>
+    <string>Username</string>
+    <key>Properties</key>
+    <dict>
+      <key>s3.assumerole.rolearn</key>
+      <string>arn:aws:iam::341857463381:role/Cyberduck</string>
+    </dict>
+  </dict>
+</plist>
