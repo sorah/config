@@ -516,6 +516,7 @@ fi
 #====================
 alias emacs='vim'
 alias vim='DISPLAY= nvim'
+alias dstat=dool
 
 timecurl() {
   curl -w "@$HOME/git/config/etc/curl-timing.txt" "$@"
