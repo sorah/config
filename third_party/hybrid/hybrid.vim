@@ -1,3 +1,6 @@
+" vim: nofoldenable
+" github.com/sorah/config modified version
+"
 " File:       hybrid.vim
 " Maintainer: Andrew Wong (w0ng)
 " URL:        https://github.com/w0ng/vim-hybrid
@@ -331,11 +334,7 @@ hi LongLineWarning  guifg=NONE        guibg=#371F1C     gui=underline ctermfg=NO
 "   WildMenu"
 
 " Use defined custom background colour for terminal Vim.
-if !has('gui_running') && exists("g:hybrid_custom_term_colors") && g:hybrid_custom_term_colors == 1
-  let s:bg_normal = s:bg_none
-else
-  let s:bg_normal = s:bg_background
-endif
+let s:bg_normal = s:bg_none
 exe "hi! Normal"        .s:fg_foreground  .s:bg_normal      .s:fmt_none
 
 "}}}
