@@ -302,8 +302,8 @@ setopt share_history        # share command history data
 
 
 # Load cdd
-if [[ -s ~/git/config/script/cdd/cdd ]] then
-  source ~/git/config/script/cdd/cdd
+if [[ -s ~/git/config/third_party/cdd/cdd ]] then
+  source ~/git/config/third_party/cdd/cdd
   function chpwd() {
     _cdd_chpwd
   }
