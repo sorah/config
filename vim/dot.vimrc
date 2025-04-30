@@ -11,9 +11,7 @@ else
   let $VIMFILES = $HOME."/.vim"
 endif
 
-if has('vim_starting') && (has('win32') || has('win64'))
-  set runtimepath+=~/git/config/vim/dot.vim
-endif
+set runtimepath+=~/git/config/vim/dot.vim
 "}}}
 
 
