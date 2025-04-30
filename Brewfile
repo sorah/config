@@ -20,6 +20,7 @@ cask 'spotify'
 cask 'vlc'
 cask 'wireshark'
 cask 'figma'
+cask 'zoom'
 
 mas 'Dictionaries', id: 1380563956
 mas 'Ivory', id: 6444602274
