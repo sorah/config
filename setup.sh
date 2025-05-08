@@ -182,7 +182,6 @@ EOF
     mold \
     file findutils grep lsof \
     zip \
-    tio \
     cmake \
     openssl cfssl \
     man-db man-pages texinfo \
@@ -195,6 +194,7 @@ EOF
     debianutils \
     devscripts \
     git-buildpackage \
+    tio \
     jsonnet-language-server-bin
 fi
 
