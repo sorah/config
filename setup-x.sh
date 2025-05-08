@@ -1,15 +1,15 @@
 #!/bin/bash
+
 if [ "$1" = "" ]; then
-  arch=mac
+  if [[ -z $arch && -e /etc/pacman.conf ]]; then
+    arch=arch
+  fi
 else
   arch=$1
 fi
 
 if [ "_$arch" = "_mac" ]; then
-  if ! which brew; then
-    echo "Install homebrew first" 1>&2
-    exit 1
-  fi
+  exit 1
 fi
 
 if [[ "_$arch" = "_arch" ]]; then
@@ -21,15 +21,15 @@ if [[ "_$arch" = "_arch" ]]; then
     i3-wm i3lock i3status dunst dmenu \
     xautolock xbindkeys xclip xkeycaps \
     adobe-source-han-sans-jp-fonts adobe-source-code-pro-fonts ttf-anonymous-pro ttf-dejavu ttf-droid ttf-inconsolata otf-ipafont ttf-opensans noto-fonts noto-fonts-cjk noto-fonts-extra noto-fonts-emoji ttf-ubuntu-font-family \
-    rxvt-unicode urxvt-perls \
+    wezterm \
     alsa-utils pulseaudio pulseaudio-alsa  \
     gnome-keyring seahorse libsecret \
     keychain \
-    ibus ibus-skk skk-jisyo \
-    feh \
-    mpv vlc \
-    remmina \
-    community/firefox-developer-edition
+    firefox-developer-edition
+    #ibus ibus-skk skk-jisyo \
+    #feh \
+    #mpv vlc \
+    #remmina \
 fi
 
 ln -sfv $HOME/git/config/linux/x/dot.xbindkeysrc ~/.xbindkeysrc

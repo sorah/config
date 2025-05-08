@@ -1,9 +1,12 @@
 #!/usr/bin/env zsh
 arch=$1
+if [[ -z $arch && -e /etc/pacman.conf ]]; then
+  arch=arch
+fi
 if [[ -z $arch && "_$(uname)" = "_Linux" ]]; then
   arch=linux
 fi
-if [[ -z $arch ]]; then
+if [[ -z $arch && "_$(uname)" = "_Darwin" ]]; then
   arch=mac
 fi
 
@@ -153,14 +156,15 @@ EOF
     strace \
     git mercurial subversion \
     go go-tools \
-    whois ipcalc iperf mtr nmap netcat tcpdump traceroute bind-tools \
+    whois ipcalc iperf mtr nmap netcat tcpdump traceroute bind-tools wireguard-tools ethtool ldns \
     ebtables nftables \
     swaks \
     bridge-utils \
     curl \
     pv \
     smartmontools usbutils \
-    cryptsetup btrfs-progs dosfstools lvm2 \
+    cryptsetup btrfs-progs dosfstools lvm2 xfsprogs \
+    e2fsprogs \
     dstat htop iotop lsof \
     parallel \
     imagemagick \
@@ -176,8 +180,14 @@ EOF
     protobuf \
     patatt \
     mold \
+    file findutils grep lsof \
+    zip \
+    tio \
+    cmake \
+    openssl cfssl \
+    man-db man-pages texinfo \
     amazon-ecr-credential-helper
-  yay -Sy baselisk-bin cloudflared-bin \
+  yay -Sy bazelisk-bin cloudflared-bin \
     perl-file-rename \
     aws-session-manager-plugin \
     pristine-tar \
