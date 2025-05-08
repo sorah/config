@@ -165,7 +165,7 @@ EOF
     smartmontools usbutils \
     cryptsetup btrfs-progs dosfstools lvm2 xfsprogs \
     e2fsprogs \
-    dstat htop iotop lsof \
+    dool htop iotop lsof \
     parallel \
     imagemagick \
     ruby \
