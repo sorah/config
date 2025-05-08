@@ -185,6 +185,7 @@ EOF
     cmake \
     openssl cfssl \
     man-db man-pages texinfo \
+    rbenv \
     amazon-ecr-credential-helper
   yay -Sy bazelisk-bin cloudflared-bin \
     perl-file-rename \
@@ -196,6 +197,11 @@ EOF
     git-buildpackage \
     tio \
     jsonnet-language-server-bin
+
+  if [[ ! -e ~/.rbenv/plugins/ruby-build ]]; then
+    mkdir -p ~/.rbenv/plugins
+    git clone https://github.com/rbenv/ruby-build ~/.rbenv/plugins/ruby-build
+  fi
 fi
 
 mise use --global pipx:aws-sam-cli
