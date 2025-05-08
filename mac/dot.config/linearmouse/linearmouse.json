@@ -1,0 +1,49 @@
+{
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.10.0",
+  "schemes" : [
+    {
+      "if" : {
+        "device" : {
+          "productID" : "0x0",
+          "productName" : "Apple Internal Keyboard \/ Trackpad",
+          "vendorID" : "0x0",
+          "category" : "trackpad"
+        }
+      },
+      "pointer" : {
+        "speed" : 0.8133,
+        "acceleration" : 1.6063,
+        "disableAcceleration" : false
+      }
+    },
+    {
+      "if" : {
+        "device" : {
+          "vendorID" : "0x46d",
+          "serialNumber" : "DABD35E3A48A0017",
+          "productID" : "0xc24a",
+          "productName" : "Gaming Mouse G600",
+          "category" : "mouse"
+        }
+      },
+      "scrolling" : {
+        "distance" : {
+          "vertical" : 7
+        },
+        "acceleration" : {
+          "vertical" : 1
+        },
+        "reverse" : {
+          "vertical" : true
+        },
+        "speed" : {
+          "vertical" : 0
+        }
+      },
+      "pointer" : {
+        "acceleration" : 0.8,
+        "disableAcceleration" : true
+      }
+    }
+  ]
+}
