@@ -148,7 +148,8 @@ EOF
 
   mise use --global asdf:mise-plugins/mise-yay
 
-  sudo pacman --needed --noconfirm -Syyu \
+  # https://unix.stackexchange.com/questions/274727/how-to-force-pacman-to-answer-yes-to-all-questions/584001#584001
+  sudo pacman --needed --noconfirm --ask 54 -Syyu \
     base-devel \
     gnupg pinentry \
     jq \
