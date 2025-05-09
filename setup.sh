@@ -177,7 +177,6 @@ EOF
     python-pipx \
     keychain \
     fzf \
-    envchain \
     ripgrep \
     ghq \
     github-cli \
@@ -200,6 +199,7 @@ EOF
     devscripts \
     git-buildpackage \
     tio \
+    envchain \
     jsonnet-language-server-bin
 
   if [[ ! -e ~/.rbenv/plugins/ruby-build ]]; then
