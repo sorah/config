@@ -28,6 +28,8 @@ fi
 
 xbindkeys
 
+xset s 120 120
+
 for dev in "TPPS/2 IBM TrackPoint" "pointer:Logitech USB Receiver"; do
   xinput set-prop "${dev}" "Evdev Wheel Emulation" 1
   xinput set-prop "${dev}" "Evdev Wheel Emulation Button" 2

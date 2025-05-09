@@ -17,9 +17,10 @@ if [[ "_$arch" = "_arch" ]]; then
     xorg-server \
     xorg-xinput xorg-xrandr xorg-xmodmap xorg-xfontsel xorg-xev \
     xorg-xinit \
-    compton \
-    i3-wm i3lock i3status dunst dmenu \
-    xautolock xbindkeys xclip xkeycaps \
+    picom \
+    i3-wm i3status dunst dmenu \
+    xss-lock i3lock \
+    xbindkeys xclip xkeycaps \
     adobe-source-han-sans-jp-fonts adobe-source-code-pro-fonts ttf-anonymous-pro ttf-dejavu ttf-droid ttf-inconsolata otf-ipafont ttf-opensans noto-fonts noto-fonts-cjk noto-fonts-extra noto-fonts-emoji ttf-ubuntu-font-family \
     wezterm \
     alsa-utils pulseaudio pulseaudio-alsa  \
