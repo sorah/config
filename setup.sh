@@ -60,6 +60,7 @@ mise settings paranoid=1
 mise use --global terraform@latest
 mise use --global aqua:astral-sh/rye
 mise use --global aqua:astral-sh/uv
+mise use --global node@lts
 
 if [[ ! -e $HOME/.rustup ]]; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -77,7 +78,6 @@ if [ "_$arch" = "_mac" ]; then
   defaults write com.apple.dock autohide-time-modifier -float 0.5
   killall Dock
 
-  mise use --global node@lts
   mise use --global github-cli@latest
   mise use --global python@latest
   if ! which pipx 2>/dev/null; then
