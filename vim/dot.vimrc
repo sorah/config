@@ -12,6 +12,7 @@ else
 endif
 
 set runtimepath+=~/git/config/vim/dot.vim
+set runtimepath+=~/git/config/vim/dot.vim/vim-plug
 "}}}
 
 
