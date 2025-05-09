@@ -160,6 +160,7 @@ EOF
     git mercurial subversion \
     go go-tools \
     whois ipcalc iperf mtr nmap netcat tcpdump traceroute bind-tools wireguard-tools ethtool ldns \
+    inetutils \
     ebtables nftables \
     swaks \
     bridge-utils \
