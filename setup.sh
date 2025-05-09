@@ -173,6 +173,7 @@ EOF
     parallel \
     imagemagick \
     ruby \
+    nodejs \
     python-pip \
     python-pipx \
     keychain \
