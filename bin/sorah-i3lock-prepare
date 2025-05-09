@@ -1,13 +1,14 @@
 #!/bin/bash
 set -x
 
-source_dir=$HOME/pictures/Tumbletail
+source_dir=$HOME/pictures/Tumbletail/
 image_path=/tmp/sorah-i3lock.png
 next_image_path=/tmp/sorah-i3lock-next.png
 
 try=0
-while [ "$try" -lt 10 ]; do
+while [[ "$try" -lt 10 ]]; do
   source_image="$(find "${source_dir}" -type f | grep -v 'gif$' | shuf -n 1)"
+  if [[ -z "${source_image}" ]]; then continue; fi
   if identify "${source_image}"; then
     source_geometry="$(cat "${source_image}" | identify - | cut -d' ' -f 3)"
     if echo "${source_geometry}" | grep -qP '^\d+x\d+$'; then
