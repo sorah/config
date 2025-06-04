@@ -172,7 +172,7 @@ EOF
     dool htop iotop lsof \
     parallel \
     imagemagick \
-    ruby \
+    ruby ruby-irb ruby-erb \
     nodejs \
     python-pip \
     python-pipx \
@@ -188,7 +188,9 @@ EOF
     zip \
     cmake \
     openssl cfssl \
+    cosign \
     man-db man-pages texinfo \
+    postgresql-libs mariadb-clients \
     rbenv \
     amazon-ecr-credential-helper
   yay -Sy bazelisk-bin cloudflared-bin \
@@ -210,6 +212,7 @@ EOF
 fi
 
 mise use --global pipx:aws-sam-cli
+mise use --global npm:@anthropic-ai/claude-code
 
 if which go 2>/dev/null >/dev/null; then
   [ ! -d ~/.gopath ] && mkdir ~/.gopath
