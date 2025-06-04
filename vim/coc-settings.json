@@ -24,5 +24,8 @@
   "[go]": {
     "coc.preferences.formatOnSave": true
   },
+  "[terraform]": {
+    "coc.preferences.formatOnSave": true
+  },
   "coc.preferences.formatOnSave": false
 }
