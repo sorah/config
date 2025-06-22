@@ -410,6 +410,8 @@ set-git-author-private() {
 main() {
   local default
   default="$(git symbolic-ref refs/remotes/origin/HEAD | sed -e 's|^.\+/||')"
+  if [[ -z $default ]]; then default="$(git rev-parse --abbrev-ref origin/HEAD|sed -e 's|^origin/||')"; fi
+  if [[ -z $default ]]; then default="main"; fi
   echo "${default}"
   git checkout "$@" "${default}"
 }
