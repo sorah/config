@@ -51,3 +51,4 @@ This file contains my personal preferences for Claude Code.
 - Never create files unless absolutely necessary
 - Always prefer editing existing files to creating new ones
 - Do not proactively create documentation files (*.md, README) unless explicitly requested
+- When working with a temporary file or temporary output, create them in `tmp/` directory under the repository root. No need to delete.
