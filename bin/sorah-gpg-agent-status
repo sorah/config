@@ -36,7 +36,7 @@ keyinfo = IO.popen(['gpg-connect-agent', '--no-autostart', "keyinfo --list", '/b
 
 nothing_cached = true
 keys.each do |k|
-  cached = k[:grps].flat_map { |_| keyinfo[_] }.select { |_| _[6] == '1' }
+  cached = k[:grps].flat_map { |_| keyinfo[_] }.select { |_| _&.fetch(6) == '1' }
 
   nothing_cached = false unless cached.empty?
   case
