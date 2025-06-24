@@ -209,6 +209,15 @@ brm() {
   done
 }
 
+wta() {
+  local prefix d
+  prefix="$(git rev-parse --git-dir)/w"
+  d="${prefix}/${branch}"
+  mkdir -p "$(basename "${d}")" || return 1
+  git worktree add -b "$1" "${d}" "$1" $*
+  cd $d || return 1
+}
+
 zsorah_ruby_path=`which ruby`
 if [[ -d "$(rbenv root 2>/dev/null)" ]]; then
   zsorah_ruby_path="zsorah-ruby"
