@@ -210,11 +210,14 @@ brm() {
 }
 
 wta() {
-  local prefix d
+  local prefix d branch
+  branch=$1
+  shift
   prefix="$(git rev-parse --git-dir)/w"
   d="${prefix}/${branch}"
-  mkdir -p "$(basename "${d}")" || return 1
-  git worktree add -b "$1" "${d}" "$1" $*
+  mkdir -p "$(dirname "${d}")" || return 1
+  echo git worktree add -b "$branch" "${d}" $*
+  git worktree add -b "$branch" "${d}" $*
   cd $d || return 1
 }
 
