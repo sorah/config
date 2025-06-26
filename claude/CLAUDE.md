@@ -153,3 +153,7 @@ This file contains my personal preferences for Claude Code.
 - Always prefer editing existing files to creating new ones
 - Do not proactively create documentation files (*.md, README) unless explicitly requested
 - When working with a temporary file or temporary output, create them in `tmp/` directory under the repository root. No need to delete.
+
+## Git GPG Signing
+
+- When encountered git commit error due to 'gpg: signing failed: Inappropriate ioctl for device', ask human to unlock their signing key instead of skipping signature.
