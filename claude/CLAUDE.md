@@ -28,6 +28,7 @@ This file contains my personal preferences for Claude Code.
 - Use keyword arguments for methods with multiple parameters
 - Prefer `attr_reader` over instance variable access
 - Omit hash or keyword argument value when it is identical to key; `{foo:}` instead of `{foo: foo}`
+- When writing a temporary script, prefer Ruby (except in the case human request or the project has another preference) and bundler/inline for its dependencies
 
 #### Module and Class Structure
 
