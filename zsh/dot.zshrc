@@ -220,6 +220,12 @@ wta() {
   git worktree add -b "$branch" "${d}" $*
   cd $d || return 1
 }
+wcd() {
+  local t
+  t="$(git worktree list | fzf --height=20%  --no-multi --scheme=path | cut -d" " -f1)"
+  if [[ -z "$t" ]]; then return 1; fi
+  cd "${t}"
+}
 
 zsorah_ruby_path=`which ruby`
 if [[ -d "$(rbenv root 2>/dev/null)" ]]; then
