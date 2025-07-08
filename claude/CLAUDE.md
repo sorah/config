@@ -7,6 +7,7 @@ This file contains my personal preferences for Claude Code.
 - Always ensure files end with a newline character (`\n`)
 - Follow existing code conventions and patterns in each project
 - Prefer editing existing files over creating new ones
+- When writing a throwaway script, prefer Ruby (except in the case human request or the project has another preference) and bundler/inline for its dependencies
 
 ## Code Quality Standards
 
@@ -14,6 +15,53 @@ This file contains my personal preferences for Claude Code.
 - Do not leave empty lines containing only whitespace
 - Write clean, readable code that follows language conventions
 - Use consistent indentation and formatting
+
+## Using Gemini AI
+
+When analyzing large codebases or multiple files that might exceed context limits or you want to search the web, use the Gemini CLI with its massive context window. Use `gemini -p` to leverage Google Gemini's large context capacity.
+
+## File and Directory Inclusion Syntax
+
+Use the `@` syntax to include files and directories in your Gemini prompts. The paths should be relative to WHERE you run the
+gemini command:
+
+### How to use
+
+- Single file analysis: gemini -p "@src/main.py Explain this file's purpose and structure"
+- Multiple files: gemini -p "@package.json @src/index.js Analyze the dependencies used in the code"
+- Entire directory: gemini -p "@src/ Summarize the architecture of this codebase"
+- Multiple directories: gemini -p "@src/ @tests/ Analyze test coverage for the source code"
+- Current directory and subdirectories: gemini -p "@./ Give me an overview of this entire project"
+- Web search: gemini -p "WebSearch: oauth 2.0 security best practices rfc"
+
+### Implementation Verification Examples
+
+Check if a feature is implemented: gemini -p "@src/ @lib/ Has dark mode been implemented in this codebase? Show me the relevant files and functions"
+Verify authentication implementation: gemini -p "@src/ @middleware/ Is JWT authentication implemented? List all auth-related endpoints and middleware"
+Check for specific patterns: gemini -p "@src/ Are there any React hooks that handle WebSocket connections? List them with file paths"
+Verify error handling: gemini -p "@src/ @api/ Is proper error handling implemented for all API endpoints? Show examples of try-catch blocks"
+Check for rate limiting: gemini -p "@backend/ @middleware/ Is rate limiting implemented for the API? Show the implementation details"
+Verify caching strategy: gemini -p "@src/ @lib/ @services/ Is Redis caching implemented? List all cache-related functions and their usage"
+Check for specific security measures: gemini -p "@src/ @api/ Are SQL injection protections implemented? Show how user inputs are sanitized"
+Verify test coverage for features: gemini -p "@src/payment/ @tests/ Is the payment processing module fully tested? List all test cases"
+
+### When to Use Gemini CLI
+
+Use gemini -p when:
+- Analyzing entire codebases or large directories
+- Comparing multiple large files
+- Need to understand project-wide patterns or architecture
+- Current context window is insufficient for the task
+- Working with files totaling more than 100KB
+- Verifying if specific features, patterns, or security measures are implemented
+- Checking for the presence of certain coding patterns across the entire codebase
+
+### Important Notes
+
+- Paths in @ syntax are relative to your current working directory when invoking gemini
+  - The CLI will include file contents directly in the context
+- Gemini's context window can handle entire codebases that would overflow Claude's context
+- When checking implementations, be specific about what you're looking for to get accurate results # Using Gemini CLI for Large Codebase Analysis
 
 ## Language-Specific Style Guides
 
@@ -28,7 +76,6 @@ This file contains my personal preferences for Claude Code.
 - Use keyword arguments for methods with multiple parameters
 - Prefer `attr_reader` over instance variable access
 - Omit hash or keyword argument value when it is identical to key; `{foo:}` instead of `{foo: foo}`
-- When writing a temporary script, prefer Ruby (except in the case human request or the project has another preference) and bundler/inline for its dependencies
 
 #### Module and Class Structure
 
@@ -153,7 +200,7 @@ This file contains my personal preferences for Claude Code.
 - Never create files unless absolutely necessary
 - Always prefer editing existing files to creating new ones
 - Do not proactively create documentation files (*.md, README) unless explicitly requested
-- When working with a temporary file or temporary output, create them in `tmp/` directory under the repository root. No need to delete.
+- When working with a temporary file, temporary script, or temporary output, create them in `tmp/` directory under the repository root. No need to delete.
 
 ## Git GPG Signing
 
