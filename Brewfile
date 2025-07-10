@@ -22,9 +22,6 @@ cask 'wireshark'
 cask 'figma'
 cask 'zoom'
 
-mas 'Dictionaries', id: 1380563956
-mas 'Ivory', id: 6444602274
-
 tap 'jorgelbg/tap'
 
 brew 'gnupg'
@@ -35,3 +32,6 @@ brew 'rbenv'
 brew 'ruby-build'
 brew 'tmux'
 brew 'mtr'
+
+mas 'Dictionaries', id: 1380563956
+mas 'Ivory', id: 6444602274
