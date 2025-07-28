@@ -4,31 +4,35 @@
     {
       "if" : {
         "device" : {
-          "productID" : "0x0",
-          "productName" : "Apple Internal Keyboard \/ Trackpad",
           "vendorID" : "0x0",
-          "category" : "trackpad"
+          "productID" : "0x0",
+          "category" : "trackpad",
+          "productName" : "Apple Internal Keyboard \/ Trackpad"
         }
       },
       "pointer" : {
         "speed" : 0.8133,
-        "acceleration" : 1.6063,
-        "disableAcceleration" : false
+        "disableAcceleration" : false,
+        "acceleration" : 1.6063
       }
     },
     {
       "if" : {
         "device" : {
-          "vendorID" : "0x46d",
           "serialNumber" : "DABD35E3A48A0017",
-          "productID" : "0xc24a",
+          "category" : "mouse",
+          "vendorID" : "0x46d",
           "productName" : "Gaming Mouse G600",
-          "category" : "mouse"
+          "productID" : "0xc24a"
         }
       },
+      "pointer" : {
+        "disableAcceleration" : true,
+        "acceleration" : 0.8
+      },
       "scrolling" : {
-        "distance" : {
-          "vertical" : 7
+        "speed" : {
+          "vertical" : 0
         },
         "acceleration" : {
           "vertical" : 1
@@ -36,13 +40,28 @@
         "reverse" : {
           "vertical" : true
         },
-        "speed" : {
-          "vertical" : 0
+        "distance" : {
+          "vertical" : 7
+        }
+      }
+    },
+    {
+      "scrolling" : {
+        "reverse" : {
+          "vertical" : true
         }
       },
       "pointer" : {
-        "acceleration" : 0.8,
+        "acceleration" : 1,
         "disableAcceleration" : true
+      },
+      "if" : {
+        "device" : {
+          "vendorID" : "0x46d",
+          "productName" : "USB Receiver",
+          "productID" : "0xc53f",
+          "category" : "mouse"
+        }
       }
     }
   ]
