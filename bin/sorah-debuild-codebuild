@@ -34,7 +34,7 @@ image, upstream_version = argv[0,2]
 
 unless image.include?(':')
   repo = case image
-         when 'stretch', 'buster', 'bullseye', 'bookworm'
+         when 'stretch', 'buster', 'bullseye', 'bookworm', 'trixie'
            'public.ecr.aws/debian/debian'
          when 'trusty', 'xenial', 'bionic', 'focal', 'jammy', 'noble'
            'public.ecr.aws/ubuntu/ubuntu'

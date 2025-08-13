@@ -1,2 +1,2 @@
-FROM debian:buster
+FROM debian:trixie
 RUN apt-get update && apt-get install -y devscripts vim gnupg2 sudo

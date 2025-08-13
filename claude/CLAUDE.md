@@ -4,7 +4,6 @@ This file contains my personal preferences for Claude Code.
 
 ## General Instructions
 
-- Always ensure files end with a newline character (`\n`)
 - Follow existing code conventions and patterns in each project
 - Prefer editing existing files over creating new ones
 - When writing a throwaway script, prefer Ruby (except in the case human request or the project has another preference) and bundler/inline for its dependencies
