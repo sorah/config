@@ -979,6 +979,9 @@ augroup END
 let g:terraform_fmt_on_save=1
 
 " Syntastic/Ale
+let g:ale_linters = {
+\  'ruby': ['ruby'],
+\ }
 let g:ale_linters_ignore = {
 \  'ruby': ['rubocop', 'solargraph'],
 \ }
