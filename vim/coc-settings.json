@@ -3,19 +3,16 @@
     "terraform": {
       "command": "terraform-ls",
       "args": ["serve"],
-      "filetypes": ["terraform", "tf"],
-      "initializationOptions": {}
+      "filetypes": ["terraform", "tf"]
     },
     "ruby": {
       "command": "ruby-lsp",
-      "filetypes": ["ruby"],
-      "initializationOptions": {}
+      "filetypes": ["ruby"]
     },
     "jsonnet": {
       "command": "jsonnet-language-server",
       "args": [],
-      "filetypes": ["jsonnet"],
-      "initializationOptions": {}
+      "filetypes": ["jsonnet"]
     }
   },
   "[typescript][typescriptreact][javascript][javascriptreact]": {

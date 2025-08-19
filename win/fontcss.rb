@@ -3,6 +3,7 @@
 FONT_TO_OVERRIDE = [
   "メイリオ",
   "Meiryo",
+  "Meiryo UI",
   "游ゴシック",
   "MS Pゴシック",
   "MS PGothic",

@@ -215,6 +215,7 @@ mise use --global pipx:aws-sam-cli
 mise use --global npm:@anthropic-ai/claude-code@latest
 mise use --global npm:@google/gemini-cli@latest
 mise use --global npm:@playwright/mcp@latest
+mise use --global npm:difit@latest
 
 if which go 2>/dev/null >/dev/null; then
   [ ! -d ~/.gopath ] && mkdir ~/.gopath
