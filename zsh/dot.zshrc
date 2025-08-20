@@ -160,10 +160,14 @@ eb() {
   envchain "${ns}" bundle exec "$@"
 }
 
+
+# aws
+export AWS_PAGER=""
 alias me="mairu exec auto "
 alias rka="mairu exec --server rubykaigi 'arn:aws:iam::005216166247:role/OrgzAdmin' "
 alias asa="mairu exec --server kmc-as 'arn:aws:iam::001762462961:role/Admin' "
 alias ma="mairu exec --server nkmi '341857463381/AdministratorAccess' "
+alias gci="aws sts get-caller-identity"
 export MAIRU_AGENT_LOG=mairu=debug
 
 alias ms="nkmish"
@@ -435,43 +439,7 @@ main() {
 }
 alias master=main
 
-### aws
 
-if [ "$(uname)" = "Darwin" ]; then
-  aws_wrapper="envchain aws"
-fi
-
-aws-instances-by-name() {
-  local iname
-  iname=$1
-  shift
-  ${=aws_wrapper} aws ec2 describe-instances "$@" --filters "Name=tag:Name,Values=$iname"
-}
-
-aws-instance-ids-by-name() {
-  aws-instances-by-name "$@" --output json | jq -r '.Reservations[] | .Instances[] | .InstanceId'
-}
-
-aws-public-dns-names-by-ids() {
-  ${=aws_wrapper} aws ec2 describe-instances --output json --instance-ids "$@" | awsi_filter-public-dns-name
-}
-
-aws-public-dns-names-by-names() {
-  aws-instances-by-name "$@" | awsi_filter-public-dns-name
-}
-
-aws-ssh-public-dns-by-name() {
-  local iname dnsname
-  iname=$1
-  shift
-  dnsname="$(aws-public-dns-names-by-names $iname | head -n1)"
-  echo $dnsname
-  ssh "$@" $dnsname
-}
-
-awsi_filter-public-dns-name() {
-  jq -r '.Reservations[] | .Instances[] | .PublicDnsName'
-}
 
 pull-pics() {
   mkdir -p ~/pictures
