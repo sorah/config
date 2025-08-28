@@ -30,7 +30,6 @@ if [ "$(uname)" = "Darwin" ]; then
   export optflags="-O0 -ggdb3"
   export RUBY_CFLAGS="${optflags} ${debugflags}"
   export CXXFLAGS="${optflags} ${debugflags}"
-  export MAKE_OPTS="-j4"
   unset CC CXX
 else
   export RUBY_CONFIGURE_OPTS=" \
@@ -42,7 +41,6 @@ else
   export optflags="-O0 -ggdb3"
   export RUBY_CFLAGS="${optflags} ${debugflags}"
   export CXXFLAGS="${optflags} ${debugflags}"
-  export MAKE_OPTS="-j4"
 fi
 
 rbenv install --keep $newver
