@@ -203,6 +203,7 @@ EOF
     git-buildpackage \
     tio \
     envchain \
+    overmind \
     jsonnet-language-server-bin
 
   if [[ ! -e ~/.rbenv/plugins/ruby-build ]]; then

@@ -132,6 +132,8 @@ elif [[ -e /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
   . /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 fi
 
+export OVERMIND_TMUX_CONFIG=$HOME/git/config/tmux/overmind.conf
+
 # Other env-vars
 export LESS='-R'
 
