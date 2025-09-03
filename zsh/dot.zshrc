@@ -431,11 +431,16 @@ set-git-author-private() {
   git config user.email 'her@sorah.jp'
 }
 
-main() {
+git-main() {
   local default
   default="$(git symbolic-ref refs/remotes/origin/HEAD | sed -e 's|^.\+/||')"
   if [[ -z $default ]]; then default="$(git rev-parse --abbrev-ref origin/HEAD|sed -e 's|^origin/||')"; fi
   if [[ -z $default ]]; then default="main"; fi
+  echo "${default}"
+}
+
+main() {
+  default="$(git-main)"
   echo "${default}"
   git checkout "$@" "${default}"
 }
@@ -457,7 +462,7 @@ cop() {
       base=HEAD
       range=HEAD
     else
-      base=master
+      base="$(git-main)"
     fi
   fi
   if [[ -z $range ]]; then
@@ -466,7 +471,7 @@ cop() {
   echo "${range}"
   ( 
     set -x
-    git diff --name-only --diff-filter=d "${range}" -- '*.rb' '*.iam' | xargs bundle exec rubocop --auto-correct   
+    git diff --name-only --diff-filter=d "${range}" -- '*.rb' '*.iam' | xargs bundle exec rubocop --autocorrect   
   )
 }
 
