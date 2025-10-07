@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+require 'bundler/inline'
+require 'optparse'
+gemfile do
+  source 'https://rubygems.org' 
+  gem 'aws-sdk-dsql'
+end
+
+host = ENV['PGHOST']
+role = ENV['PGUSER'] || 'admin'
+
+opt = OptionParser.new() do |o|
+  o.on('-h', '--host HOST', 'DSQL Host') { host = _1 }
+  o.on('-U', '--username USER', 'role') { role = _1 }
+end
+
+opt.parse(ARGV.dup)
+abort "PGUSER or --username is required" if role.nil? || role.empty?
+host_match = host.match(/\A(?<id>[a-z0-9-]+)\.dsql\.(?<region>[a-z0-9-]+).on\.aws\z/) or abort "Invalid DSQL host format #{host.inspect}"
+region = host_match[:region]
+
+@dsql = Aws::DSQL::Client.new
+token_generator = Aws::DSQL::AuthTokenGenerator.new(credentials: @dsql.config.credentials)
+
+
+password_token = {
+  endpoint: host,
+  region:,
+  expires_in: 3600,
+}.then do |params|
+  case role
+  when "admin"
+    token_generator.generate_db_connect_admin_auth_token(params)
+  else
+    token_generator.generate_db_connect_auth_token(params)
+  end 
+end
+
+pgpassfile = Tempfile.new('pgpass').tap do |f|
+  f.write("*:*:*:#{role}:#{password_token}\n")
+  f.flush
+end
+ENV['PGPASSFILE'] = pgpassfile.path
+ENV['PGSSLMODE'] = 'verify-full'
+#ENV['PGSSLCERTMODE'] = 'require'
+ENV['PGSSLROOTCERT'] = 'system'
+ENV['PGDATABASE'] = 'postgres'
+exec 'psql', *ARGV
