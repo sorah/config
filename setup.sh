@@ -223,6 +223,11 @@ for x in mysqldef psqldef sqlite3def; do
   mise use --global "${x}"
 done
 
+mise alias set smithy "github:smithy-lang/smithy[bin_path=bin,bin=smithy,strip_components=1]"
+mise alias set smithy-language-server "github:smithy-lang/smithy-language-server[bin_path=bin,bin=smithy-language-server]"
+mise use --global smithy
+mise use --global smithy-language-server
+
 if which go 2>/dev/null >/dev/null; then
   [ ! -d ~/.gopath ] && mkdir ~/.gopath
   [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
