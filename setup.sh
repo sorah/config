@@ -134,6 +134,7 @@ fi
 mise use --global aws-cli@latest
 mise use --global gcloud@latest
 
+mise use --global aqua:suzuki-shunsuke/pinact
 
 if [[ "_$arch" = "_arch" ]]; then
   if ! grep -q aur-sorah /etc/pacman.conf; then
