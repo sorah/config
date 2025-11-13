@@ -7,5 +7,5 @@ action:
 condition:
   domainType: thirdParty
   requestDomains:
-    - w.wovn.io
+    - j.wovn.io
 ---
