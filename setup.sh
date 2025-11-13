@@ -150,7 +150,7 @@ EOF
   mise use --global asdf:mise-plugins/mise-yay
 
   # https://unix.stackexchange.com/questions/274727/how-to-force-pacman-to-answer-yes-to-all-questions/584001#584001
-  sudo pacman --needed --noconfirm --ask 54 -Syyu \
+  sudo pacman --needed --noconfirm --ask 54 -Syy \
     base-devel \
     gnupg pinentry \
     jq \
@@ -238,6 +238,11 @@ if which go 2>/dev/null >/dev/null; then
   if ! which gopls; then
     go install golang.org/x/tools/gopls@latest
   fi
+fi
+
+if which claude 2>/dev/null >/dev/null; then
+  claude mcp get playwright || claude mcp add -s user playwright mcp-server-playwright
+  claude mcp get aws-knowledge-mcp-server || claude mcp add -s user aws-knowledge-mcp-server -t http https://knowledge-mcp.global.api.aws
 fi
 
 if systemctl --version 2>/dev/null >/dev/null; then
