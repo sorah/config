@@ -74,6 +74,7 @@ Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
 Plug 'nvim-telescope/telescope-ghq.nvim'
+Plug 'nvim-telescope/telescope-ui-select.nvim'
 Plug 'RRethy/vim-illuminate'
 Plug 'github/copilot.vim'
 if has('nvim')
