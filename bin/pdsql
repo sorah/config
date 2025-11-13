@@ -15,7 +15,6 @@ opt = OptionParser.new() do |o|
 end
 
 opt.parse(ARGV.dup)
-abort "PGUSER or --username is required" if role.nil? || role.empty?
 host_match = host.match(/\A(?<id>[a-z0-9-]+)\.dsql\.(?<region>[a-z0-9-]+).on\.aws\z/) or abort "Invalid DSQL host format #{host.inspect}"
 region = host_match[:region]
 
@@ -40,9 +39,18 @@ pgpassfile = Tempfile.new('pgpass').tap do |f|
   f.write("*:*:*:#{role}:#{password_token}\n")
   f.flush
 end
+ObjectSpace.undefine_finalizer(pgpassfile)
 ENV['PGPASSFILE'] = pgpassfile.path
+ENV['PGPASSWORD'] = password_token
 ENV['PGSSLMODE'] = 'verify-full'
 #ENV['PGSSLCERTMODE'] = 'require'
-ENV['PGSSLROOTCERT'] = 'system'
+ENV['PGSSLROOTCERT'] = '/etc/ssl/certs/ca-bundle.crt'.then { File.exist?(_1) ? _1: 'system' }
 ENV['PGDATABASE'] = 'postgres'
-exec 'psql', *ARGV
+ENV['PGUSER'] = role
+
+if ARGV[0] == '--'
+  ARGV.shift
+  exec(*ARGV)
+else
+  exec 'psql', *ARGV
+end

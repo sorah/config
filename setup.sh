@@ -218,6 +218,11 @@ mise use --global npm:@google/gemini-cli@latest
 mise use --global npm:@playwright/mcp@latest
 mise use --global npm:difit@latest
 
+for x in mysqldef psqldef sqlite3def; do
+  mise alias set "${x}" "ubi:sqldef/sqldef[exe=${x},matching=${x}]"
+  mise use --global "${x}"
+done
+
 if which go 2>/dev/null >/dev/null; then
   [ ! -d ~/.gopath ] && mkdir ~/.gopath
   [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
