@@ -1,5 +1,6 @@
 # custom uBOL rules
 
+---
 id: 1
 priority: 10
 action:
@@ -9,3 +10,12 @@ condition:
   requestDomains:
     - j.wovn.io
 ---
+id: 2
+priority: 10
+action:
+  type: block
+condition:
+  domainType: thirdParty
+  urlFilter:
+     - ||cache.img.gmo.jp/gmo/header/script.min.js
+
