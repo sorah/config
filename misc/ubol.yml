@@ -15,7 +15,5 @@ priority: 10
 action:
   type: block
 condition:
-  domainType: thirdParty
-  urlFilter:
-     - ||cache.img.gmo.jp/gmo/header/script.min.js
+  urlFilter: ||cache.img.gmo.jp/gmo/header/script.min.js
 
