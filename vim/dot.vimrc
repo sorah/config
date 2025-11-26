@@ -985,6 +985,7 @@ let g:ale_linters = {
 \ }
 let g:ale_linters_ignore = {
 \  'ruby': ['rubocop', 'solargraph'],
+\  'markdown': ['alex', 'cspell', 'languagetool', 'markdownlint', 'marksman', 'mdl', 'proselint', 'pymarkdown', 'redpen', 'remark_lint', 'textlint', 'vale', 'writegood'],
 \ }
 
 let g:tsuquyomi_disable_quickfix = 1
