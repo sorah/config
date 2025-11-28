@@ -80,23 +80,11 @@ rbenv_uninit_path=$PATH
 eval "$(rbenv init --no-rehash -)"
 export PATH=$rbenv_uninit_path
 
-if [[ -e /opt/asdf-vm/asdf.sh ]]; then
-  . /opt/asdf-vm/asdf.sh
-fi
 if [[ -e $HOME/.local/bin/mise ]]; then
   eval "$($HOME/.local/bin/mise activate zsh)"
 fi
 
 export PATH=~/.cargo/bin:$PATH
-
-export PATH=~/.plenv/bin:$PATH
-if command -v plenv >/dev/null 2>&1; then
-  eval "$(plenv init -)"
-fi
-
-if command -v docker-machine >/dev/null 2>&1; then
-  eval "$(docker-machine env default 2>/dev/null)"
-fi
 
 export GEMSRC_USE_GHQ=1
 export DISABLE_SPRING=1
