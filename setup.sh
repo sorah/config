@@ -58,6 +58,7 @@ fi
 mise settings paranoid=1
 
 mise use --global terraform@latest
+mise use --global 1password@latest
 mise use --global aqua:astral-sh/rye
 mise use --global aqua:astral-sh/uv
 mise use --global node@lts
