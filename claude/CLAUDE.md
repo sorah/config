@@ -10,7 +10,6 @@ This file contains my personal preferences for Claude Code.
 
 ## Code Quality Standards
 
-- Throw errors instead of silently ignoring them (unless explicitly instructed otherwise)
 - Do not leave empty lines containing only whitespace
 - Write clean, readable code that follows language conventions
 - Use consistent indentation and formatting
@@ -45,9 +44,6 @@ Comments should not repeat what the code is saying. Use comments for explaining 
 - Don't reference removed or obsolete code paths (e.g. "No longer uses X format")
 
 ## Language-Specific Style Guides
-
-**CRITICAL REQUIREMENT**: Before writing or modifying ANY code in the following languages, you MUST first read and apply the corresponding style guide. This is non-negotiable.
-**Enforcement**: If you write code without following these style guides, the code will be considered incorrect and must be rewritten.
 
 ### Ruby
 
