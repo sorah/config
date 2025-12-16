@@ -194,6 +194,7 @@ EOF
     man-db man-pages texinfo \
     postgresql-libs mariadb-clients \
     rbenv \
+    docker-buildx \
     amazon-ecr-credential-helper
   yay -Sy bazelisk-bin cloudflared-bin \
     perl-file-rename \
