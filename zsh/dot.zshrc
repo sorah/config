@@ -459,7 +459,7 @@ cop() {
   echo "${range}"
   ( 
     set -x
-    git diff --name-only --diff-filter=d "${range}" -- '*.rb' '*.iam' | xargs bundle exec rubocop --autocorrect   
+    git diff --name-only --diff-filter=d "${range}" -- '*.rb' '*.iam' 'Gemfile' | xargs bundle exec rubocop --autocorrect   
   )
 }
 
