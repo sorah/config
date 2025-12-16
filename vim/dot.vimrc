@@ -92,7 +92,6 @@ let g:coc_global_extensions = [
   \   "coc-json",
   \   "coc-omni",
   \   "coc-rust-analyzer",
-  \   "coc-solargraph",
   \   "coc-syntax",
   \   "coc-tag",
   \   "coc-tsserver",
@@ -100,6 +99,7 @@ let g:coc_global_extensions = [
   \   "coc-prettier",
   \   "@hexuhua/coc-copilot",
   \ ]
+" \   "coc-solargraph",
 
 filetype on
 filetype plugin on
@@ -987,6 +987,7 @@ let g:ale_linters_ignore = {
 \  'ruby': ['rubocop', 'solargraph'],
 \  'markdown': ['alex', 'cspell', 'languagetool', 'markdownlint', 'marksman', 'mdl', 'proselint', 'pymarkdown', 'redpen', 'remark_lint', 'textlint', 'vale', 'writegood'],
 \ }
+let g:ale_ruby_solargraph_executable = 'solargraph_invalid'
 
 let g:tsuquyomi_disable_quickfix = 1
 
