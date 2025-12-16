@@ -349,18 +349,33 @@ augroup TerraformFt
 
   autocmd BufWinEnter,BufNewFile *.tf setf terraform
 augroup END
+
+augroup SmithyFt
+  autocmd!
+  autocmd BufWinEnter,BufNewFile *.smithy setf smithy
+augroup END
 "}}}
 
 "treesitter
 lua << EOL
 require('nvim-treesitter.configs').setup({
+  ensure_installed = {"smithy"},
   highlight = {
     enable = true,
     disable = function(lang, bufnr)
       -- including vim for the sake of Lua blocks inside VimL
-      if lang == "vim" or lang == "lua" or lang == "typescriptreact" or lang == "typescript" then
+      if lang == "vim" or lang == "lua" or lang == "typescriptreact" or lang == "typescript" or lang == "smithy" then
         return false
       end
+      return true
+    end,
+  },
+  indent = {
+    enable = true,
+    disable = function(lang, bufnr)
+      if lang == "ruby" or lang == "smithy" or lang == "typescriptreact" or lang == "typescript" or lang == "smithy" then
+        return false
+        end
       return true
     end,
   },
