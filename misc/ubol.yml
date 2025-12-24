@@ -9,6 +9,7 @@ condition:
   domainType: thirdParty
   requestDomains:
     - j.wovn.io
+    - b.shutto-translation.com
 ---
 id: 2
 priority: 10
@@ -16,4 +17,3 @@ action:
   type: block
 condition:
   urlFilter: ||cache.img.gmo.jp/gmo/header/script.min.js
-
