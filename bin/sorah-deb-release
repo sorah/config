@@ -150,7 +150,8 @@ puts
 
 deb_files = []
 
-target_changes = ARGV.map do |change_path|
+target_changes = ARGV.filter_map do |change_path|
+  next nil if change_path.include?('-build-deps_')
   changes = File.read(change_path)
   change_arch = change_path.match(/_([a-z0-9]+?)\.changes\z/)[1]
 
@@ -162,7 +163,7 @@ target_changes = ARGV.map do |change_path|
   arch = change_fields['Architecture'][0].split(/\s+/).grep_v('source').first
 
   case
-  when /^ruby[23]\.\d+$/ === package_name
+  when /^ruby\d\.\d+$/ === package_name
     repo_name = "ruby"
   else
     repo_name = package_name
