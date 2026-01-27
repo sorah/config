@@ -1,0 +1,26 @@
+;; vim: ft=skkdict
+;; Battle Stats (Full Names)
+くりてぃかる /武略; FFXIV Materia CRT/
+だいれくとひっと /天眼; FFXIV Materia DH/
+いしりょく /雄略; FFXIV Materia DET/
+すきるすぴーど /戦技; FFXIV Materia SkS/
+すぺるすぴーど /詠唱; FFXIV Materia SpS/
+ふくつ /剛柔; FFXIV Materia TEN/
+しんこう /信力; FFXIV Materia PIE/
+
+;; Battle Stats (Abbreviations)
+くり /武略; FFXIV Materia CRT/
+だいひ /天眼; FFXIV Materia DH/
+いし /雄略; FFXIV Materia DET/
+すきすぴ /戦技; FFXIV Materia SkS/
+すぺすぴ /詠唱; FFXIV Materia SpS/
+
+;; Crafter Stats
+さぎょうせいど /名匠; FFXIV Materia CMS/
+かこうせいど /巨匠; FFXIV Materia CTRL/
+しーぴー /魔匠; FFXIV Materia CP/
+
+;; Gatherer Stats
+かくとくりょく /達識; FFXIV Materia Gathering/
+しきしつりょく /博識; FFXIV Materia Perception/
+じーぴー /器識; FFXIV Materia GP/
