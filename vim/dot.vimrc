@@ -1001,6 +1001,7 @@ let g:ale_linters = {
 let g:ale_linters_ignore = {
 \  'ruby': ['rubocop', 'solargraph'],
 \  'markdown': ['alex', 'cspell', 'languagetool', 'markdownlint', 'marksman', 'mdl', 'proselint', 'pymarkdown', 'redpen', 'remark_lint', 'textlint', 'vale', 'writegood'],
+\  'proto': ['buf_lint', 'protoc-gen-lint', 'protolint'],
 \ }
 let g:ale_ruby_solargraph_executable = 'solargraph_invalid'
 

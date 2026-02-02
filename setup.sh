@@ -231,6 +231,8 @@ mise alias set smithy-language-server "github:smithy-lang/smithy-language-server
 mise use --global smithy
 mise use --global smithy-language-server
 
+mise use --global buf
+
 if which go 2>/dev/null >/dev/null; then
   [ ! -d ~/.gopath ] && mkdir ~/.gopath
   [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src

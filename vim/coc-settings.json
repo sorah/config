@@ -13,6 +13,11 @@
       "command": "jsonnet-language-server",
       "args": [],
       "filetypes": ["jsonnet"]
+    },
+    "proto": {
+      "command": "buf",
+      "args": ["lsp", "serve"],
+      "filetypes": ["proto"]
     }
   },
   "[typescript][typescriptreact][javascript][javascriptreact]": {
