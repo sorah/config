@@ -221,6 +221,8 @@ wcd() {
   cd "${t}"
 }
 
+alias hub-fork='gh repo fork --remote --remote-name sorah'
+
 zsorah_ruby_path=`which ruby`
 if [[ -d "$(rbenv root 2>/dev/null)" ]]; then
   zsorah_ruby_path="zsorah-ruby"
