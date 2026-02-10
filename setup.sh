@@ -221,10 +221,9 @@ mise use --global npm:@google/gemini-cli@latest
 mise use --global npm:@playwright/mcp@latest
 mise use --global npm:difit@latest
 
-for x in mysqldef psqldef sqlite3def; do
-  mise alias set "${x}" "ubi:sqldef/sqldef[exe=${x},matching=${x}]"
-  mise use --global "${x}"
-done
+mise use --global psqldef
+mise use --global sqlite3def
+mise use --global mysqldef
 
 mise alias set smithy "github:smithy-lang/smithy[bin_path=bin,bin=smithy,strip_components=1]"
 mise alias set smithy-language-server "github:smithy-lang/smithy-language-server[bin_path=bin,bin=smithy-language-server]"
