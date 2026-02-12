@@ -80,6 +80,12 @@ rbenv_uninit_path=$PATH
 eval "$(rbenv init --no-rehash -)"
 export PATH=$rbenv_uninit_path
 
+export MISE_ENV_CACHE=1
+if [[ -n "$XDG_RUNTIME_DIR" ]]; then
+  mkdir -p "$XDG_RUNTIME_DIR/mise-env-cache"
+  chmod 700 "$XDG_RUNTIME_DIR/mise-env-cache"
+  ln -sf "$XDG_RUNTIME_DIR/mise-env-cache" "$HOME/.local/state/mise/env-cache"
+fi
 if [[ -e $HOME/.local/bin/mise ]]; then
   eval "$($HOME/.local/bin/mise activate zsh)"
 fi
