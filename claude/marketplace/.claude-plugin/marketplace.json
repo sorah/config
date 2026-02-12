@@ -1,0 +1,25 @@
+{
+  "name": "sorah-marketplace",
+  "owner": {
+    "name": "sorah"
+  },
+  "metadata": {
+    "description": "Personal Claude Code plugins for coding guidelines, security review, and spec-driven development."
+  },
+  "plugins": [
+    {
+      "name": "sorah-guides",
+      "source": "./plugins/sorah-guides",
+      "description": "Coding guidelines and review tools. Skills for general coding, Ruby, Rails, Terraform, and security. Includes a security review agent.",
+      "version": "0.1.0",
+      "license": "CC0-1.0"
+    },
+    {
+      "name": "sorah-spec",
+      "source": "./plugins/sorah-spec",
+      "description": "Reviews spec files and conducts exhaustive interview sessions to resolve ambiguities, gaps, and missing details until specs are implementation-ready.",
+      "version": "0.1.0",
+      "license": "CC0-1.0"
+    }
+  ]
+}

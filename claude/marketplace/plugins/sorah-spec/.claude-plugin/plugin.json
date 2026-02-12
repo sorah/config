@@ -1,0 +1,9 @@
+{
+  "name": "sorah-spec",
+  "version": "0.1.0",
+  "description": "Reviews spec files and conducts exhaustive interview sessions to resolve ambiguities, gaps, and missing details until specs are implementation-ready.",
+  "author": {
+    "name": "sorah"
+  },
+  "license": "CC0-1.0"
+}
