@@ -301,7 +301,7 @@ end.each do |tag, changes|
 
       asset = begin
         octo.upload_asset(release.url, file, content_type: content_type, name: name)
-      rescue Faraday::ConnectionFailed => e
+      rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
         puts " * asset: #{name} (Retrying due to #{e.class})"
         sleep 3
         retry
