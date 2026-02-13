@@ -1,6 +1,6 @@
 {
   "name": "sorah-guides",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Coding guidelines and review tools. Skills for general coding, Ruby, Rails, Terraform, and security. Includes a security review agent.",
   "author": {
     "name": "sorah"

@@ -158,21 +158,7 @@ Comments should not repeat what the code is saying. Use comments for explaining 
 
 ### Git Commit
 
-Follow these guidelines if there is no project-specific commit message convention.
-
-#### First Line (Summary)
-- Try to keep total length under 50 characters
-- Start with `{component_name}: ` prefix when possible
-  - Component name can be shortened filename or directory name
-  - Omit prefix if it would make the line too long
-- Use imperative mood (e.g., "Add feature" not "Added feature")
-- Use more contextful verbs than "Change", "Add", "Fix" or "Update"
-- Try to explain the "why" of the change, not just the "what"
-
-#### Additional Lines
-- Leave second line empty
-- Add detailed explanation, background, or reasoning in subsequent lines
-- Include relevant context that helps reviewers understand the change
+Follow the **Git Commit Style** skill (sorah-guides:commit-style) for commit message conventions including subject line style, prefix patterns, contextful verbs, and body guidelines.
 
 ## File Management
 
