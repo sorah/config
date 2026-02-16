@@ -1,7 +1,7 @@
 ---
 name: Git Commit Style
 description: This skill should be used when writing git commit messages, creating git commits, composing pull request titles and descriptions, or when the user asks to "commit", "git commit", "write commit message", "pull request", or "PR description". Provides conventions for subject lines, prefix patterns, body content, and verb choices.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Git Commit Style
@@ -29,7 +29,7 @@ Prefer specific verbs over generic ones:
 - `gains` for new capabilities (component as subject): `SponsorEvent: gains hero image upload`
 - `learns` for new options/parameters: `TitoApi: learns v3.1 pagination`
 - `no longer` for behavioral removals: `event_submission_open? no longer gates asset uploads`
-- `roll` for dependency updates, `releng` for release engineering, `trigger` for CI/build triggers
+- `roll` for dependency updates and referenced image/git tag updates, `releng` for release engineering, `trigger` for CI/build triggers
 
 ## Prefix Pattern
 
