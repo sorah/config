@@ -1,7 +1,7 @@
 ---
 name: Git Commit Style
 description: This skill should be used when writing git commit messages, creating git commits, composing pull request titles and descriptions, or when the user asks to "commit", "git commit", "write commit message", "pull request", or "PR description". Provides conventions for subject lines, prefix patterns, body content, and verb choices.
-version: 0.1.1
+version: 0.2.0
 ---
 
 # Git Commit Style
@@ -17,6 +17,15 @@ Conventions for writing git commit messages and pull request descriptions. Proje
 - Embed the "why" directly when possible: `avoid enlarging small images`, `avoid double-save on withdraw`
 - Technical identifiers kept verbatim: `config.x.asset_file_uploadable`, `event_submission_open?`
 - Arrow notation for renames: `ops-lb: rknw -> rknet`
+
+### Keeping Under 50 Characters
+
+Techniques when the subject runs long:
+
+- Drop `add` when the subject already names the primary new thing: `site-sessions: SiteSession model` not `… add SiteSession model` — keep `add` when supplementing existing code (specs, logging)
+- Omit secondary artifacts when the primary deliverable is clear: `site-sessions: SiteSessionIssuance service` not `… service and background jobs` — mention omitted parts in the body
+- `&` over `and`: `PrimarySession & User changes`
+- Drop qualifiers the prefix already provides: `site-sessions: PrimarySession & User changes` not `… for site sessions`
 
 ### Contextful Verbs
 
@@ -36,10 +45,10 @@ Prefer specific verbs over generic ones:
 Format: `prefix: rest of subject` — use when the commit targets a specific component.
 
 Prefix types vary by what is being changed:
-- **Class/module name** (PascalCase, matching actual name): `SponsorEventAssetFilesController: fix set_asset_file authorization`
+- **Class/module name** (PascalCase, matching actual name; short, greppable, consistent — prefer over lowercase descriptive forms): `SponsorEventAssetFilesController: fix set_asset_file authorization`, `SiteSessionRenewal: just propagate errors`
 - **Method reference** (Class#method): `SponsorEventsController#destroy: avoid double-save on withdraw`
 - **View/route path**: `broadcasts/show: sort recipients alphabetically`
-- **Feature/epic name** (consistent across a series): `event-assets: begin validation`
+- **Feature/epic name** (hyphenated, no spaces — consistent across a series): `event-assets: begin validation`, `site-sessions: SiteSession model`
 - **File or directory**: `Dockerfile: build minimal libvips`, `CI: install libvips-tools`
 - **Subsystem/infra name**: `tf/k8s: ...`, `radius: ...`, `grafana: ...`
 
