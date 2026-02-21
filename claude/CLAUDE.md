@@ -166,6 +166,7 @@ Follow the **Git Commit Style** skill (sorah-guides:commit-style) for commit mes
 - Always prefer editing existing files to creating new ones
 - Do not proactively create documentation files (*.md, README) unless explicitly requested
 - When working with a temporary file, temporary script, or temporary output, create them in `tmp/` directory under the repository root. No need to delete.
+  - Human usually declines using `/tmp` directory, outside of the project directory.
 
 ## Git GPG Signing
 
