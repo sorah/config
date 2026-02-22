@@ -22,6 +22,7 @@ $ARGUMENTS
 **Description:**
 
 - For a **single-commit branch**: use the commit subject as title and commit body as description. If the commit has no body, the description can be empty or a single sentence.
+  - When taking a commit body into the PR description, **unwrap hard-wrapped lines** within each paragraph into a single line. Commit messages wrap at ~72 chars, but GitHub renders embedded newlines as `<br>`, producing hard-to-read paragraphs. Preserve paragraph breaks (blank lines) but join consecutive non-blank lines with a space.
 - For a **multi-commit branch**: write a concise summary title, then in the description, explain individual commits under headings or bullet points. Use Markdown naturally.
 
 **Never include:**
