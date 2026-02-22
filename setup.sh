@@ -216,7 +216,6 @@ EOF
 fi
 
 mise use --global pipx:aws-sam-cli
-mise use --global npm:@anthropic-ai/claude-code@latest
 mise use --global npm:@google/gemini-cli@latest
 mise use --global npm:@playwright/mcp@latest
 mise use --global npm:difit@latest
@@ -244,8 +243,11 @@ if which go 2>/dev/null >/dev/null; then
 fi
 
 if which claude 2>/dev/null >/dev/null; then
-  claude mcp get playwright || claude mcp add -s user playwright mcp-server-playwright
   claude mcp get aws-knowledge-mcp-server || claude mcp add -s user aws-knowledge-mcp-server -t http https://knowledge-mcp.global.api.aws
+  claude plugin marketplace add `pwd`/claude/marketplace
+  claude plugin add sorah-spec@sorah-marketplace
+  claude plugin marketplace add https://github.com/microsoft/playwright-cli
+  claude plugin install playwright-cli@playwright-cli
 fi
 
 if systemctl --version 2>/dev/null >/dev/null; then
