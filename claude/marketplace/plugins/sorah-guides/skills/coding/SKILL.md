@@ -1,5 +1,5 @@
 ---
-name: General Coding Guidelines
+name: coding
 description: This skill should be used when writing or reviewing code in any language. Provides language-agnostic coding conventions for code quality, comments, error handling, and formatting. Project-specific conventions always take priority.
 version: 0.1.0
 ---

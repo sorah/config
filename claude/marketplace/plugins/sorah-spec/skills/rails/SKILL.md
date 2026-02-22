@@ -1,5 +1,5 @@
 ---
-name: Rails Spec Interview
+name: rails
 description: This skill should be used when conducting spec interviews or implementing specs for Ruby on Rails projects, or when the spec mentions "Rails", "ActiveRecord", "ActiveJob", "concerns", "migrations", "Rails.configuration", or "request specs". Provides Rails-specific interview and implementation checklist items.
 version: 0.1.0
 ---

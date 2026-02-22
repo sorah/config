@@ -1,5 +1,5 @@
 ---
-name: Rails Conventions
+name: rails
 description: This skill should be used when writing or reviewing Ruby on Rails code, or when the project uses "Rails", "ActiveRecord", "ActiveJob", "concerns", "migrations", "Rails.configuration", "request specs", or "controller". Provides Rails coding conventions, patterns, and best practices. Project-specific conventions always take priority.
 version: 0.1.0
 ---

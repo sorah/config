@@ -3,7 +3,7 @@ description: Create a GitHub pull request following sorah's commit/PR style
 argument-hint: "[message-only]"
 ---
 
-Load the **Git Commit Style** skill and apply its conventions to PR titles and descriptions.
+Load the **commit-style** skill and apply its conventions to PR titles and descriptions.
 
 ## Instructions
 

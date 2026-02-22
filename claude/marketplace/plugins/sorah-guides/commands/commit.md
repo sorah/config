@@ -3,7 +3,7 @@ description: Create git commit(s) following sorah's commit style conventions
 argument-hint: "[split]"
 ---
 
-Load the **Git Commit Style** skill and follow its conventions precisely — subject line style, prefix pattern, contextful verbs, lowercase imperative, and body guidelines.
+Load the **commit-style** skill and follow its conventions precisely — subject line style, prefix pattern, contextful verbs, lowercase imperative, and body guidelines.
 
 ## Instructions
 

@@ -1,5 +1,5 @@
 ---
-name: Ruby Conventions
+name: ruby
 description: This skill should be used when writing or reviewing Ruby code, or when the project uses "Ruby", "RSpec", "service objects", "Struct", "Data class", or Ruby class/module patterns. Provides Ruby coding conventions, patterns, and best practices. Project-specific conventions always take priority.
 version: 0.1.0
 ---

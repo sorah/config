@@ -1,5 +1,5 @@
 ---
-name: Ruby Spec Interview
+name: ruby
 description: This skill should be used when conducting spec interviews or implementing specs for Ruby projects, or when the spec mentions "Ruby", "RSpec", "service objects", "Struct", or Ruby class/module patterns. Provides Ruby-specific interview and implementation checklist items.
 version: 0.1.0
 ---

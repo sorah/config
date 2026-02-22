@@ -1,5 +1,5 @@
 ---
-name: Terraform Conventions
+name: terraform
 description: This skill should be used when writing or reviewing Terraform code, or when the project uses "Terraform", "HCL", "tfvars", "aws_iam_role", "data sources", or infrastructure-as-code patterns. Provides Terraform coding conventions, patterns, and best practices. Project-specific conventions always take priority.
 version: 0.1.0
 ---

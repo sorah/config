@@ -1,5 +1,5 @@
 ---
-name: Japanese Text
+name: japanese-text
 description: This skill should be used when writing Japanese text, blog posts, diary entries, technical articles, prose, or when the user asks to write in Japanese, compose a blog post, draft a diary entry, or write technical content in Japanese. Provides writing style, orthography, and composition conventions across personal, technical, and corporate contexts.
 version: 0.1.0
 ---

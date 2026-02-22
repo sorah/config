@@ -1,5 +1,5 @@
 ---
-name: Git Commit Style
+name: commit-style
 description: This skill should be used when writing git commit messages, creating git commits, composing pull request titles and descriptions, or when the user asks to "commit", "git commit", "write commit message", "pull request", or "PR description". Provides conventions for subject lines, prefix patterns, body content, and verb choices.
 version: 0.3.0
 ---

@@ -1,5 +1,5 @@
 ---
-name: Security Review
+name: security
 description: This skill should be used when reviewing code for security vulnerabilities, performing security audits, or when the user asks about "security review", "vulnerability", "XSS", "CSRF", "injection", "race conditions", "OAuth security", "OIDC pitfalls", "timing attacks", or "access control". Provides a comprehensive vulnerability taxonomy and review methodology.
 version: 0.1.0
 ---

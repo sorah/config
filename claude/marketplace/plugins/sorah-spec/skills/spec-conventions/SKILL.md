@@ -1,5 +1,5 @@
 ---
-name: Spec Conventions
+name: spec-conventions
 description: This skill should be used when the user asks about "spec file format", "spec conventions", "spec vs docs", "current status section", "specification structure", "how to write a spec", "spec deliverables", or "self-contained spec". Provides conventions for writing implementation-ready specification documents.
 version: 0.1.0
 ---
