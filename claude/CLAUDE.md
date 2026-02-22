@@ -8,6 +8,10 @@ This file contains my personal preferences for Claude Code.
 - Prefer editing existing files over creating new ones
 - When writing a throwaway script, prefer Ruby (except in the case human request or the project has another preference) and bundler/inline for its dependencies
 
+## Required Plugins
+
+This file references skills from the **sorah-guides** and **sorah-spec** plugins. If either plugin is not loaded (i.e. their skills do not appear in the available skills list), warn the user immediately at the start of the conversation.
+
 ## Coding & Style Guides
 
 Follow the **sorah-guides** plugin skills for coding conventions:
