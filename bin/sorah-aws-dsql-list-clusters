@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'aws-sdk-dsql'
+end
+
+require 'json'
+
+client = Aws::DSQL::Client.new
+
+clusters = []
+client.list_clusters.each_page do |page|
+  clusters.concat(page.clusters)
+end
+
+clusters.each do |cluster|
+  detail = client.get_cluster(identifier: cluster.identifier)
+  tags = client.list_tags_for_resource(resource_arn: cluster.arn).tags
+  tag_str = tags.map { |k, v| "#{k}=#{v}" }.join(", ")
+  puts "#{detail.identifier}\t#{detail.status}\t#{detail.endpoint}\t#{detail.arn}\t#{tag_str}"
+end
