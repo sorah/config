@@ -156,9 +156,10 @@ Comments should not repeat what the code is saying. Use comments for explaining 
 - Name should match the associated IAM role name
 - Use `aws_iam_role.Role.name` for both name and role attributes
 
-### Git Commit
+### Git
 
-Follow the **Git Commit Style** skill (sorah-guides:commit-style) for commit message conventions including subject line style, prefix patterns, contextful verbs, and body guidelines.
+- Follow the **Git Commit Style** skill (sorah-guides:commit-style) for commit message conventions including subject line style, prefix patterns, contextful verbs, and body guidelines.
+- Avoid using `git -C` option as it would invalidate pre-approved permissions. Use `cd` to change working directory.
 
 ## File Management
 

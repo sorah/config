@@ -1,7 +1,7 @@
 ---
 name: Git Commit Style
 description: This skill should be used when writing git commit messages, creating git commits, composing pull request titles and descriptions, or when the user asks to "commit", "git commit", "write commit message", "pull request", or "PR description". Provides conventions for subject lines, prefix patterns, body content, and verb choices.
-version: 0.2.0
+version: 0.3.0
 ---
 
 # Git Commit Style
@@ -95,3 +95,7 @@ Apply the same subject line conventions to PR titles (under 70 chars).
 - **Multi-commit branch**: write a concise summary title, then explain individual commits under headings or bullet points using Markdown
 
 Never include test procedures, test plans, QA checklists, task lists, or TODO checkboxes in PR descriptions.
+
+## Git Command Usage
+
+- Never use `git -C <path>` — it invalidates pre-approved permissions in Claude Code. Always `cd` to the target directory first, then run git commands.
