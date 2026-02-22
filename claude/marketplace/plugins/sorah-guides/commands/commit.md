@@ -20,3 +20,7 @@ Before committing, present the proposed split plan (which files/hunks go into wh
 ### Otherwise
 
 Commit all changes together in a single commit.
+
+## GPG Signing Errors
+
+If a git commit fails with `gpg: signing failed: Inappropriate ioctl for device`, ask the user to unlock their signing key. Do not skip or disable GPG signing.
