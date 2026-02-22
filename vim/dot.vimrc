@@ -77,6 +77,7 @@ Plug 'nvim-telescope/telescope-ghq.nvim'
 Plug 'nvim-telescope/telescope-ui-select.nvim'
 Plug 'RRethy/vim-illuminate'
 Plug 'github/copilot.vim'
+Plug 'https://github.com/apple/pkl-neovim.git'
 if has('nvim')
   Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 endif
@@ -359,12 +360,12 @@ augroup END
 "treesitter
 lua << EOL
 require('nvim-treesitter.configs').setup({
-  ensure_installed = {"smithy"},
+  ensure_installed = {"smithy", "pkl"},
   highlight = {
     enable = true,
     disable = function(lang, bufnr)
       -- including vim for the sake of Lua blocks inside VimL
-      if lang == "vim" or lang == "lua" or lang == "typescriptreact" or lang == "typescript" or lang == "smithy" then
+      if lang == "vim" or lang == "lua" or lang == "typescriptreact" or lang == "typescript" or lang == "smithy" or lang == "pkl" then
         return false
       end
       return true
@@ -373,7 +374,7 @@ require('nvim-treesitter.configs').setup({
   indent = {
     enable = true,
     disable = function(lang, bufnr)
-      if lang == "ruby" or lang == "smithy" or lang == "typescriptreact" or lang == "typescript" or lang == "smithy" then
+      if lang == "ruby" or lang == "smithy" or lang == "typescriptreact" or lang == "typescript" or lang == "smithy" or lang == "pkl" then
         return false
         end
       return true
