@@ -70,9 +70,9 @@ mkdir -p ~/.zfunc
 rustup completions zsh > ~/.zfunc/_rustup
 
 if [ "_$arch" = "_mac" ]; then
-  mkdir -p `pwd`/mac/dot.config/karabiner
+  mkdir -p ~/.config/karabiner
   ln -sf `pwd`/mac/dot.config/karabiner/karabiner.json ~/.config/karabiner/karabiner.json
-  mkdir -p `pwd`/mac/dot.config/linearmouse
+  mkdir -p ~/.config/linearmouse
   ln -sf `pwd`/mac/dot.config/linearmouse/linearmouse.json ~/.config/linearmouse/linearmouse.json
 
   defaults write com.apple.dock workspaces-auto-swoosh -bool YES
