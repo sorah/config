@@ -502,6 +502,7 @@ if which aws_completer >/dev/null 2>/dev/null; then
   complete -C "$(which aws_completer)" aws
 fi
 
+export CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=1
 claude() {
   local toplevel
   toplevel="$(git rev-parse --show-toplevel 2>/dev/null)"
