@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+THRESHOLD = 86400 * 90
+
+dry_run = ARGV.include?('--dry-run')
+
+reclaimed_size = 0
+Dir["#{ENV['HOME']}/.terraform.d/plugin-cache/**/*"].each do |file|
+  stat = File.stat(file)
+  next unless stat.executable? && stat.file?
+  next if Time.now - stat.atime < THRESHOLD
+  
+  size_str =  "#{(stat.size / (1024.0 * 1024)).round(2)} MB"
+  reclaimed_size += stat.size
+  puts "#{File.basename(file)} (size=#{size_str}, atime=#{stat.atime}, #{(Time.now - stat.atime) / 86400} days ago)"
+  unless dry_run
+    File.delete(file)
+  end
+end
+puts "Total reclaimed size: #{(reclaimed_size / (1024.0 * 1024)).round(2)} MB"
