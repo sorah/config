@@ -1,0 +1,8 @@
+[Unit]
+Description=portless
+
+[Service]
+ExecStart=/home/sorah/.local/bin/mise exec npm:portless -- portless proxy start --foreground
+
+[Install]
+WantedBy=default.target
