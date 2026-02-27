@@ -502,9 +502,10 @@ nnoremap <silent> <Space>ee  :<C-u>edit $MYVIMRC<CR>
 nnoremap <silent> <Space>eg  :<C-u>edit $MYGVIMRC<CR>
 nnoremap <silent> <Space>ea  :source $MYVIMRC<Return>
 
-augroup MKDUnFold
+augroup MKD
   autocmd!
   autocmd FileType markdown setl nofoldenable
+  autocmd FileType markdown setl linebreak
 augroup END
 
 nnoremap <C-h> :<C-u>vertical help<Space>
