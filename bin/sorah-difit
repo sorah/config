@@ -1,2 +1,2 @@
 #!/bin/bash
-exec mise exec npm:difit -- difit --no-open --port "$PORT" --host "$HOST" "$@"
+exec mise exec npm:difit -- difit --no-open --port "$PORT" --host "$HOST" --keep-alive "$@"
