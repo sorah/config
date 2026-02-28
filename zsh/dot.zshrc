@@ -523,6 +523,7 @@ alias difit='portless difit sorah-difit'
 #====================
 alias emacs='vim'
 alias vim='DISPLAY= nvim'
+export EDITOR='DISPLAY= nvim'
 alias dstat=dool
 
 timecurl() {
