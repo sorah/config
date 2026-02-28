@@ -1,0 +1,9 @@
+#!/bin/zsh
+local toplevel
+toplevel="$(git rev-parse --show-toplevel 2>/dev/null)"
+if [[ -n "$toplevel" && "$PWD" != "$toplevel" ]]; then
+  echo "warning: not at repository root ($toplevel), chdir and retrying... (use ALLOW_SUBDIR=1 to bypass)" >&2
+  sleep 1.2
+  cd "$toplevel"
+fi
+exec "$@"
