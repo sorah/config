@@ -49,11 +49,39 @@ config.window_padding = {
   bottom = '0cell',
 }
 
+local bg_image_path = wezterm.home_dir .. (is_windows and '\\Pictures\\wezterm.jpg' or '/Pictures/wezterm.jpg')
+local bg_transparent = {
+  {
+    source = { Color = "#0c0c0c" },
+    width = "100%",
+    height = "100%",
+    opacity = 0.90,
+  },
+}
+local bg_image = {
+  {
+    source = { File = bg_image_path },
+    height = "Cover",
+    vertical_align = "Middle",
+    hsb = { brightness = 0.02, hue = 1.0, saturation = 1.0 },
+  },
+}
+config.background = bg_transparent
+
+local bg_image_active = false
+wezterm.on('toggle-background', function(window, _pane)
+  bg_image_active = not bg_image_active
+  window:set_config_overrides({
+    background = bg_image_active and bg_image or bg_transparent,
+  })
+end)
+
 config.keys = {
   { mods = 'ALT', key = 'c', action = wezterm.action.CopyTo 'Clipboard' },
   { mods = 'ALT', key = 'v', action = wezterm.action.PasteFrom 'Clipboard' },
   { mods = 'ALT', key = '.', action = wezterm.action.CharSelect {
   }},
+  { mods = 'CTRL|SHIFT', key = 'b', action = wezterm.action.EmitEvent 'toggle-background' },
 }
 
 config.detect_password_input = true
