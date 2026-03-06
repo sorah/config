@@ -6,5 +6,9 @@ if paths.empty?
 end
 paths.each do |path|
   next unless path.end_with?('.rs')
-  IO.popen(["cargo", "locate-project"])
+  dir = File.dirname(path)
+  project_json = IO.popen(["cargo", "locate-project", chdir: dir], &:read)
+  next unless $?.success?
+  project_root = File.dirname(JSON.parse(project_json).fetch("root"))
+  system("cargo", "fmt", "--", path, chdir: project_root, exception: true)
 end

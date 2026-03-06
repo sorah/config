@@ -25,6 +25,15 @@
           },
         ],
       },
+      {
+        matcher: 'Write|Edit|MultiEdit|Update',
+        hooks: [
+          {
+            type: 'command',
+            command: 'env RBENV_VERSION= RBENV_DIR=/ ruby ~/git/config/claude/cargo-fmt.rb',
+          },
+        ],
+      },
     ],
     Notification: [
       {
