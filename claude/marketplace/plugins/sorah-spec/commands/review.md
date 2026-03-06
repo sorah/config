@@ -18,8 +18,9 @@ Before asking any questions:
 1. **Read the spec file** thoroughly
 2. **Read all referenced files** — follow every file reference, schema file, existing code mentioned in the spec
 3. **Read project conventions** — check for project-level documentation (CLAUDE.md, style guides, architecture docs, knowledge files) relevant to the spec's domain
-4. **Explore existing codebase** for related models, modules, patterns, and conventions that the spec's implementation would interact with
-5. **Check for inconsistencies** — field collisions in schemas, index types, formula errors, duplicated sections, naming mismatches between spec and code
+4. **Read project roadmap** — look for big-picture documents, project timelines, roadmaps, or milestone plans that describe planned or upcoming changes relevant to the spec's domain
+5. **Explore existing codebase** for related models, modules, patterns, and conventions that the spec's implementation would interact with
+6. **Check for inconsistencies** — field collisions in schemas, index types, formula errors, duplicated sections, naming mismatches between spec and code
 
 ## Interview Phase
 
@@ -64,6 +65,12 @@ Project-specific conventions (CLAUDE.md, style guides, knowledge docs) and frame
 - Development setup and fixtures
 - Purging/cleanup strategies
 - Key rotation handling
+
+### Future-proofing
+- Whether the proposed design accommodates planned or foreseeable changes (from roadmap docs, project timelines, or the author's knowledge)
+- Risks the author knowingly accepts — document them explicitly so implementors and future readers understand the trade-offs
+- Migration or evolution path if a known upcoming change would affect this feature
+- Interfaces and data models that may need to change — are they designed to be extended without breaking changes?
 
 ### Scope & Deliverables
 - What's explicitly in/out of scope
