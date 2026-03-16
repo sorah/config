@@ -1,4 +1,11 @@
 #!/usr/bin/env ruby
+require 'bundler/inline'
+gemfile do
+  source 'https://rubygems.org'
+  gem 'octokit'
+  gem 'aws-sdk-s3'
+  gem 'rexml'
+end
 require 'shellwords'
 require 'yaml'
 require 'fileutils'
