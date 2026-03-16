@@ -246,7 +246,7 @@ fi
 
 if which claude 2>/dev/null >/dev/null; then
   claude mcp get aws-knowledge-mcp-server || claude mcp add -s user aws-knowledge-mcp-server -t http https://knowledge-mcp.global.api.aws
-  claude plugin marketplace add `pwd`/claude/marketplace
+  claude plugin marketplace add `pwd`
   claude plugin add sorah-spec@sorah-marketplace
   claude plugin marketplace add https://github.com/microsoft/playwright-cli
   claude plugin install playwright-cli@playwright-cli

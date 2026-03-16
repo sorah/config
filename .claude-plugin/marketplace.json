@@ -9,14 +9,14 @@
   "plugins": [
     {
       "name": "sorah-guides",
-      "source": "./plugins/sorah-guides",
+      "source": "./claude/marketplace/plugins/sorah-guides",
       "description": "Coding guidelines and review tools. Skills for general coding, Ruby, Rails, Rust, Terraform, security, and Japanese text writing. Includes a security review agent.",
       "version": "0.6.1",
       "license": "CC0-1.0"
     },
     {
       "name": "sorah-spec",
-      "source": "./plugins/sorah-spec",
+      "source": "./claude/marketplace/plugins/sorah-spec",
       "description": "Reviews spec files and conducts exhaustive interview sessions to resolve ambiguities, gaps, and missing details until specs are implementation-ready.",
       "version": "0.1.3",
       "license": "CC0-1.0"
