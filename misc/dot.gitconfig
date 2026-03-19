@@ -14,13 +14,22 @@
 	smtpserver = smtp.sorah.jp
   smtpuser = sorah@sorah.jp
   smtpserverport = 587
+[fetch]
+  prune = true
+[rerere]
+  enabled = true
 [pull]
 	ff = only
+[push]
+  autoSetupRemote = true
 [merge]
-	conflictStyle = diff3
+	conflictStyle = zdiff3
+[diff]
+  algorithm = histogram
 [core]
   preloadindex = true
   editor = nvim
+  commentChar = ";"
 [init]
 	defaultBranch = main
 [feature]
