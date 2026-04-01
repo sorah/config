@@ -3,4 +3,6 @@ require 'base64'
 
 ARGF.read.split(?.).each do |encoded|
   p Base64.urlsafe_decode64(encoded.chomp)
+rescue ArgumentError => e
+  warn "Error decoding #{encoded.inspect}: #{e.message}"
 end
