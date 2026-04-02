@@ -56,6 +56,7 @@ chown buildbot:buildbot /build
 chown buildbot:buildbot /home/buildbot
 cp /run.sh /run2.sh
 chown buildbot:buildbot /run2.sh
+echo buildbot > /etc/mailname
 
 if [ ! -e /control ]; then
   mk-build-deps -r -i -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends' /debian/control

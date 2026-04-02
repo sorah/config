@@ -27,6 +27,7 @@ phases:
       - apt-get update
       - apt-get install -y --no-install-recommends tzdata debhelper dh-make devscripts gnupg2 equivs lsb-release sudo
       - 'apt-get install -y --no-install-recommends fakeroot || :'
+      - 'echo buildbot > /etc/mailname'
 
   pre_build:
     commands:
