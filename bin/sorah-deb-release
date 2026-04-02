@@ -3,21 +3,29 @@ require 'bundler/inline'
 gemfile do
   source 'https://rubygems.org'
   gem 'octokit'
-  gem 'aws-sdk-s3'
+  gem 'aws-sdk-core'
   gem 'rexml'
+  gem 'httpx'
 end
 require 'shellwords'
 require 'yaml'
 require 'fileutils'
 require 'octokit'
 require 'logger'
-require 'aws-sdk-s3'
+require 'aws-sdk-core'
 require 'net/http'
 require 'net/https'
+require 'httpx'
 require 'uri'
 
-BintrayTarget = Struct.new(:gh_organization, :bintray_repo, keyword_init: true)
-AptlyTarget = Struct.new(:gh_organization, :aptly_repo, :aptly_endpoint, :aptly_gpg_key, keyword_init: true)
+AptlyTarget = Struct.new(
+  :gh_organization,
+  :stscat_identity,
+  :aptly_repo,
+  :aptly_endpoint,
+  :aptly_gpg_key,
+  keyword_init: true,
+)
 
 Change = Struct.new(
   :path,
@@ -36,7 +44,15 @@ Change = Struct.new(
 
 DebFile = Struct.new(:package, :version, :distro, :arch, :path, :name, keyword_init: true)
 
-CONFIG_FILE = File.expand_path('~/.nkmi-deb-release')
+CONFIG_FILE = File.expand_path('~/.nkmi-deb-release.json')
+
+Config = Struct.new(
+  :stscat_url,
+  :stscat_audience,
+  :stscat_identity,
+)
+
+@config = File.exist?(CONFIG_FILE) ? Config.new(**JSON.parse(File.read(CONFIG_FILE))) : Config.new
 
 def parse_debian_metafile(str)
   if str.start_with?('-----BEGIN PGP SIGNED MESSAGE-----')
@@ -84,55 +100,30 @@ class ReleaseDescription
     new(dsc: dsc, changes_by_arch: changes_by_arch)
   end
 end
+
+def stscat_access_token(target)
+  client = Aws::STS::Client.new()
+  id_token = client.get_web_identity_token(
+    audience: [@config.stscat_audience],
+    signing_algorithm: 'ES384',
+    duration_seconds: 300,
+  ).web_identity_token
+  resp = HTTPX.post("#{@config.stscat_url}/token", json: { scope: target.gh_organization, identity: target.stscat_identity || @config.stscat_identity || 'release' }, headers: { 'Authorization' => "Bearer #{id_token}", "user-agent" => "sorah-deb-release" })
+  resp.raise_for_status
+  resp.json.fetch('token')
+end
+
 ####
 
 if ARGV.size < 2
   abort 'Usage: nkmi-deb-release repo [path/to.changes ...]'
 end
 
-Aws::S3::Client.new(region: 'ap-northeast-1', logger: Logger.new($stdout)).list_buckets
-
-config = File.exist?(CONFIG_FILE) ? YAML.load_file(CONFIG_FILE) : {}
-configuration_changed = false
-
-unless config['github_token']
-  print "Tell me your GitHub access token: "
-  config['github_token'] = $stdin.gets.chomp
-  configuration_changed = true
-end
-
-#unless config['bintray_api_key']
-#  print "bintray_api_key ($USER:$KEY): "
-#  config['bintray_api_key'] = $stdin.gets.chomp
-#  configuration_changed = true
-#end
-#
-#unless config['bintray_gpg_key_passphrase']
-#  print "bintray_gpg_key_passphrase: "
-#  config['bintray_gpg_key_passphrase'] = $stdin.gets.chomp
-#  configuration_changed = true
-#end
-
-if configuration_changed
-  File.open(CONFIG_FILE, 'w', 0600) do |io|
-    io.puts config.to_yaml
-  end
-end
-
-octo = Octokit::Client.new(access_token: config['github_token'])
-
-
 
 puts "=> Destination"
 puts
 
 case ARGV.shift
-when 'bintray-original'
-  target = BintrayTarget.new(
-    gh_organization: 'nkmideb',
-    bintray_repo: 'nekomit/deb-originals',
-  )
-  puts "   bintray #{target.inspect}"
 when 'ruby'
   target = AptlyTarget.new(
     gh_organization: 'sorah-rbpkg',
@@ -152,6 +143,8 @@ when 'nkmideb'
 else
   raise
 end
+
+octo = Octokit::Client.new(access_token: stscat_access_token(target))
 
 puts
 
@@ -333,35 +326,6 @@ end.each do |tag, changes|
 end
 
 case target
-when BintrayTarget
-  puts "=> Adding to bintray #{target.bintray_repo}"
-
-  deb_files.each do |deb|
-    next unless deb.path.end_with?('.deb')
-    url = URI("https://api.bintray.com/content/#{target.bintray_repo}/" \
-              "#{URI.encode_www_form_component(deb.package)}/" \
-              "#{URI.encode_www_form_component(deb.version)}/" \
-              "#{URI.encode_www_form_component(deb.distro)}/pool/#{deb.package[0]}/#{URI.encode_www_form_component(deb.name)};" \
-              "deb_distribution=#{URI.encode_www_form_component(deb.distro)};" \
-              "deb_architecture=#{URI.encode_www_form_component(deb.arch)};" \
-              "deb_component=main;" \
-              "publish=1;override=1")
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = url.scheme == 'https'
-    http.start do
-      print "* #{deb.path} => #{url.path} ... "
-      File.open(deb.path, 'r') do |io|
-        req = Net::HTTP::Put.new(url)
-        req.basic_auth(*config['bintray_api_key'].split(?:))
-        req['Content-Type'] = 'application/vnd.debian.binary-package'
-        req['X-GPG-PASSPHRASE'] = config['bintray_gpg_key_passphrase']
-        req['Transfer-Encoding'] = 'chunked'
-        req.body_stream = io
-        http.request(req)
-      end
-      puts "done"
-    end
-  end
 when AptlyTarget
   puts "=> Adding to aptly"
 
