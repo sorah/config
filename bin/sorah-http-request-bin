@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+require 'bundler/inline'
+require 'tmpdir'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'rack'
+  gem 'webrick'
+  gem 'rackup'
+end
+
+tmpdir = Dir.mktmpdir
+i = 0
+
+app = proc do |env|
+  message = [
+    "#{env['REQUEST_METHOD']} #{env['PATH_INFO']}#{env['QUERY_STRING'].empty? ? '' : "?#{env['QUERY_STRING']}"} #{env['SERVER_PROTOCOL']}",
+    env.select { |k, _| k.start_with?('HTTP_') }.map { |k, v| "#{k.sub(/^HTTP_/, '').split('_').map(&:downcase).join('-')}: #{v}" }.sort,
+    "",
+    env['rack.input'].read,
+    "",
+  ].join("\n")
+
+  path = File.join(tmpdir, '%04d-%s.txt' % [i, Time.now.strftime('%Y-%m-%d-%H-%M-%S')])
+  File.write(path, message)
+  i += 1
+
+  puts "============ #{path}"
+  puts message
+  puts "____________ #{path}"
+
+  ['200', {'Content-Type' => 'text/plain'}, ['']]
+end
+
+
+Rackup::Handler::WEBrick.run(app, Port: ENV['PORT']&.to_i || 3000)
