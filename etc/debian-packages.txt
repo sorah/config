@@ -10,10 +10,10 @@ ruby3.4 --arch=amd64,arm64 --dist=dist/3.4 --master=master-3.4                  
 ruby4.0 --arch=amd64,arm64 --dist=dist/4.0                                                jammy noble resolute                 bookworm trixie
 ruby-defaults --arch=amd64,arm64                                                          jammy noble resolute                 bookworm trixie
 rubygems-integration --arch=amd64                                                         jammy noble resolute                 bookworm trixie
-envchain --arch=amd64,arm64 focal jammy noble bullseye
+envchain --arch=amd64,arm64 focal jammy noble resolute bullseye bookworm trixie
 subsystemctl --arch=amd64,arm64 focal bullseye
-mitamae --arch=amd64,arm64 focal jammy noble bullseye bookworm
+mitamae --arch=amd64,arm64 focal jammy noble resolute bullseye bookworm trixie
 prometheus-exporter-proxy --arch=amd64,arm64 focal jammy noble
 cfssl --arch=amd64,arm64 jammy noble
-needroleshere --arch=amd64,arm64 focal jammy noble
+needroleshere --arch=amd64,arm64 focal jammy noble resolute
 bird2 --arch=amd64,arm64 jammy
