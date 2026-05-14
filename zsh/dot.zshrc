@@ -513,8 +513,10 @@ alias difit='portless difit sorah-difit'
 #====================
 alias emacs='vim'
 alias vim='DISPLAY= nvim'
-export EDITOR='DISPLAY= nvim'
+export EDITOR='env DISPLAY= nvim'
 alias dstat=dool
+
+alias ls='ls --color=auto'
 
 timecurl() {
   curl -w "@$HOME/git/config/etc/curl-timing.txt" "$@"
