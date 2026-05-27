@@ -8,6 +8,15 @@ This file contains my personal preferences for Claude Code.
 - Prefer editing existing files over creating new ones
 - When writing a throwaway script, prefer Ruby (except in the case human request or the project has another preference) and bundler/inline for its dependencies
 
+### Git
+
+- Before any commit/branch/push, verify the live branch with `git branch --show-current` (never the session-start snapshot) and commit onto the currently checked-out branch. Never blindly create a branch; if it's the default branch, stop and ask first.
+- Commit or push only when the user asks.
+- Each commits should be self-contained, i.e. include schema and implementation changes together.
+  - During the plan, group tasks by commits.
+- Interactive flags (`-i`, e.g. `git rebase -i`, `git add -i`) are not supported in this environment.
+- Use the `gh` CLI for GitHub operations (PRs, issues, API).
+
 ## Required Plugins
 
 This file references skills from the **sorah-guides** and **sorah-spec** plugins. If either plugin is not loaded (i.e. their skills do not appear in the available skills list), warn the user immediately at the start of the conversation.

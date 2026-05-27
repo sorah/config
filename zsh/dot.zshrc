@@ -503,6 +503,7 @@ if which aws_completer >/dev/null 2>/dev/null; then
 fi
 
 export CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=1
+export CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS=false
 alias claude='sorah-force-repo-root claude'
 alias claude-bedrock='CLAUDE_CODE_USE_BEDROCK=1 ANTHROPIC_MODEL=us.anthropic.claude-opus-4-20250514-v1:0 ANTHROPIC_SMALL_FAST_MODEL=us.anthropic.claude-sonnet-4-20250514-v1:0 AWS_PROFILE=bedrock AWS_REGION=us-west-2 claude'
 
