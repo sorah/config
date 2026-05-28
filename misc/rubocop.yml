@@ -1,0 +1,52 @@
+inherit_gem:
+  rubocop-shopify: rubocop.yml
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Style/MethodCallWithArgsParentheses:
+  Enabled: false
+
+Layout/MultilineMethodArgumentLineBreaks:
+  Enabled: false
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+Style/ClassMethodsDefinitions:
+  Enabled: false
+
+Style/SingleLineMethods:
+  Enabled: false
+
+Style/InvertibleUnlessCondition:
+  InverseMethods:
+    # disable rubocop-rails rules depending on ActiveSupport methods
+    :include?: ~
+    :exclude?: ~
+
+Style/AccessModifierDeclarations:
+  Enabled: true
+  EnforcedStyle: inline
+
+Style/SpecialGlobalVars:
+  Enabled: false
+
+Style/CaseLikeIf:
+  Enabled: true
+  MinBranchesCount: 2
+
+Style/EmptyCaseCondition:
+  Enabled: false
+
+Lint/NoReturnInBeginEndBlocks:
+  Enabled: false
+
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: start_of_line
