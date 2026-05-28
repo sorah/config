@@ -14,9 +14,34 @@
     ],
     deny: [],
   },
+  local rubyHook(script) = 'env RBENV_VERSION= RBENV_DIR=/ ruby ~/git/config/claude/' + script,
   hooks: {
+    UserPromptSubmit: [
+      {
+        _id: 'skill-reminder',
+        hooks: [
+          {
+            type: 'command',
+            command: rubyHook('skill-reminder.rb'),
+          },
+        ],
+      },
+    ],
+    PreToolUse: [
+      {
+        _id: 'skill-reminder',
+        matcher: 'Write|Edit|MultiEdit|Update',
+        hooks: [
+          {
+            type: 'command',
+            command: rubyHook('skill-reminder.rb'),
+          },
+        ],
+      },
+    ],
     PostToolUse: [
       {
+        _id: 'ensure-newline',
         matcher: 'Write|Edit|MultiEdit|Update',
         hooks: [
           {
@@ -26,6 +51,7 @@
         ],
       },
       {
+        _id: 'cargo-fmt',
         matcher: 'Write|Edit|MultiEdit|Update',
         hooks: [
           {
@@ -37,6 +63,7 @@
     ],
     Notification: [
       {
+        _id: 'pushover',
         matcher: '*',
         hooks: [
           {
@@ -46,5 +73,23 @@
         ],
       },
     ],
+  },
+  preferredNotifChannel: 'terminal_bell',
+  skipAutoPermissionPrompt: true,
+  extraKnownMarketplaces: {
+    'sorah-marketplace': {
+      source: {
+        source: 'directory',
+        path: '/home/sorah/git/config',
+      },
+    },
+  },
+  enabledPlugins: {
+    'sorah-guides@sorah-marketplace': true,
+    'sorah-spec@sorah-marketplace': true,
+    'plugin-dev@claude-plugins-official': true,
+    'rust-analyzer-lsp@claude-plugins-official': true,
+    'ruby-lsp@claude-plugins-official': true,
+    'typescript-lsp@claude-plugins-official': true,
   },
 }

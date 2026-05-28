@@ -25,10 +25,49 @@ This file references skills from the **sorah-guides** and **sorah-spec** plugins
 
 Follow the **sorah-guides** plugin skills for coding conventions:
 
-- **General Coding Guidelines** skill (sorah-guides:coding) — e.g. code quality, comments, error handling
-- **Ruby Conventions** skill (sorah-guides:ruby) — e.g. data handling, AWS SDK, testing
-- **Terraform Conventions** skill (sorah-guides:terraform) — e.g. file organization, naming, AWS-specific patterns
-- **Git Commit Style** skill (sorah-guides:commit-style) — e.g. subject lines, prefix patterns, contextful verbs
+- **Ruby Conventions** /sorah-guides:ruby — e.g. data handling, AWS SDK, testing
+- **Terraform Conventions** /sorah-guides:terraform — e.g. file organization, naming, AWS-specific patterns
+- **Git Commit Style** /sorah-guides:commit-style — e.g. subject lines, prefix patterns, contextful verbs
+
+### General Coding Guidelines
+
+This section mirrors the **/sorah-guides:coding** skill; keep them in sync.
+
+Language-agnostic coding conventions applicable across all projects. Project-specific conventions (CLAUDE.md, style guides) always take priority over this guidance.
+
+#### Code Quality
+
+- Do not leave empty lines containing only whitespace
+- Write clean, readable code that follows the language's established conventions
+- Use consistent indentation and formatting
+
+#### Code Comments
+
+Comments must not repeat what the code already expresses. Use comments for explaining **why** something is done, or to provide context not obvious from the code itself.
+
+**When to comment:**
+
+- To explain why a particular approach or workaround was chosen
+- To clarify intent when the code could be misread or misunderstood
+- To provide context from external systems, specs, or requirements
+- To document assumptions, edge cases, or limitations
+
+**When not to comment:**
+
+- Do not narrate what the code is doing — the code already says that
+- Do not duplicate function or variable names in plain English
+- Do not leave stale comments that contradict the code
+- Do not reference removed or obsolete code paths
+
+#### Error Handling
+
+- Avoid blanket exception handling unless absolutely necessary — error logging is typically handled by the runtime or framework
+- Prefer letting exceptions propagate up the call stack
+- Only catch specific exceptions when there is a meaningful reason:
+  - Adding context to the error
+  - Performing cleanup operations
+  - Converting one exception type to another with additional information
+  - Recovering from expected error conditions
 
 ## File Management
 
