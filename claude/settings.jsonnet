@@ -51,12 +51,12 @@
         ],
       },
       {
-        _id: 'cargo-fmt',
+        _id: 'fmt',
         matcher: 'Write|Edit|MultiEdit|Update',
         hooks: [
           {
             type: 'command',
-            command: 'env RBENV_VERSION= RBENV_DIR=/ ruby ~/git/config/claude/cargo-fmt.rb',
+            command: 'env RBENV_VERSION= RBENV_DIR=/ ruby ~/git/config/claude/fmt.rb',
           },
         ],
       },
