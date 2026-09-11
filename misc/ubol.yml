@@ -10,6 +10,7 @@ condition:
   requestDomains:
     - j.wovn.io
     - b.shutto-translation.com
+    - encom.xsrv.jp
 ---
 id: 2
 priority: 10
