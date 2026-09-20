@@ -1,0 +1,360 @@
+### macOS 27.0 (26A5406e)
+### NSGlobalDomain
+AppleAntiAliasingThreshold = 4
+AppleAquaColorVariant = 1
+AppleEnableSwipeNavigateWithScrolls = False
+AppleKeyboardUIMode = 3
+AppleLanguages[0] = 'en-GB'
+AppleLanguages[1] = 'ja-GB'
+AppleLocale = 'en_GB'
+AppleMeasurementUnits = 'Centimeters'
+AppleMetricUnits = True
+AppleMiniaturizeOnDoubleClick = False
+AppleShowAllExtensions = True
+AppleShowScrollBars = 'Always'
+AppleSpacesSwitchOnActivate = True
+InitialKeyRepeat = 25.0
+KB_DoubleQuoteOption = '“abc”'
+KB_SingleQuoteOption = '‘abc’'
+KB_SpellingLanguage.KB_SpellingLanguageIsAutomatic = True
+KeyRepeat = 2.0
+NSAutomaticCapitalizationEnabled = True
+NSAutomaticPeriodSubstitutionEnabled = True
+NSNavPanelFileLastListModeForOpenModeKey = 2
+NSNavPanelFileLastListModeForSaveModeKey = 2
+NSNavPanelFileListModeForOpenMode2 = 2
+NSNavPanelFileListModeForSaveMode2 = 2
+NSPreferredWebServices.NSWebServicesProviderWebSearch.NSDefaultDisplayName = 'Google'
+NSPreferredWebServices.NSWebServicesProviderWebSearch.NSProviderIdentifier = 'com.google.www'
+NSUserKeyEquivalents.Emoji & Symbols = '@$.'
+NSUserQuotesArray[0] = '“'
+NSUserQuotesArray[1] = '”'
+NSUserQuotesArray[2] = '‘'
+NSUserQuotesArray[3] = '’'
+NavPanelFileListModeForOpenMode = 2
+NavPanelFileListModeForSaveMode = 2
+com.apple.keyboard.fnState = True
+com.apple.sound.beep.flash = 0
+com.apple.sound.beep.sound = '/System/Library/Sounds/Sosumi.aiff'
+com.apple.springing.delay = 0.7575731128454208
+com.apple.springing.enabled = True
+com.apple.trackpad.forceClick = True
+com.apple.trackpad.scaling = 2.0
+com.apple.trackpad.scrolling = 0.1838
+shouldShowRSVPDataDetectors = False
+### NSGlobalDomain (currentHost)
+com.apple.keyboard.modifiermapping.0-0-0[0].HIDKeyboardModifierMappingDst = 30064771300
+com.apple.keyboard.modifiermapping.0-0-0[0].HIDKeyboardModifierMappingSrc = 30064771129
+com.apple.keyboard.modifiermapping.1452-591-0[0].HIDKeyboardModifierMappingDst = 30064771129
+com.apple.keyboard.modifiermapping.1452-591-0[0].HIDKeyboardModifierMappingSrc = 30064771129
+com.apple.trackpad.enableSecondaryClick = True
+com.apple.trackpad.fiveFingerPinchSwipeGesture = 2
+com.apple.trackpad.fourFingerHorizSwipeGesture = 2
+com.apple.trackpad.fourFingerPinchSwipeGesture = 2
+com.apple.trackpad.fourFingerVertSwipeGesture = 2
+com.apple.trackpad.momentumScroll = True
+com.apple.trackpad.pinchGesture = True
+com.apple.trackpad.rotateGesture = True
+com.apple.trackpad.scrollBehavior = 2
+com.apple.trackpad.threeFingerDragGesture = False
+com.apple.trackpad.threeFingerHorizSwipeGesture = 1
+com.apple.trackpad.threeFingerTapGesture = 0
+com.apple.trackpad.threeFingerVertSwipeGesture = 2
+com.apple.trackpad.twoFingerDoubleTapGesture = 1
+com.apple.trackpad.twoFingerFromRightEdgeSwipeGesture = 3
+com.apple.trackpad.version = 5
+### com.apple.dock
+autohide = True
+autohide-time-modifier = 0.5
+expose-group-apps = False
+loc = 'en_GB:GB'
+mineffect = 'scale'
+mru-spaces = False
+region = 'GB'
+showAppExposeGestureEnabled = True
+showMissionControlGestureEnabled = True
+tilesize = 39.0
+version = 1
+workspaces-auto-swoosh = True
+wvous-br-corner = 14
+wvous-br-modifier = 0
+### com.apple.finder
+FXArrangeGroupViewBy = 'Name'
+FXICloudDriveDesktop = False
+FXICloudDriveDocuments = False
+FXICloudDriveEnabled = True
+FXInfoPanesExpanded.MetaData = False
+FXInfoPanesExpanded.Name = False
+FXInfoPanesExpanded.OpenWith = True
+FXPreferredGroupBy = 'Name'
+FXPreferredSearchViewStyle = 'Nlsv'
+FXPreferredSearchViewStyleVersion = '%00%00%00%01'
+FXPreferredViewStyle = 'Nlsv'
+FXSidebarUpgradedSharedSearchToTwelve = True
+FavoriteTagNames[0] = ''
+FavoriteTagNames[1] = 'Red'
+FavoriteTagNames[2] = 'Orange'
+FavoriteTagNames[3] = 'Yellow'
+FavoriteTagNames[4] = 'Green'
+FavoriteTagNames[5] = 'Blue'
+FavoriteTagNames[6] = 'Purple'
+FavoriteTagNames[7] = 'Grey'
+NewWindowTarget = 'PfAF'
+RecentsArrangeGroupViewBy = 'Date Last Opened'
+ShowMountedServersOnDesktop = True
+ShowPathbar = True
+ShowSidebar = True
+ShowStatusBar = True
+SidebarDevicesSectionDisclosedState = True
+SidebarPlacesSectionDisclosedState = True
+SidebarShowingSignedIntoiCloud = True
+SidebarShowingiCloudDesktop = False
+SidebarTagsSctionDisclosedState = True
+### com.apple.HIToolbox
+AppleEnabledInputSources[0].InputSourceKind = 'Keyboard Layout'
+AppleEnabledInputSources[0].KeyboardLayout ID = 252
+AppleEnabledInputSources[0].KeyboardLayout Name = 'ABC'
+AppleEnabledInputSources[1].Bundle ID = 'com.apple.CharacterPaletteIM'
+AppleEnabledInputSources[1].InputSourceKind = 'Non Keyboard Input Method'
+AppleEnabledInputSources[2].Bundle ID = 'com.apple.PressAndHold'
+AppleEnabledInputSources[2].InputSourceKind = 'Non Keyboard Input Method'
+AppleFnUsageType = 0
+### com.apple.inputsources
+AppleEnabledThirdPartyInputSources[0].Bundle ID = 'jp.sourceforge.inputmethod.aquaskk'
+AppleEnabledThirdPartyInputSources[0].InputSourceKind = 'Keyboard Input Method'
+AppleEnabledThirdPartyInputSources[1].Bundle ID = 'jp.sourceforge.inputmethod.aquaskk'
+AppleEnabledThirdPartyInputSources[1].Input Mode = 'com.apple.inputmethod.Japanese'
+AppleEnabledThirdPartyInputSources[1].InputSourceKind = 'Input Mode'
+### com.apple.keyboard.preferences
+IsMixmojiSuggestionsEnabled = False
+### com.apple.symbolichotkeys
+AppleSymbolicHotKeys.15.enabled = False
+AppleSymbolicHotKeys.16.enabled = False
+AppleSymbolicHotKeys.164.enabled = False
+AppleSymbolicHotKeys.164.value.parameters[0] = 65535
+AppleSymbolicHotKeys.164.value.parameters[1] = 65535
+AppleSymbolicHotKeys.164.value.parameters[2] = 0
+AppleSymbolicHotKeys.164.value.type = 'standard'
+AppleSymbolicHotKeys.17.enabled = False
+AppleSymbolicHotKeys.176.enabled = False
+AppleSymbolicHotKeys.176.value.type = 'SAE1.0'
+AppleSymbolicHotKeys.18.enabled = False
+AppleSymbolicHotKeys.19.enabled = False
+AppleSymbolicHotKeys.20.enabled = False
+AppleSymbolicHotKeys.21.enabled = False
+AppleSymbolicHotKeys.22.enabled = False
+AppleSymbolicHotKeys.23.enabled = False
+AppleSymbolicHotKeys.24.enabled = False
+AppleSymbolicHotKeys.25.enabled = False
+AppleSymbolicHotKeys.26.enabled = False
+AppleSymbolicHotKeys.60.enabled = True
+AppleSymbolicHotKeys.60.value.parameters[0] = 32
+AppleSymbolicHotKeys.60.value.parameters[1] = 49
+AppleSymbolicHotKeys.60.value.parameters[2] = 262144
+AppleSymbolicHotKeys.60.value.type = 'standard'
+AppleSymbolicHotKeys.61.enabled = True
+AppleSymbolicHotKeys.61.value.parameters[0] = 32
+AppleSymbolicHotKeys.61.value.parameters[1] = 49
+AppleSymbolicHotKeys.61.value.parameters[2] = 786432
+AppleSymbolicHotKeys.61.value.type = 'standard'
+AppleSymbolicHotKeys.79.enabled = True
+AppleSymbolicHotKeys.80.enabled = True
+AppleSymbolicHotKeys.81.enabled = True
+AppleSymbolicHotKeys.82.enabled = True
+AppleSymbolicHotKeys.98.enabled = True
+AppleSymbolicHotKeys.98.value.parameters[0] = 47
+AppleSymbolicHotKeys.98.value.parameters[1] = 44
+AppleSymbolicHotKeys.98.value.parameters[2] = 1179648
+AppleSymbolicHotKeys.98.value.type = 'standard'
+### com.apple.universalaccess
+UserAssignableHotKeys[0].enabled = True
+UserAssignableHotKeys[0].key = 120
+UserAssignableHotKeys[0].modifier = 8650752
+UserAssignableHotKeys[0].sybmolichotkey = 7
+UserAssignableHotKeys[1].enabled = True
+UserAssignableHotKeys[1].key = 99
+UserAssignableHotKeys[1].modifier = 8650752
+UserAssignableHotKeys[1].sybmolichotkey = 8
+UserAssignableHotKeys[2].enabled = True
+UserAssignableHotKeys[2].key = 118
+UserAssignableHotKeys[2].modifier = 8650752
+UserAssignableHotKeys[2].sybmolichotkey = 9
+UserAssignableHotKeys[3].enabled = True
+UserAssignableHotKeys[3].key = 96
+UserAssignableHotKeys[3].modifier = 8650752
+UserAssignableHotKeys[3].sybmolichotkey = 10
+UserAssignableHotKeys[4].enabled = True
+UserAssignableHotKeys[4].key = 97
+UserAssignableHotKeys[4].modifier = 8650752
+UserAssignableHotKeys[4].sybmolichotkey = 11
+closeViewHotkeysEnabled = False
+closeViewZoomFactor = 1.0
+com.apple.custommenu.apps[0] = 'NSGlobalDomain'
+keyboardAccessFocusRingTimeout = 15.0
+liveSpeechEnabled = False
+login = False
+sessionChange = False
+slowKey = False
+slowKeyDelay = 250
+stickyKey = False
+useStickyKeysShortcutKeys = False
+### com.apple.AppleMultitouchTrackpad
+ActuateDetents = 1
+Clicking = 0
+DragLock = 0
+Dragging = 0
+FirstClickThreshold = 1
+ForceSuppressed = False
+SecondClickThreshold = 1
+TrackpadCornerSecondaryClick = 0
+TrackpadFiveFingerPinchGesture = 2
+TrackpadFourFingerHorizSwipeGesture = 2
+TrackpadFourFingerPinchGesture = 2
+TrackpadFourFingerVertSwipeGesture = 2
+TrackpadHandResting = True
+TrackpadHorizScroll = 1
+TrackpadMomentumScroll = True
+TrackpadPinch = 1
+TrackpadRightClick = True
+TrackpadRotate = 1
+TrackpadScroll = True
+TrackpadThreeFingerDrag = False
+TrackpadThreeFingerHorizSwipeGesture = 1
+TrackpadThreeFingerTapGesture = 0
+TrackpadThreeFingerVertSwipeGesture = 2
+TrackpadTwoFingerDoubleTapGesture = 1
+TrackpadTwoFingerFromRightEdgeSwipeGesture = 3
+USBMouseStopsTrackpad = 0
+UserPreferences = True
+version = 12
+### com.apple.driver.AppleBluetoothMultitouch.trackpad
+Clicking = 0
+DragLock = 0
+Dragging = 0
+TrackpadCornerSecondaryClick = 0
+TrackpadFiveFingerPinchGesture = 2
+TrackpadFourFingerHorizSwipeGesture = 2
+TrackpadFourFingerPinchGesture = 2
+TrackpadFourFingerVertSwipeGesture = 2
+TrackpadHandResting = True
+TrackpadHorizScroll = 1
+TrackpadMomentumScroll = True
+TrackpadPinch = 1
+TrackpadRightClick = True
+TrackpadRotate = 1
+TrackpadScroll = True
+TrackpadThreeFingerDrag = False
+TrackpadThreeFingerHorizSwipeGesture = 1
+TrackpadThreeFingerTapGesture = 0
+TrackpadThreeFingerVertSwipeGesture = 1
+TrackpadTwoFingerDoubleTapGesture = 1
+TrackpadTwoFingerFromRightEdgeSwipeGesture = 3
+USBMouseStopsTrackpad = 0
+UserPreferences = True
+version = 5
+### com.apple.AppleMultitouchMouse
+MouseButtonDivision = 55
+MouseButtonMode = 'OneButton'
+MouseHorizontalScroll = True
+MouseMomentumScroll = True
+MouseOneFingerDoubleTapGesture = 0
+MouseTwoFingerDoubleTapGesture = 3
+MouseTwoFingerHorizSwipeGesture = 2
+MouseVerticalScroll = True
+UserPreferences = True
+version = 1
+### com.apple.driver.AppleBluetoothMultitouch.mouse
+MouseButtonDivision = 55
+MouseButtonMode = 'OneButton'
+MouseHorizontalScroll = True
+MouseMomentumScroll = True
+MouseOneFingerDoubleTapGesture = 0
+MouseTwoFingerDoubleTapGesture = 3
+MouseTwoFingerHorizSwipeGesture = 2
+MouseVerticalScroll = True
+UserPreferences = True
+### com.apple.driver.AppleHIDMouse
+Button1 = 1
+Button2 = 1
+Button3 = 0
+Button4 = 0
+Button4Click = 0
+Button4Force = 0
+ButtonDominance = 1
+ScrollH = 1
+ScrollS = 4
+ScrollSSize = 30
+ScrollV = 1
+### com.apple.WindowManager
+AppWindowGroupingBehavior = 1
+AutoHide = False
+EnableTiledWindowMargins = False
+GloballyEnabled = False
+HideDesktop = True
+StageManagerHideWidgets = False
+StandardHideWidgets = False
+### com.apple.menuextra.clock
+ShowAMPM = True
+ShowDate = 0
+ShowDayOfWeek = True
+TimeAnnouncementsEnabled = False
+TimeAnnouncementsIntervalIdentifier = 'EveryHourInterval'
+### com.apple.screencapture
+style = 'window'
+target-screenrecording = 'file'
+target-screenshot = 'file'
+video = True
+### com.apple.screensaver
+tokenRemovalAction = 0
+### com.apple.screensaver (currentHost)
+tokenRemovalAction = 0
+### com.apple.systemuiserver
+__NSEnableTSMDocumentWindowLevel = True
+### com.apple.Spotlight
+__NSEnableTSMDocumentWindowLevel = True
+### com.apple.Spotlight (currentHost)
+MenuItemHidden = True
+### com.apple.soundpref (currentHost)
+AlertsUseMainDevice = 0
+### MDM-managed domains (these override everything above)
+com.1password.1password.AppInstaller
+com.apple.DiscRecording
+com.apple.MCX
+com.apple.MCX.FileVault2
+com.apple.ShareKitHelper
+com.apple.TCC.configuration-profile-policy
+com.apple.applicationaccess
+com.apple.applicationaccess.new
+com.apple.appstore
+com.apple.classroom
+com.apple.coremediaio.support
+com.apple.dashboard
+com.apple.desktop
+com.apple.extensiblesso
+com.apple.fileproviderd
+com.apple.finder
+com.apple.gamed
+com.apple.icloud.managed
+com.apple.loginwindow
+com.apple.notificationsettings
+com.apple.preferences.users
+com.apple.screensaver
+com.apple.security.FDERecoveryKeyEscrow
+com.apple.servicemanagement
+com.apple.system-extension-policy
+com.apple.systempreferences
+com.apple.systemuiserver
+com.apple.touchidpolicy
+com.apple.webcontent-filter
+com.github.macadmins.Nudge
+com.google.Chrome
+com.jamf.remote.assist
+com.jamf.setupmanager
+com.keepersecurity.passwordmanager
+com.microsoft.autoupdate2
+com.microsoft.wdav
+com.microsoft.wdav.atp
+com.tinyspeck.slackmacgap
+com.twingate.macos
+complete
+org.mozilla.firefox

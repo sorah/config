@@ -76,9 +76,8 @@ if [ "_$arch" = "_mac" ]; then
   mkdir -p ~/.config/linearmouse
   ln -sf `pwd`/mac/dot.config/linearmouse/linearmouse.json ~/.config/linearmouse/linearmouse.json
 
-  defaults write com.apple.dock workspaces-auto-swoosh -bool YES
-  defaults write com.apple.dock autohide-time-modifier -float 0.5
-  killall Dock
+  # UI preferences; see mac/README-defaults.md
+  ./mac/defaults.sh
 
   mise use --global github-cli@latest
   mise use --global python@latest
