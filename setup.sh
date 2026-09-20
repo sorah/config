@@ -57,6 +57,10 @@ if [[ ! -e $HOME/.local/bin/mise ]]; then
 fi
 mise settings paranoid=1
 
+# Casks declared in mise.toml; the Brewfile still owns the rest. See mise.toml.
+mise trust
+mise bootstrap --only packages --yes
+
 mise use --global terraform@latest
 mise use --global 1password@latest
 mise use --global aqua:astral-sh/rye
@@ -76,8 +80,9 @@ if [ "_$arch" = "_mac" ]; then
   mkdir -p ~/.config/linearmouse
   ln -sf `pwd`/mac/dot.config/linearmouse/linearmouse.json ~/.config/linearmouse/linearmouse.json
 
-  # UI preferences; see mac/README-defaults.md
-  ./mac/defaults.sh
+  # UI preferences live in mise.toml. Run via --only so the post-defaults hook
+  # restarts Dock/Finder/SystemUIServer; `macos defaults apply` skips hooks.
+  mise bootstrap --only macos-defaults --yes
 
   mise use --global github-cli@latest
   mise use --global python@latest
