@@ -4,10 +4,10 @@ min_version = "2026.9.11"
 # Machine setup for `mise bootstrap` -- https://mise.jdx.dev/bootstrap.html
 #
 # This file holds the macOS casks that install as plain app bundles, the Arch
-# package lists, the macOS defaults and the dotfile symlinks. The Brewfile holds
-# the casks whose installers need sudo, the formulae and the Mac App Store apps.
-# setup.sh holds the rest: the aur-sorah repo, rustup, gopls, claude plugins and
-# the systemd units.
+# package lists, the macOS defaults, the dotfile symlinks and the systemd user
+# units. The Brewfile holds the casks whose installers need sudo, the formulae
+# and the Mac App Store apps. setup.sh holds the rest: the aur-sorah repo,
+# rustup, gopls and the claude plugins.
 #
 #   mise bootstrap status
 #   mise bootstrap packages status
@@ -214,6 +214,36 @@ variants = [{ os = "macos", target = "~/.zshrc_global_env" }]
 [dotfiles.sorah_browser_desktop]
 source = "linux/dot.local/share/applications/sorah-browser.desktop"
 variants = [{ os = "linux", target = "~/.local/share/applications/sorah-browser.desktop" }]
+
+# ----- systemd user units -----------------------------------------------------
+#
+# Linux only, by virtue of the table name. String values are Tera templates.
+#
+#   mise bootstrap linux systemd-units status
+#   mise bootstrap linux systemd-units apply --dry-run
+#
+# mise installs these as dev.mise.<name>.service, so systemctl takes
+# `dev.mise.homeproxy`, not `homeproxy`.
+
+# autossh is not declared in [bootstrap.packages], so the unit needs it
+# installed by hand.
+#
+# wanted_by = [] omits [Install] and start = false stops the unit, leaving it
+# installed but off. Running it is a per-machine decision:
+#
+#   systemctl --user add-wants default.target dev.mise.homeproxy.service
+#   systemctl --user start dev.mise.homeproxy
+#
+# Each apply converges that back to off.
+[bootstrap.linux.systemd.units.homeproxy]
+description = "homeproxy"
+type = "simple"
+working_directory = "{{ env.HOME }}"
+exec_start = "{{ config_root }}/bin/sorah-autossh -N homeproxy"
+restart = "always"
+restart_sec = "3"
+wanted_by = []
+start = false
 
 # ----- macOS preferences ------------------------------------------------------
 #

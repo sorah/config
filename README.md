@@ -6,8 +6,8 @@ parts live in `mise.toml` and `mise/tools.toml`, applied by
 
 | Path | What |
 | --- | --- |
-| `setup.sh` | The whole run, idempotent: Homebrew and the Brewfile, the aur-sorah pacman repository, mise and every bootstrap phase, and the imperative leftovers (rustup, gopls, claude plugins, systemd units). |
-| `mise.toml` | `[dotfiles]` for the dotfiles, `[bootstrap.packages]` for macOS app casks and the Arch pacman and AUR packages, `[bootstrap.macos]` for UI preferences. |
+| `setup.sh` | The whole run, idempotent: Homebrew and the Brewfile, the aur-sorah pacman repository, mise and every bootstrap phase, and the imperative leftovers (rustup, gopls, claude plugins). |
+| `mise.toml` | `[dotfiles]` for the dotfiles, `[bootstrap.packages]` for macOS app casks and the Arch pacman and AUR packages, `[bootstrap.macos]` for UI preferences, `[bootstrap.linux.systemd.units]` for the systemd user units. |
 | `mise/tools.toml` | The global tool set and the `[settings]` that govern it. Deployed to `~/.config/mise/conf.d/sorah-tools.toml`, so it applies in every directory rather than only in this repo. |
 | `Brewfile` | What Homebrew still owns: sudo-requiring casks, formulae, Mac App Store apps. |
 
@@ -45,6 +45,7 @@ cd ~/git/config && mise trust
 mise bootstrap packages status
 mise bootstrap macos defaults status
 mise bootstrap dotfiles status
+mise bootstrap linux systemd-units status
 ```
 
 Then apply:
@@ -55,6 +56,7 @@ mise bootstrap --only dotfiles --yes
 mise trust ~/.config/mise/conf.d/sorah-tools.toml
 mise bootstrap --only tools --yes
 mise bootstrap packages apply --manager aur --yes   # Arch
+mise bootstrap --only linux-systemd-units --yes     # Linux
 ```
 
 - Every package should already read `installed`: mise reads the Homebrew prefix
@@ -156,6 +158,28 @@ By hand:
   copy-mode files into the repo. An apply discards whatever was not captured.
 - Delete the `<name>.pre-mise.<timestamp>` backups `setup.sh` leaves behind
   when it moves a conflicting target aside.
+
+## systemd user units
+
+`[bootstrap.linux.systemd.units]` in `mise.toml` generates them from structured
+keys rather than from a unit file in the repo, so every directive is a TOML key
+and string values are Tera templates.
+
+mise installs each as `dev.mise.<name>.service`, not `<name>.service`.
+`setup.sh` removes the bare-named copies it used to install, disabling and
+stopping them first.
+
+`homeproxy` is declared `wanted_by = []` and `start = false`: installed, but
+with no `[Install]` section and not running. To run it on a machine:
+
+```bash
+systemctl --user add-wants default.target dev.mise.homeproxy.service
+systemctl --user start dev.mise.homeproxy
+```
+
+`add-wants` rather than `enable`, which needs an `[Install]` section. Both
+undone by the next apply, which converges the unit back to disabled and
+stopped. `autossh` is not declared in `[bootstrap.packages]` either.
 
 ## Notes
 

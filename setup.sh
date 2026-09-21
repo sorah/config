@@ -5,9 +5,9 @@
 #   ./setup.sh [mac|arch|linux]
 #
 # The declarative half lives in mise.toml (macOS app casks, the Arch package
-# lists, macOS preferences, the dotfiles) and mise/tools.toml (the global tool
-# set), applied from here through `mise bootstrap`. The Brewfile holds what
-# Homebrew owns. See README.md.
+# lists, macOS preferences, the dotfiles, the systemd user units) and
+# mise/tools.toml (the global tool set), applied from here through
+# `mise bootstrap`. The Brewfile holds what Homebrew owns. See README.md.
 #
 # Deliberately no `set -e`, so one failing step does not strand the rest.
 
@@ -214,12 +214,19 @@ fi
 
 ##### systemd ##################################################################
 
+# The units are [bootstrap.linux.systemd.units] in mise.toml. mise installs
+# them as dev.mise.<name>.service, so the bare-named copies this script used to
+# install are removed first; systemd would otherwise keep running both.
 if command -v systemctl >/dev/null; then
-  mkdir -p "$HOME/.config/systemd/user"
-  for x in "$repo"/systemd/user/*; do
-    cp -v "$x" "$HOME/.config/systemd/user/"
+  for unit in homeproxy.service; do
+    if [[ -e $HOME/.config/systemd/user/$unit ]]; then
+      systemctl --user disable --now "$unit"
+      rm -f -- "$HOME/.config/systemd/user/$unit"
+    fi
   done
   systemctl --user daemon-reload
+
+  mise bootstrap --only linux-systemd-units --yes
 fi
 
 set +x
