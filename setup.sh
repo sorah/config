@@ -244,6 +244,15 @@ fi
 
 ##### claude ###################################################################
 
+# Installs the launcher into ~/.local/bin, already on PATH from the mise
+# section. Explicitly bash: the installer is a bash script and refuses sudo.
+if ! command -v claude >/dev/null; then
+  curl -fsSL https://claude.ai/install.sh | bash
+  # zsh caches the contents of the directories on PATH, so a binary added to
+  # one during this run stays invisible to the block below without this.
+  rehash
+fi
+
 if command -v claude >/dev/null; then
   claude mcp get aws-knowledge-mcp-server >/dev/null 2>&1 \
     || claude mcp add -s user aws-knowledge-mcp-server -t http https://knowledge-mcp.global.api.aws
