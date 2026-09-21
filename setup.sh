@@ -83,6 +83,12 @@ EOF
   # databases.
   sudo pacman -Sy
 
+  # Conflicts with pacman:bazelisk, and --noconfirm declines the removal, which
+  # fails the whole packages transaction. bazelisk also provides bazel.
+  if pacman -Qq bazelisk-bin >/dev/null 2>&1; then
+    sudo pacman -Rdd --noconfirm bazelisk-bin
+  fi
+
   # ruby-build ships as a plugin directory, not a package.
   if [[ ! -e ~/.rbenv/plugins/ruby-build ]]; then
     mkdir -p ~/.rbenv/plugins
@@ -139,6 +145,8 @@ typeset -a mise_dotfile_links=(
   ~/.irbrc
   ~/.gemrc
   ~/.config/wezterm/wezterm.lua
+  ~/.claude/CLAUDE.md
+  ~/.claude/docs
   ~/.zshrc_global_env
   ~/.local/share/applications/sorah-browser.desktop
 )

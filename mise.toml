@@ -47,11 +47,15 @@ min_version = "2026.9.11"
 "pacman:zip" = "latest"
 "pacman:pv" = "latest"
 "pacman:parallel" = "latest"
+"pacman:openssh" = "latest"
+"pacman:rsync" = "latest"
+"pacman:unzip" = "latest"
 
 # vcs
 "pacman:git" = "latest"
 "pacman:mercurial" = "latest"
 "pacman:subversion" = "latest"
+"pacman:hub" = "latest"
 
 # shell, terminal, editor
 "pacman:zsh" = "latest"
@@ -67,11 +71,16 @@ min_version = "2026.9.11"
 "pacman:cfssl" = "latest"
 "pacman:cosign" = "latest"
 "pacman:patatt" = "latest"
+"pacman:krb5" = "latest"
+"pacman:vault" = "latest"
+# aur-sorah
+"pacman:step-cli-bin" = "latest"
 
 # networking. netcat, bind-tools and ebtables are virtual provides.
 "pacman:whois" = "latest"
 "pacman:ipcalc" = "latest"
 "pacman:iperf" = "latest"
+"pacman:iperf3" = "latest"
 "pacman:mtr" = "latest"
 "pacman:nmap" = "latest"
 "pacman:netcat" = "latest"
@@ -85,6 +94,9 @@ min_version = "2026.9.11"
 "pacman:ebtables" = "latest"
 "pacman:nftables" = "latest"
 "pacman:swaks" = "latest"
+"pacman:net-snmp" = "latest"
+# ExecStart of the homeproxy unit below
+"pacman:autossh" = "latest"
 
 # disks, hardware, process inspection
 "pacman:smartmontools" = "latest"
@@ -108,8 +120,11 @@ min_version = "2026.9.11"
 "pacman:ruby" = "latest"
 "pacman:ruby-irb" = "latest"
 "pacman:ruby-erb" = "latest"
+"pacman:ruby-bundler" = "latest"
 "pacman:rbenv" = "latest"
 "pacman:nodejs" = "latest"
+"pacman:npm" = "latest"
+"pacman:yarn" = "latest"
 "pacman:python-pip" = "latest"
 "pacman:python-pipx" = "latest"
 
@@ -120,7 +135,7 @@ min_version = "2026.9.11"
 "pacman:ghq" = "latest"
 "pacman:github-cli" = "latest"
 "pacman:protobuf" = "latest"
-# An installed bazelisk-bin satisfies this, providing bazelisk.
+# bazelisk-bin conflicts with this without providing it, so setup.sh removes it.
 "pacman:bazelisk" = "latest"
 
 # database clients
@@ -131,12 +146,28 @@ min_version = "2026.9.11"
 # pacman repo, not the AUR.
 "pacman:docker-buildx" = "latest"
 "pacman:amazon-ecr-credential-helper" = "latest"
+"pacman:docker" = "latest"
+"pacman:docker-compose" = "latest"
+# kubectl-bin from aur-sorah provides kubectl. kubecfg is from aur-sorah.
+"pacman:kubectl" = "latest"
+"pacman:kustomize" = "latest"
+"pacman:kubecfg" = "latest"
+"pacman:etcd" = "latest"
+"pacman:packer" = "latest"
 
 # misc
 "pacman:imagemagick" = "latest"
 "pacman:man-db" = "latest"
 "pacman:man-pages" = "latest"
 "pacman:texinfo" = "latest"
+# ffmpeg-sorah from aur-nonfree-sorah provides ffmpeg.
+"pacman:ffmpeg" = "latest"
+# aur-sorah
+"pacman:mitamae" = "latest"
+
+# arch packaging
+"pacman:pacman-contrib" = "latest"
+"pacman:devtools" = "latest"
 
 # AUR, built by the yay in mise/tools.toml. setup.sh applies these after the
 # tools phase that installs it.
@@ -150,6 +181,7 @@ min_version = "2026.9.11"
 "aur:overmind" = "latest"
 "aur:tio" = "latest"
 "aur:bridge-utils" = "latest"
+"aur:go-jsonnet" = "latest"
 # debian packaging
 "aur:debianutils" = "latest"
 "aur:devscripts" = "latest"
@@ -186,6 +218,10 @@ min_version = "2026.9.11"
 # ruby
 "~/.irbrc" = "misc/dot.irbrc"
 "~/.gemrc" = "misc/dot.gemrc"
+
+# claude. ~/.claude/settings.json is merged in by claude/update-settings.rb.
+"~/.claude/CLAUDE.md" = "claude/CLAUDE.md"
+"~/.claude/docs"      = "claude"
 
 # Karabiner and LinearMouse rewrite their config in place, replacing a symlink
 # with a regular file, so these are copies with the repo as source of truth. An
@@ -226,9 +262,6 @@ variants = [{ os = "linux", target = "~/.local/share/applications/sorah-browser.
 # mise installs these as dev.mise.<name>.service, so systemctl takes
 # `dev.mise.homeproxy`, not `homeproxy`.
 
-# autossh is not declared in [bootstrap.packages], so the unit needs it
-# installed by hand.
-#
 # wanted_by = [] omits [Install] and start = false stops the unit, leaving it
 # installed but off. Running it is a per-machine decision:
 #

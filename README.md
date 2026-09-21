@@ -74,6 +74,9 @@ mise bootstrap --only linux-systemd-units --yes     # Linux
   macOS. `~/.gopath/bin` precedes both `/usr/bin` and the mise shims in
   `~/.zshrc`, so `setup.sh` deletes `~/.gopath/bin/gopls`; a `go install` copy
   left there would keep winning.
+- An old `bazelisk-bin` from yay conflicts with `pacman:bazelisk` without
+  providing it, which fails the whole pacman transaction. `setup.sh` removes
+  it first; by hand, `sudo pacman -Rdd bazelisk-bin`.
 - On Arch, `packages status` should show everything `installed` too: both
   backends read pacman's database, and `pacman:` resolves groups and virtual
   provides, so `base-devel`, `netcat`, `bind-tools` and `ebtables` count as
@@ -183,7 +186,7 @@ systemctl --user start dev.mise.homeproxy
 
 `add-wants` rather than `enable`, which needs an `[Install]` section. Both
 undone by the next apply, which converges the unit back to disabled and
-stopped. `autossh` is not declared in `[bootstrap.packages]` either.
+stopped.
 
 ## Notes
 
