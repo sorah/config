@@ -6,9 +6,9 @@ parts live in `mise.toml` and `mise/tools.toml`, applied by
 
 | Path | What |
 | --- | --- |
-| `setup.sh` | The whole run, idempotent: Homebrew and the Brewfile, mise and every bootstrap phase, the Arch package lists, and the imperative leftovers (rustup, gopls, claude plugins, systemd units). |
-| `mise.toml` | `[dotfiles]` for the dotfiles, `[bootstrap.packages]` for macOS app casks, `[bootstrap.macos]` for UI preferences. |
-| `mise/tools.toml` | The global tool set. Deployed to `~/.config/mise/conf.d/sorah-tools.toml`, so it applies in every directory rather than only in this repo. |
+| `setup.sh` | The whole run, idempotent: Homebrew and the Brewfile, the aur-sorah pacman repository, mise and every bootstrap phase, and the imperative leftovers (rustup, gopls, claude plugins, systemd units). |
+| `mise.toml` | `[dotfiles]` for the dotfiles, `[bootstrap.packages]` for macOS app casks and the Arch pacman and AUR packages, `[bootstrap.macos]` for UI preferences. |
+| `mise/tools.toml` | The global tool set and the `[settings]` that govern it. Deployed to `~/.config/mise/conf.d/sorah-tools.toml`, so it applies in every directory rather than only in this repo. |
 | `Brewfile` | What Homebrew still owns: sudo-requiring casks, formulae, Mac App Store apps. |
 
 ## New machine
@@ -28,9 +28,10 @@ You have to:
   modifier-key remapping on already-connected keyboards (macOS).
 
 The platform comes from `/etc/pacman.conf` and `uname`; pass `arch`, `linux` or
-`mac` as `$1` to override. On Arch the packages come from pacman and yay inside
-`setup.sh`, and the `[bootstrap.packages]` and `[bootstrap.macos]` sections are
-macOS-scoped and inert.
+`mac` as `$1` to override. `[bootstrap.packages]` holds every platform's
+packages and each entry is applied only where its manager exists, so the casks
+are inert on Arch and the `pacman:`/`aur:` entries are inert on macOS.
+`[bootstrap.macos]` is macOS-scoped the same way.
 
 ## Migrating an existing machine
 
@@ -53,6 +54,7 @@ mise bootstrap --only macos-defaults --yes
 mise bootstrap --only dotfiles --yes
 mise trust ~/.config/mise/conf.d/sorah-tools.toml
 mise bootstrap --only tools --yes
+mise bootstrap packages apply --manager aur --yes   # Arch
 ```
 
 - Every package should already read `installed`: mise reads the Homebrew prefix
@@ -66,20 +68,33 @@ mise bootstrap --only tools --yes
   skips the `post-defaults` hook that restarts Dock, Finder and SystemUIServer.
 - `min_version` in `mise.toml` stops an older mise with self-update
   instructions, so the `self-update` above is only to get it over with early.
+- On Arch, `packages status` should show everything `installed` too: both
+  backends read pacman's database, and `pacman:` resolves groups and virtual
+  provides, so `base-devel`, `netcat`, `bind-tools` and `ebtables` count as
+  installed through `base-devel`'s members, `openbsd-netcat`, `bind` and
+  `iptables`.
 
-Finally, delete the `[tools]` and `[tool_alias]` tables from
-`~/.config/mise/config.toml`, by hand or:
+Finally, strip `~/.config/mise/config.toml` down to two settings, deleting the
+`[tools]` and `[tool_alias]` tables:
 
 ```bash
-mise unuse --global --no-prune go node python terraform
+mise unuse --global --no-prune $(mise ls --current 2>/dev/null | awk '$3 ~ /config\.toml$/ {print $1}')
 ```
 
 - `config.toml` overrides `conf.d`, so while an entry is duplicated there it,
   not this repo, decides that tool's version. `mise/tools.toml` declares all of
   them, so both tables can go entirely.
-- Keep `[settings] paranoid`. `setup.sh` asserts it, and the fragment cannot:
-  mise wants trust before parsing a symlink into this repo, and an unparsed
-  file cannot be what turns paranoid on.
+- Six of them are declared here under a different name, so check before
+  assuming a tool disappeared: `aws-cli` and `pinact` are the `aqua:` entries,
+  `gh` is `github-cli`, `ubi:sqldef/sqldef` is `sqlite3def`, and the two `ubi:`
+  smithy entries are the `github:` `[tool_alias]` definitions.
+- Keep `[settings] paranoid` and `[settings] disable_tools`; delete the other
+  settings. `experimental`, `lockfile`,
+  `idiomatic_version_file_enable_tools` and `npm.package_manager` live in
+  `mise/tools.toml` now, and a `conf.d` fragment serves them once trusted.
+  `paranoid` is the one that cannot move -- mise wants trust before parsing a
+  symlink into this repo, and an unparsed file cannot be what turns paranoid
+  on -- and `disable_tools` is per machine.
 - `--no-prune` keeps the installations. Unrelated to `mise prune`, which deletes
   unused tool versions and never edits configuration.
 
@@ -103,11 +118,19 @@ mise bootstrap --yes
 - A full bootstrap runs the `post-defaults` hook every time, restarting Dock,
   Finder, SystemUIServer and ControlCenter. `mise bootstrap --only
   packages,tools --yes` avoids that.
+- A bare `mise bootstrap` cannot install the `aur:` entries on a machine that
+  has no AUR helper yet: mise's AUR backend shells out to yay, yay is a mise
+  tool, and the packages phase runs before the tools phase. It reports them as
+  `skipped (neither yay nor paru found)` rather than failing, and
+  `mise bootstrap packages apply --manager aur --yes` picks them up afterwards.
+  `setup.sh` does exactly that.
 - Removals need hands. A tool dropped from `mise/tools.toml` stays installed
   (`mise unuse`), a cask dropped from `[bootstrap.packages]` stays installed
   (`mise bootstrap packages prune --dry-run`), a dotfile dropped from
   `[dotfiles]` stays deployed (`mise bootstrap dotfiles unapply`), and a
   deleted macOS preference keeps its value — mise never deletes a default.
+  `prune` covers Homebrew only; `pacman` and `aur` answer `does not support
+  pruning`, so a dropped Arch package needs `pacman -Rs` by hand.
 
 ## Dotfiles
 
@@ -142,6 +165,16 @@ By hand:
   `--dry-run`.
 - `logitech-g-hub` stays in the Brewfile because its cask installer runs sudo,
   which mise's own cask implementation rejects.
+- `pacman:` and `aur:` entries can only be `"latest"`. Arch repositories carry
+  one version of each package, and an AUR helper builds the current PKGBUILD.
+- `pacman -S --needed` never refreshes the sync databases, so `setup.sh` runs
+  `pacman -Sy` before the packages phase. A full `-Syu` stays a manual
+  decision.
+- yay comes from `github:Jguer/yay`, not the `mise-yay` asdf plugin it
+  replaced. Delete the old one with `mise uninstall
+  asdf:mise-plugins/mise-yay` once the new one works; while both are installed
+  the shim order decides which mise calls. paru is not usable here at all --
+  its release binary links `libalpm.so.15` and Arch is on `.so.16`.
 
 ## License
 

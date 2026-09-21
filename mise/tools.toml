@@ -1,18 +1,26 @@
-# The global tool set.
+# The global tool set, and the settings that govern it.
 #
 # Deployed to ~/.config/mise/conf.d/sorah-tools.toml by the [dotfiles] entry in
 # ../mise.toml, so these apply in every directory. Declaring them in
 # ../mise.toml instead would scope them to ~/git/config only.
 #
-# Migrated from the `mise use --global` lines in setup.sh.
+# The filename matters. mise/config.toml and mise/conf.d/*.toml would load as
+# project config for this repo. tools.toml is only active once deployed.
 #
-# Note the filename: mise/config.toml and mise/conf.d/*.toml WOULD be loaded
-# as project config for this repo. mise/tools.toml is not, which is what we
-# want -- it is only active once deployed into the global conf.d.
-#
-# Precedence wrinkle: ~/.config/mise/config.toml OVERRIDES conf.d fragments,
-# and `mise use -g` writes to config.toml -- so an ad-hoc `-g` install shadows
-# this file until it is folded back in here.
+# ~/.config/mise/config.toml overrides conf.d fragments and `mise use -g`
+# writes there, so an ad-hoc `-g` install shadows this file.
+
+# paranoid cannot live here, since mise trusts this file before parsing it.
+# disable_tools stays alongside it in ~/.config/mise/config.toml, being per
+# machine.
+[settings]
+experimental = true
+lockfile = true
+idiomatic_version_file_enable_tools = ["node"]
+
+# Applies to the npm: entries below. bun itself is declared in [tools].
+[settings.npm]
+package_manager = "bun"
 
 [tool_alias]
 trustless = "ubi:sorah/trustless[tag_regex='^trustless/v']"
@@ -25,9 +33,8 @@ smithy-language-server = "github:smithy-lang/smithy-language-server[bin_path=bin
 "aqua:astral-sh/rye" = "latest"
 "aqua:astral-sh/uv" = "latest"
 "aqua:suzuki-shunsuke/pinact" = "latest"
-# setup.sh said `aws-cli`, but the global config and the existing install use
-# the explicit aqua backend -- the short name resolves to a separate tool and
-# would pour a second copy.
+# The short name `aws-cli` resolves to a different tool and would pour a
+# second copy.
 "aqua:aws/aws-cli" = "latest"
 bun = "latest"
 buf = "latest"
@@ -46,12 +53,36 @@ mysqldef = "latest"
 psqldef = "latest"
 sqlite3def = "latest"
 
+deno = "latest"
+pnpm = "latest"
+ubi = "latest"
+watchexec = "latest"
+"aqua:fujiwara/lambroll" = "latest"
+"github:aviator-co/av" = "latest"
+"github:databricks/cli" = "latest"
+"github:grafana/jsonnet-language-server" = "latest"
+
+"npm:@devcontainers/cli" = "latest"
+"npm:@playwright/cli" = "latest"
+"npm:ccusage" = "latest"
+"npm:portless" = "latest"
+"npm:skills" = "latest"
+
+# jrsonnet has no 0.5.0 final, and the three crates share one workspace.
+"cargo:jrsonnet" = "0.5.0-pre98"
+"cargo:jrsonnet-deps" = "0.5.0-pre98"
+"cargo:jrsonnet-fmt" = "0.5.0-pre98"
+
 smithy = "latest"
 smithy-language-server = "latest"
 
-# macOS only: on Arch these come from pacman/yay instead, which setup.sh still
-# handles. These were `if ! which X` guarded before -- on this Mac all of them
-# already resolved to mise installs, so dropping the guard changes nothing.
+# mise's AUR backend shells out to this for the aur: entries in ../mise.toml.
+# ubi rejects yay's release assets, whose names carry no OS token, hence the
+# github backend.
+"github:Jguer/yay" = { version = "latest", os = ["linux"] }
+
+# macOS only. On Arch these come from pacman, in [bootstrap.packages] in
+# ../mise.toml.
 "aqua:BurntSushi/ripgrep" = { version = "latest", os = ["macos"] }
 "aqua:cloudflare/cloudflared" = { version = "latest", os = ["macos"] }
 "aqua:junegunn/fzf" = { version = "latest", os = ["macos"] }
@@ -62,6 +93,5 @@ smithy-language-server = "latest"
 github-cli = { version = "latest", os = ["macos"] }
 python = { version = "latest", os = ["macos"] }
 
-# Deliberately shadows macOS's own /usr/bin/jq, which the old
-# `if ! which jq` guard always deferred to. Arch gets jq from pacman.
+# Shadows macOS's own /usr/bin/jq. Arch gets jq from pacman.
 "aqua:jqlang/jq" = { version = "latest", os = ["macos"] }

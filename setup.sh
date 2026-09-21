@@ -4,14 +4,12 @@
 #
 #   ./setup.sh [mac|arch|linux]
 #
-# The declarative half lives in mise.toml (macOS app casks, macOS preferences,
-# the dotfiles) and mise/tools.toml (the global tool set), and is applied from
-# here through `mise bootstrap`. The Brewfile keeps what Homebrew still owns:
-# casks whose installers need sudo, the formulae, and the Mac App Store apps.
-# See README.md.
+# The declarative half lives in mise.toml (macOS app casks, the Arch package
+# lists, macOS preferences, the dotfiles) and mise/tools.toml (the global tool
+# set), applied from here through `mise bootstrap`. The Brewfile holds what
+# Homebrew owns. See README.md.
 #
-# Deliberately no `set -e`: one failing step should not strand the rest of the
-# run. Re-run after fixing whatever failed.
+# Deliberately no `set -e`, so one failing step does not strand the rest.
 
 repo=${0:A:h}
 cd "$repo" || exit 1
@@ -32,8 +30,8 @@ set -x
 
 ##### Dotfiles #################################################################
 
-# Generated, so neither a symlink nor a copy of anything -- the rest of the
-# dotfiles are [dotfiles] in mise.toml, applied further down.
+# Generated, so neither a symlink nor a copy. The rest are [dotfiles] in
+# mise.toml.
 
 cat <<'EOF' > ~/.tmux.reattacher
 #!/bin/sh
@@ -60,10 +58,52 @@ if [[ $arch = mac ]]; then
   if [[ -x /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
-  # The first cask group asks for an admin password; the `mas` entries need the
+  # The first cask group asks for an admin password. The `mas` entries need the
   # App Store signed in.
   brew bundle --file="$repo/Brewfile"
 fi
+
+##### Arch #####################################################################
+
+# The mise section below installs from the repositories set up here. The
+# package lists themselves are [bootstrap.packages] in mise.toml.
+
+if [[ $arch = arch ]]; then
+  if ! grep -q aur-sorah /etc/pacman.conf; then
+    curl -Ssf https://sorah.jp/packaging/arch/17C611F16D92677398E0ADF51AD43CA09D82C624.txt | sudo pacman-key -a -
+    sudo pacman-key --lsign-key 17C611F16D92677398E0ADF51AD43CA09D82C624
+    sudo tee -a /etc/pacman.conf <<-'EOF'
+[aur-sorah]
+SigLevel = Required
+Server = https://arch.sorah.jp/$repo/os/$arch
+EOF
+  fi
+
+  # mise installs with `pacman -S --needed`, which never refreshes the sync
+  # databases.
+  sudo pacman -Sy
+
+  # ruby-build ships as a plugin directory, not a package.
+  if [[ ! -e ~/.rbenv/plugins/ruby-build ]]; then
+    mkdir -p ~/.rbenv/plugins
+    git clone https://github.com/rbenv/ruby-build ~/.rbenv/plugins/ruby-build
+  fi
+fi
+
+##### rust #####################################################################
+
+# The mise tools phase below builds the cargo: tools in mise/tools.toml with
+# this cargo.
+
+if [[ ! -e $HOME/.rustup ]]; then
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+fi
+mkdir -p ~/.zfunc
+rustup_bin=$(command -v rustup || echo "$HOME/.cargo/bin/rustup")
+if [[ -x $rustup_bin ]]; then
+  "$rustup_bin" completions zsh > ~/.zfunc/_rustup
+fi
+export PATH="$HOME/.cargo/bin:$PATH"
 
 ##### mise #####################################################################
 
@@ -77,19 +117,17 @@ mise settings paranoid=1
 # after every change to mise.toml.
 mise trust
 
-# macOS app casks. Homebrew is not required for these: mise manages the prefix
-# itself.
+# macOS app casks and the Arch pacman packages. Homebrew is not required for
+# the casks, since mise manages the prefix itself.
 mise bootstrap --only packages --yes
 
 # mise refuses to overwrite a target it did not create, and a single conflict
 # aborts the whole dotfiles phase, so conflicting targets are cleared first.
-# Both branches are guarded on the state they fix, so this is a no-op on a
-# migrated machine and on a fresh one.
 #
-# --force-dotfiles would cover this in one flag, but for a directory target it
-# deletes the directory, and ~/.local/share/nvim/site is one.
+# Not --force-dotfiles: for a directory target it deletes the directory, and
+# ~/.local/share/nvim/site is one.
 #
-# Symlink-mode targets only: copy takes its target over whatever is there.
+# Symlink-mode targets only. Copy takes its target over whatever is there.
 typeset -a mise_dotfile_links=(
   ~/.vim
   ~/.local/share/nvim/site
@@ -116,114 +154,26 @@ for dotfile in $mise_dotfile_links; do
   fi
 done
 
-# The global tool set is declared in mise/tools.toml and deployed to
-# ~/.config/mise/conf.d/ by a [dotfiles] entry. Deploy, trust -- the tools phase
-# skips a fragment it may not parse -- then install.
+# The tools phase skips a fragment it may not parse, so the file the dotfiles
+# phase deploys is trusted before it runs.
 mise bootstrap --only dotfiles --yes
 mise trust "$HOME/.config/mise/conf.d/sorah-tools.toml"
 mise bootstrap --only tools --yes
 
-##### rust #####################################################################
-
-if [[ ! -e $HOME/.rustup ]]; then
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-fi
-mkdir -p ~/.zfunc
-rustup_bin=$(command -v rustup || echo "$HOME/.cargo/bin/rustup")
-if [[ -x $rustup_bin ]]; then
-  "$rustup_bin" completions zsh > ~/.zfunc/_rustup
+# mise's AUR backend shells out to yay, which the tools phase above installs.
+if [[ $arch = arch ]]; then
+  mise bootstrap packages apply --manager aur --yes
 fi
 
 ##### macOS ####################################################################
 
 if [[ $arch = mac ]]; then
-  # UI preferences live in mise.toml. Run via --only so the post-defaults hook
-  # restarts Dock/Finder/SystemUIServer; `macos defaults apply` skips hooks.
+  # --only runs the post-defaults hook that restarts Dock, Finder and
+  # SystemUIServer. `macos defaults apply` skips hooks.
   mise bootstrap --only macos-defaults --yes
 
   if ! command -v pipx >/dev/null; then
     mise exec -- python -m pip install --user pipx
-  fi
-fi
-
-##### Arch #####################################################################
-
-if [[ $arch = arch ]]; then
-  if ! grep -q aur-sorah /etc/pacman.conf; then
-    curl -Ssf https://sorah.jp/packaging/arch/17C611F16D92677398E0ADF51AD43CA09D82C624.txt | sudo pacman-key -a -
-    sudo pacman-key --lsign-key 17C611F16D92677398E0ADF51AD43CA09D82C624
-    sudo tee -a /etc/pacman.conf <<-'EOF'
-[aur-sorah]
-SigLevel = Required
-Server = https://arch.sorah.jp/$repo/os/$arch
-EOF
-  fi
-
-  mise use --global asdf:mise-plugins/mise-yay
-
-  # https://unix.stackexchange.com/questions/274727/how-to-force-pacman-to-answer-yes-to-all-questions/584001#584001
-  sudo pacman --needed --noconfirm --ask 54 -Syy \
-    base-devel \
-    gnupg pinentry \
-    jq \
-    screen tmux zsh \
-    neovim \
-    git \
-    strace \
-    git mercurial subversion \
-    go go-tools \
-    whois ipcalc iperf mtr nmap netcat tcpdump traceroute bind-tools wireguard-tools ethtool ldns \
-    inetutils \
-    ebtables nftables \
-    swaks \
-    bridge-utils \
-    curl \
-    pv \
-    smartmontools usbutils \
-    cryptsetup btrfs-progs dosfstools lvm2 xfsprogs \
-    e2fsprogs \
-    dool htop iotop lsof \
-    parallel \
-    imagemagick \
-    ruby ruby-irb ruby-erb \
-    nodejs \
-    python-pip \
-    python-pipx \
-    keychain \
-    fzf \
-    ripgrep \
-    ghq \
-    github-cli \
-    protobuf \
-    patatt \
-    mold \
-    file findutils grep lsof \
-    zip \
-    cmake \
-    openssl cfssl \
-    cosign \
-    man-db man-pages texinfo \
-    postgresql-libs mariadb-clients \
-    rbenv \
-    docker-buildx \
-    amazon-ecr-credential-helper
-  # yay comes from mise just above, so it is not on PATH yet on a fresh box.
-  mise exec -- yay -Sy bazelisk-bin cloudflared-bin \
-    perl-file-rename \
-    aws-session-manager-plugin \
-    pristine-tar \
-    terraform-ls \
-    debianutils \
-    devscripts \
-    git-buildpackage \
-    tio \
-    envchain \
-    overmind \
-    jsonnet-language-server-bin
-
-  if [[ ! -e ~/.rbenv/plugins/ruby-build ]]; then
-    mkdir -p ~/.rbenv/plugins
-    git clone https://github.com/rbenv/ruby-build ~/.rbenv/plugins/ruby-build
   fi
 fi
 
@@ -244,12 +194,11 @@ fi
 
 ##### claude ###################################################################
 
-# Installs the launcher into ~/.local/bin, already on PATH from the mise
-# section. Explicitly bash: the installer is a bash script and refuses sudo.
+# Installs the launcher into ~/.local/bin. Explicitly bash, since the installer
+# is a bash script and refuses sudo.
 if ! command -v claude >/dev/null; then
   curl -fsSL https://claude.ai/install.sh | bash
-  # zsh caches the contents of the directories on PATH, so a binary added to
-  # one during this run stays invisible to the block below without this.
+  # zsh caches the directories on PATH, hiding a binary added during this run.
   rehash
 fi
 

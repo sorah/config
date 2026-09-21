@@ -1,18 +1,17 @@
 # vim: ft=ruby
 #
-# What Homebrew still owns: casks whose installers need sudo, the formulae, and
-# the Mac App Store apps. The remaining casks moved to mise.toml, applied with
-# `mise bootstrap packages`.
+# What Homebrew owns: casks whose installers need sudo, the formulae, and the
+# Mac App Store apps. The other casks are [bootstrap.packages] in mise.toml.
 #
 #   brew bundle
 
-# sudo required; installed first so the admin prompt arrives early
+# sudo required, so these come first and the admin prompt arrives early
 cask 'google-drive'
 cask 'karabiner-elements'
 cask 'parsec'
 cask 'logitech-g-hub'
 cask 'prolific-pl2303'
-# renamed upstream: the plain tokens are the CLI formulae now, the apps are -app
+# Renamed upstream: the plain tokens are the CLI formulae, the apps are -app
 cask 'tailscale-app'
 cask 'wireshark-app'
 cask 'zoom'

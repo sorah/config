@@ -1,24 +1,21 @@
-# `mise bootstrap` and [bootstrap.macos] need a recent mise; without this a
-# too-old mise fails in confusing ways instead of telling you to update.
+# `mise bootstrap` and [bootstrap.macos] set this floor.
 min_version = "2026.9.11"
 
 # Machine setup for `mise bootstrap` -- https://mise.jdx.dev/bootstrap.html
 #
-# Gradually replacing setup.sh. Migrated so far: the macOS casks that install
-# as plain app bundles, the global tool set, the macOS defaults, and the
-# dotfile symlinks. Homebrew keeps the casks that need sudo, the formulae and
-# the Mac App Store apps, in the Brewfile; the Linux/Arch package branches and
-# the imperative leftovers (rustup, gopls, claude plugins, systemd units) are
-# still in setup.sh.
+# This file holds the macOS casks that install as plain app bundles, the Arch
+# package lists, the macOS defaults and the dotfile symlinks. The Brewfile holds
+# the casks whose installers need sudo, the formulae and the Mac App Store apps.
+# setup.sh holds the rest: the aur-sorah repo, rustup, gopls, claude plugins and
+# the systemd units.
 #
 #   mise bootstrap status
 #   mise bootstrap packages status
 #   mise bootstrap packages apply --dry-run
 #   mise bootstrap packages apply
 #
-# Homebrew is not required for these: mise pours into /opt/homebrew itself and
-# counts what a real brew installed as already installed, leaving existing app
-# bundles (and their TCC grants) in place rather than re-pouring them.
+# Homebrew is not required. mise pours into /opt/homebrew itself and counts a
+# brew-installed cask as installed, leaving the app bundle and its TCC grants.
 
 [bootstrap.packages]
 "brew-cask:1password" = { os = "macos" }
@@ -36,20 +33,141 @@ min_version = "2026.9.11"
 "brew-cask:vlc" = { os = "macos" }
 "brew-cask:figma" = { os = "macos" }
 
+# Arch. mise skips a manager the machine does not have, so no os key is needed.
+# Arch repositories carry one version of each package, so only "latest" works.
+
+# base system, build toolchain
+"pacman:base-devel" = "latest"
+"pacman:cmake" = "latest"
+"pacman:mold" = "latest"
+"pacman:file" = "latest"
+"pacman:findutils" = "latest"
+"pacman:grep" = "latest"
+"pacman:curl" = "latest"
+"pacman:zip" = "latest"
+"pacman:pv" = "latest"
+"pacman:parallel" = "latest"
+
+# vcs
+"pacman:git" = "latest"
+"pacman:mercurial" = "latest"
+"pacman:subversion" = "latest"
+
+# shell, terminal, editor
+"pacman:zsh" = "latest"
+"pacman:tmux" = "latest"
+"pacman:screen" = "latest"
+"pacman:neovim" = "latest"
+
+# crypto and secrets
+"pacman:gnupg" = "latest"
+"pacman:pinentry" = "latest"
+"pacman:keychain" = "latest"
+"pacman:openssl" = "latest"
+"pacman:cfssl" = "latest"
+"pacman:cosign" = "latest"
+"pacman:patatt" = "latest"
+
+# networking. netcat, bind-tools and ebtables are virtual provides.
+"pacman:whois" = "latest"
+"pacman:ipcalc" = "latest"
+"pacman:iperf" = "latest"
+"pacman:mtr" = "latest"
+"pacman:nmap" = "latest"
+"pacman:netcat" = "latest"
+"pacman:tcpdump" = "latest"
+"pacman:traceroute" = "latest"
+"pacman:bind-tools" = "latest"
+"pacman:wireguard-tools" = "latest"
+"pacman:ethtool" = "latest"
+"pacman:ldns" = "latest"
+"pacman:inetutils" = "latest"
+"pacman:ebtables" = "latest"
+"pacman:nftables" = "latest"
+"pacman:swaks" = "latest"
+
+# disks, hardware, process inspection
+"pacman:smartmontools" = "latest"
+"pacman:usbutils" = "latest"
+"pacman:cryptsetup" = "latest"
+"pacman:btrfs-progs" = "latest"
+"pacman:dosfstools" = "latest"
+"pacman:lvm2" = "latest"
+"pacman:xfsprogs" = "latest"
+"pacman:e2fsprogs" = "latest"
+"pacman:dool" = "latest"
+"pacman:htop" = "latest"
+"pacman:iotop" = "latest"
+"pacman:lsof" = "latest"
+"pacman:strace" = "latest"
+
+# languages. The macOS equivalents are in mise/tools.toml.
+"pacman:go" = "latest"
+"pacman:go-tools" = "latest"
+"pacman:ruby" = "latest"
+"pacman:ruby-irb" = "latest"
+"pacman:ruby-erb" = "latest"
+"pacman:rbenv" = "latest"
+"pacman:nodejs" = "latest"
+"pacman:python-pip" = "latest"
+"pacman:python-pipx" = "latest"
+
+# cli tools that mise/tools.toml installs itself on macOS
+"pacman:jq" = "latest"
+"pacman:fzf" = "latest"
+"pacman:ripgrep" = "latest"
+"pacman:ghq" = "latest"
+"pacman:github-cli" = "latest"
+"pacman:protobuf" = "latest"
+# An installed bazelisk-bin satisfies this, providing bazelisk.
+"pacman:bazelisk" = "latest"
+
+# database clients
+"pacman:postgresql-libs" = "latest"
+"pacman:mariadb-clients" = "latest"
+
+# containers, cloud. amazon-ecr-credential-helper comes from aur-sorah, a
+# pacman repo, not the AUR.
+"pacman:docker-buildx" = "latest"
+"pacman:amazon-ecr-credential-helper" = "latest"
+
+# misc
+"pacman:imagemagick" = "latest"
+"pacman:man-db" = "latest"
+"pacman:man-pages" = "latest"
+"pacman:texinfo" = "latest"
+
+# AUR, built by the yay in mise/tools.toml. setup.sh applies these after the
+# tools phase that installs it.
+#
+# mise omits --needed for these, so an aur: entry replaces a repository package
+# of the same name.
+"aur:cloudflared-bin" = "latest"
+"aur:aws-session-manager-plugin" = "latest"
+"aur:terraform-ls" = "latest"
+"aur:envchain" = "latest"
+"aur:overmind" = "latest"
+"aur:tio" = "latest"
+"aur:bridge-utils" = "latest"
+# debian packaging
+"aur:debianutils" = "latest"
+"aur:devscripts" = "latest"
+"aur:git-buildpackage" = "latest"
+"aur:pristine-tar" = "latest"
+"aur:perl-file-rename" = "latest"
+
 # ----- dotfiles ---------------------------------------------------------------
 #
-# Sources are relative to this file; parent directories are created as needed.
+# Sources are relative to this file. Parent directories are created as needed.
 #
 #   mise bootstrap dotfiles status
 #   mise bootstrap dotfiles apply --dry-run
 #
 # mise refuses to overwrite a target it did not create, and one conflict aborts
-# the whole phase, leaving unrelated entries unapplied -- setup.sh clears those
-# targets before applying. --force-dotfiles is avoided: for a directory target
-# it deletes the directory.
+# the whole phase. setup.sh clears conflicting targets before applying.
 #
-# Still in setup.sh: ~/.tmux.reattacher, and ghq.root and include.path, which
-# stay `git config --global` so a machine can override them locally.
+# setup.sh owns ~/.tmux.reattacher, ghq.root and include.path. The git settings
+# stay `git config --global` so a machine can override them.
 
 [dotfiles]
 # vim / neovim. dot.vim and dot.vimrc each serve two targets.
@@ -68,33 +186,27 @@ min_version = "2026.9.11"
 "~/.irbrc" = "misc/dot.irbrc"
 "~/.gemrc" = "misc/dot.gemrc"
 
-# Karabiner and LinearMouse rewrite their config in place, which replaces a
-# symlink with a regular file -- hence copy, with the repo as the source of
-# truth. Copy takes the target over whatever it finds there, plain file or
-# symlink, without --force, and unlinks rather than writing through. An app
-# edit therefore lives only in the target until captured:
+# Karabiner and LinearMouse rewrite their config in place, replacing a symlink
+# with a regular file, so these are copies with the repo as source of truth. An
+# app-side edit lives only in the target until captured:
 #
 #   mise bootstrap dotfiles add --changed
 "~/.config/karabiner/karabiner.json"     = { source = "mac/dot.config/karabiner/karabiner.json", mode = "copy" }
 "~/.config/linearmouse/linearmouse.json" = { source = "mac/dot.config/linearmouse/linearmouse.json", mode = "copy" }
 
-# The global tool set lives in mise/tools.toml and is deployed here as a global
-# config fragment: ~/.config/mise/conf.d/*.toml is read in every directory,
-# whereas [tools] in this file would only apply under ~/git/config.
-#
-# This is mise's "self-managing config" pattern -- a mise config file deployed
-# as a dotfile. Under `paranoid`, the deployed path needs trusting once:
+# ~/.config/mise/conf.d/*.toml is read in every directory, whereas [tools] in
+# this file would only apply under ~/git/config, so the global tool set is
+# deployed there as a fragment. Under `paranoid` the deployed path needs
+# trusting once:
 #
 #   mise trust ~/.config/mise/conf.d/sorah-tools.toml
 "~/.config/mise/conf.d/sorah-tools.toml" = { source = "mise/tools.toml", mode = "symlink" }
 
-# A dotfile entry has no `os` key of its own: the key becomes a logical name
-# and each variant supplies the target. An entry whose variants do not match
-# this machine is not listed by `status` and is not deployed.
+# A dotfile entry has no `os` key of its own. The key becomes a logical name,
+# each variant supplies a target, and an unmatched entry is not deployed.
 #
-# zsh/gentoo.zshrc_global_env is deliberately not declared: it hardcodes
-# /usr/lib64/qt5, so os = "linux" would be wrong on Arch. ~/.zshrc sources this
-# file only `if [[ -e ]]`.
+# zsh/gentoo.zshrc_global_env is not declared. It hardcodes /usr/lib64/qt5, so
+# os = "linux" would be wrong on Arch, and ~/.zshrc sources it only if present.
 [dotfiles.zshrc_global_env]
 source = "zsh/mac.zshrc_global_env"
 variants = [{ os = "macos", target = "~/.zshrc_global_env" }]
@@ -105,36 +217,28 @@ variants = [{ os = "linux", target = "~/.local/share/applications/sorah-browser.
 
 # ----- macOS preferences ------------------------------------------------------
 #
-# Captured from this Mac on macOS 27.0 (26A5406e) in 2026-08, and holding only
-# settings that DIFFER from stock macOS: of the ~180 keys captured, around 130
-# were at their factory value and were dropped. Two consequences:
+# Captured from this Mac on macOS 27.0 (26A5406e) in 2026-08, holding only the
+# settings that differ from stock. Applying therefore converges a fresh Mac
+# rather than undoing drift on a used one, and `macos defaults status` is the
+# drift check for the keys declared here.
 #
-#   1. This converges a fresh Mac, not a drifted one. Because stock-valued
-#      settings are omitted, applying will not undo one that has already been
-#      changed elsewhere -- it does not force tap-to-click off, for instance,
-#      since off is the factory value. `macos defaults status` is the drift
-#      check for the keys that ARE declared.
-#   2. Stock values are not queryable: they live in each app's compiled-in
-#      registerDefaults, not in any plist, so the trim rests on knowledge of
-#      macOS rather than measurement. A few entries are kept despite being
-#      uncertain -- AppleFnUsageType, dock expose-group-apps, WindowManager
-#      HideDesktop and AppWindowGroupingBehavior, and Magic Mouse
-#      MouseButtonMode. If one turns out to be stock, writing it is harmless.
+# Stock values live in each app's compiled-in registerDefaults, not in any
+# plist, so the trim rests on judgement. Writing one that turns out to be stock
+# is harmless.
 #
-# Some of this is overridden by MDM on managed machines.
+# MDM overrides some of this on managed machines.
 #
 #   mise bootstrap macos defaults status
 #   mise bootstrap macos defaults apply --dry-run
 #   mise bootstrap macos defaults apply
 #
-# A logout/login is still needed for: input sources (AquaSKK/ABC), the fn key
-# action, and modifier-key remapping on already-connected keyboards.
+# A logout/login is needed for input sources (AquaSKK/ABC), the fn key action,
+# and modifier-key remapping on already-connected keyboards.
 #
-# Types are load-bearing: mise only counts a preference as in sync when the
-# plist type matches too, so the keys macOS stores as reals are
-# floats here (25.0, not 25). Raw domains are used throughout rather than the
-# friendly [bootstrap.macos.dock]/[macos.keyboard] shorthands, which would
-# write integers for some of these.
+# Types are load-bearing. mise counts a preference as in sync only when the
+# plist type matches, so keys macOS stores as reals are floats here (25.0, not
+# 25). Raw domains throughout, rather than the [bootstrap.macos.dock] and
+# [macos.keyboard] shorthands, which would write integers for some of these.
 
 [bootstrap.macos.defaults.NSGlobalDomain]
 # Locale / language
@@ -154,10 +258,7 @@ AppleKeyboardUIMode = 3
 
 # Trackpad speeds (tracking, scroll) and spring-loaded folder delay. Every
 # gesture on this machine is at its factory setting, so only the speeds are
-# here. A customised gesture would have to be written to three domains that
-# agree: com.apple.AppleMultitouchTrackpad (built-in),
-# com.apple.driver.AppleBluetoothMultitouch.trackpad (Magic Trackpad), and the
-# per-host com.apple.trackpad.* keys that the System Settings pane reads back.
+# declared.
 "com.apple.trackpad.scaling" = 2.0
 "com.apple.trackpad.scrolling" = 0.1838
 "com.apple.springing.delay" = 0.7575731128454208
@@ -178,9 +279,8 @@ NSNavPanelFileLastListModeForSaveModeKey = 2
 shouldShowRSVPDataDetectors = false
 
 [bootstrap.macos.defaults."com.apple.HIToolbox"]
-# fn key action. Value copied verbatim; the UI offers Do Nothing / Change Input
-# Source / Show Emoji & Symbols / Start Dictation and Apple documents no
-# mapping, so which one 0 means is unconfirmed.  [logout]
+# fn key action, copied verbatim. Apple documents no mapping for the value, so
+# which UI option 0 means is unconfirmed.  [logout]
 AppleFnUsageType = 0
 # Input sources: ABC layout + AquaSKK (Japanese, declared in com.apple.inputsources
 # below). AquaSKK must be installed first, and HIToolbox is only re-read at
@@ -206,13 +306,9 @@ closeViewHotkeysEnabled = false
 
 # Magic Mouse: single button (no right-click), no one-finger smart zoom.
 #
-# com.apple.swipescrolldirection and com.apple.mouse.scaling are deliberately
-# left UNSET: the trackpad keeps macOS "natural" scrolling, while per-mouse
-# scroll direction, pointer speed and acceleration are handled by LinearMouse
-# (mac/dot.config/linearmouse/linearmouse.json), which reverses scrolling for
-# the Logitech mice only. Setting swipescrolldirection here would fight it.
-# com.apple.driver.AppleHIDMouse is likewise untouched -- all stock, and
-# LinearMouse governs those mice anyway.
+# com.apple.swipescrolldirection and com.apple.mouse.scaling are left unset.
+# LinearMouse (mac/dot.config/linearmouse/linearmouse.json) governs per-mouse
+# scroll direction and pointer speed, and writing them here would fight it.
 [bootstrap.macos.defaults."com.apple.AppleMultitouchMouse"]
 MouseButtonMode = "OneButton"
 MouseOneFingerDoubleTapGesture = 0
@@ -252,9 +348,9 @@ key = "MenuItemHidden"
 host = "current"
 value = true
 
-# Modifier keys: Caps Lock -> Control (0x700000039 -> 0x7000000E4) for every
-# keyboard, EXCEPT vendor 1452 / product 591, which is the Karabiner DriverKit
-# VirtualHIDKeyboard -- exempted so Karabiner output is not remapped twice.
+# Caps Lock -> Control (0x700000039 -> 0x7000000E4) on every keyboard except
+# vendor 1452 / product 591, the Karabiner DriverKit VirtualHIDKeyboard, whose
+# output would otherwise be remapped twice.
 [[bootstrap.macos.defaults_entries]]
 domain = "NSGlobalDomain"
 key = "com.apple.keyboard.modifiermapping.0-0-0"
@@ -267,10 +363,10 @@ key = "com.apple.keyboard.modifiermapping.1452-591-0"
 host = "current"
 value = [{ HIDKeyboardModifierMappingSrc = 30064771129, HIDKeyboardModifierMappingDst = 30064771129 }]
 
-# Accessibility zoom / invert-colours / contrast hotkeys (IDs 15-26): all off,
+# Accessibility zoom, invert-colours and contrast hotkeys (IDs 15-26), all off
 # so Cmd-Opt-8 and Cmd-Opt-+/- stay available to apps. Each id is patched
-# individually -- writing AppleSymbolicHotKeys whole would drop every other
-# shortcut, the way `defaults write -dict-add` avoided.
+# individually. Writing AppleSymbolicHotKeys whole would drop every other
+# shortcut.
 
 [[bootstrap.macos.defaults_entries]]
 domain = "com.apple.symbolichotkeys"
@@ -353,7 +449,7 @@ path = ["164"]
 value = { enabled = false, value = { parameters = [65535, 65535, 0], type = "standard" } }
 
 # System "Show Emoji & Symbols" (Ctrl-Cmd-Space) off, replaced by the
-# Cmd-Shift-. menu equivalent below -- which frees Ctrl-Cmd-Space entirely.
+# Cmd-Shift-. menu equivalent below, which frees Ctrl-Cmd-Space.
 [[bootstrap.macos.defaults_entries]]
 domain = "com.apple.symbolichotkeys"
 key = "AppleSymbolicHotKeys"
@@ -366,8 +462,8 @@ key = "NSUserKeyEquivalents"
 path = ["Emoji & Symbols"]
 value = "@$."
 
-# Some apps only read changed preferences after a relaunch; mise never
-# restarts them itself. Runs on every `mise bootstrap`, changed preferences or not.
+# Some apps read changed preferences only after a relaunch, and mise never
+# restarts them. This runs on every `mise bootstrap`, changed or not.
 [bootstrap.hooks.post-defaults]
 run = [
   "killall Dock Finder SystemUIServer ControlCenter 2>/dev/null || true",
