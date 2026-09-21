@@ -166,6 +166,13 @@ done
 # phase deploys is trusted before it runs.
 mise bootstrap --only dotfiles --yes
 mise trust "$HOME/.config/mise/conf.d/sorah-tools.toml"
+# github: tools exceed the anonymous API rate limit. xtrace would print the
+# token.
+set +x
+if [[ -z ${GITHUB_TOKEN:-} ]] && command -v gh >/dev/null && gh auth token >/dev/null 2>&1; then
+  export GITHUB_TOKEN=$(gh auth token)
+fi
+set -x
 mise bootstrap --only tools --yes
 
 # mise's AUR backend shells out to yay, which the tools phase above installs.

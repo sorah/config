@@ -23,8 +23,8 @@ idiomatic_version_file_enable_tools = ["node"]
 package_manager = "bun"
 
 [tool_alias]
-trustless = "ubi:sorah/trustless[tag_regex='^trustless/v']"
-trustless-provider-lambda = "ubi:sorah/trustless[tag_regex='^trustless-provider-lambda/v']"
+trustless = "github:sorah/trustless[version_prefix=trustless/v]"
+trustless-provider-lambda = "github:sorah/trustless[version_prefix=trustless-provider-lambda/v]"
 smithy = "github:smithy-lang/smithy[bin_path=bin,bin=smithy,strip_components=1]"
 smithy-language-server = "github:smithy-lang/smithy-language-server[bin_path=bin,bin=smithy-language-server]"
 
@@ -42,8 +42,9 @@ gcloud = "latest"
 node = "lts"
 "pipx:aws-sam-cli" = "latest"
 terraform = "latest"
-"ubi:kagehq/port-kill" = "latest"
-"ubi:sorah/mairu" = "latest"
+# The console build. Without matching the tray app is picked.
+"github:kagehq/port-kill" = { version = "latest", matching = "console", bin = "port-kill" }
+"github:sorah/mairu" = "latest"
 
 "npm:@google/gemini-cli" = "latest"
 "npm:@playwright/mcp" = "latest"
@@ -55,7 +56,6 @@ sqlite3def = "latest"
 
 deno = "latest"
 pnpm = "latest"
-ubi = "latest"
 watchexec = "latest"
 "aqua:fujiwara/lambroll" = "latest"
 "github:aviator-co/av" = "latest"
@@ -82,7 +82,7 @@ pkl = "latest"
 zig = "latest"
 zizmor = "latest"
 "github:draftcode/aws-gcp-token" = "latest"
-"ubi:ayinke-llc/sdump" = "latest"
+"github:ayinke-llc/sdump" = "latest"
 
 "cargo:bpf-linker" = "latest"
 "cargo:cargo-binstall" = "latest"
@@ -98,8 +98,6 @@ smithy = "latest"
 smithy-language-server = "latest"
 
 # mise's AUR backend shells out to this for the aur: entries in ../mise.toml.
-# ubi rejects yay's release assets, whose names carry no OS token, hence the
-# github backend.
 "github:Jguer/yay" = { version = "latest", os = ["linux"] }
 
 # macOS only. On Arch these come from pacman, in [bootstrap.packages] in

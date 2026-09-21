@@ -93,10 +93,11 @@ mise unuse --global --no-prune $(mise ls --current 2>/dev/null | awk '$3 ~ /conf
 - `config.toml` overrides `conf.d`, so while an entry is duplicated there it,
   not this repo, decides that tool's version. `mise/tools.toml` declares all of
   them, so both tables can go entirely.
-- Six of them are declared here under a different name, so check before
+- Some of them are declared here under a different name, so check before
   assuming a tool disappeared: `aws-cli` and `pinact` are the `aqua:` entries,
-  `gh` is `github-cli`, `ubi:sqldef/sqldef` is `sqlite3def`, and the two `ubi:`
-  smithy entries are the `github:` `[tool_alias]` definitions.
+  `gh` is `github-cli`, `ubi:sqldef/sqldef` is `sqlite3def`, the two `ubi:`
+  smithy entries are the `github:` `[tool_alias]` definitions, and any other
+  `ubi:owner/repo` is `github:owner/repo`.
 - Keep `[settings] paranoid` and `[settings] disable_tools`; delete the other
   settings. `experimental`, `lockfile`,
   `idiomatic_version_file_enable_tools` and `npm.package_manager` live in
@@ -206,6 +207,14 @@ stopped.
   asdf:mise-plugins/mise-yay` once the new one works; while both are installed
   the shim order decides which mise calls. paru is not usable here at all --
   its release binary links `libalpm.so.15` and Arch is on `.so.16`.
+- The deprecated `ubi:` backend is not used; `github:` replaces it. Installs
+  made through it linger until removed with `mise uninstall --all ubi
+  ubi:kagehq/port-kill ubi:sorah/mairu ubi:ayinke-llc/sdump`. A registry tool
+  such as `k9s` may also have been installed through ubi; `mise doctor` names
+  those, and `mise uninstall --all k9s && mise install k9s` moves it back.
+- The `github:` backend queries the GitHub API on install, whose anonymous rate
+  limit a full bootstrap exceeds. `setup.sh` exports `GITHUB_TOKEN` from `gh
+  auth token` when `gh` is logged in.
 
 ## License
 
