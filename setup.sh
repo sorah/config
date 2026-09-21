@@ -5,10 +5,10 @@
 #   ./setup.sh [mac|arch|linux]
 #
 # The declarative half lives in mise.toml (macOS app casks, macOS preferences,
-# the tool-set deploy) and mise/tools.toml (the global tool set), and is applied
-# from here through `mise bootstrap`. The Brewfile keeps what Homebrew still
-# owns: casks whose installers need sudo, the formulae, and the Mac App Store
-# apps. See README.md.
+# the dotfiles) and mise/tools.toml (the global tool set), and is applied from
+# here through `mise bootstrap`. The Brewfile keeps what Homebrew still owns:
+# casks whose installers need sudo, the formulae, and the Mac App Store apps.
+# See README.md.
 #
 # Deliberately no `set -e`: one failing step should not strand the rest of the
 # run. Re-run after fixing whatever failed.
@@ -27,40 +27,13 @@ if [[ -z $arch && "_$(uname)" = "_Darwin" ]]; then
   arch=mac
 fi
 
-# link <path-in-repo> <destination> -- idempotent symlink. Creates the parent
-# directory, replaces an existing link, and skips loudly when the source is not
-# in the repo rather than leaving a dangling link behind.
-link() {
-  local src="$repo/$1" dest="$2"
-  if [[ ! -e $src ]]; then
-    print -u2 "setup: skipped $dest -- $1 is not in the repo"
-    return
-  fi
-  mkdir -p "${dest:h}"
-  ln -sfn "$src" "$dest"
-}
-
 setopt null_glob
 set -x
 
 ##### Dotfiles #################################################################
 
-link vim/dot.vim           ~/.vim
-link vim/dot.vim           ~/.local/share/nvim/site
-link vim/dot.vimrc         ~/.vimrc
-link vim/dot.vimrc         ~/.config/nvim/init.vim
-link vim/coc-settings.json ~/.config/nvim/coc-settings.json
-link zsh/dot.zshrc         ~/.zshrc
-link tmux/tmux.conf        ~/.tmux.conf
-link misc/dot.irbrc        ~/.irbrc
-link misc/dot.gemrc        ~/.gemrc
-link wezterm.lua           ~/.config/wezterm/wezterm.lua
-
-# Only mac and gentoo variants exist; anywhere else gets no global env file.
-link "zsh/${arch}.zshrc_global_env" ~/.zshrc_global_env
-
-link dot.local/share/applications/sorah-browser.desktop \
-  ~/.local/share/applications/sorah-browser.desktop
+# Generated, so neither a symlink nor a copy of anything -- the rest of the
+# dotfiles are [dotfiles] in mise.toml, applied further down.
 
 cat <<'EOF' > ~/.tmux.reattacher
 #!/bin/sh
@@ -108,9 +81,44 @@ mise trust
 # itself.
 mise bootstrap --only packages --yes
 
+# mise refuses to overwrite a target it did not create, and a single conflict
+# aborts the whole dotfiles phase, so conflicting targets are cleared first.
+# Both branches are guarded on the state they fix, so this is a no-op on a
+# migrated machine and on a fresh one.
+#
+# --force-dotfiles would cover this in one flag, but for a directory target it
+# deletes the directory, and ~/.local/share/nvim/site is one.
+#
+# Symlink-mode targets only: copy takes its target over whatever is there.
+typeset -a mise_dotfile_links=(
+  ~/.vim
+  ~/.local/share/nvim/site
+  ~/.vimrc
+  ~/.config/nvim/init.vim
+  ~/.config/nvim/coc-settings.json
+  ~/.zshrc
+  ~/.tmux.conf
+  ~/.irbrc
+  ~/.gemrc
+  ~/.config/wezterm/wezterm.lua
+  ~/.zshrc_global_env
+  ~/.local/share/applications/sorah-browser.desktop
+)
+for dotfile in $mise_dotfile_links; do
+  if [[ -L $dotfile && ! -e $dotfile ]]; then
+    # Dangling: the source was renamed or moved. A target not declared for this
+    # platform is never revisited by mise, so it would stay broken.
+    rm -f -- "$dotfile"
+  elif [[ -e $dotfile && ! -L $dotfile ]]; then
+    # Moved aside rather than deleted: ~/.local/share/nvim/site is a directory
+    # vim-plug has written into.
+    mv -- "$dotfile" "$dotfile.pre-mise.$(date +%Y%m%d%H%M%S)"
+  fi
+done
+
 # The global tool set is declared in mise/tools.toml and deployed to
-# ~/.config/mise/conf.d/ by the [dotfiles] entry in mise.toml. Deploy it, trust
-# it -- the tools phase skips a fragment it may not parse -- then install.
+# ~/.config/mise/conf.d/ by a [dotfiles] entry. Deploy, trust -- the tools phase
+# skips a fragment it may not parse -- then install.
 mise bootstrap --only dotfiles --yes
 mise trust "$HOME/.config/mise/conf.d/sorah-tools.toml"
 mise bootstrap --only tools --yes
@@ -129,9 +137,6 @@ fi
 ##### macOS ####################################################################
 
 if [[ $arch = mac ]]; then
-  link mac/dot.config/karabiner/karabiner.json     ~/.config/karabiner/karabiner.json
-  link mac/dot.config/linearmouse/linearmouse.json ~/.config/linearmouse/linearmouse.json
-
   # UI preferences live in mise.toml. Run via --only so the post-defaults hook
   # restarts Dock/Finder/SystemUIServer; `macos defaults apply` skips hooks.
   mise bootstrap --only macos-defaults --yes

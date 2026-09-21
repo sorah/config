@@ -1,66 +1,92 @@
 {
-  "$schema" : "https:\/\/schema.linearmouse.app\/0.10.0",
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.11.4",
   "schemes" : [
     {
       "if" : {
         "device" : {
-          "vendorID" : "0x0",
-          "productID" : "0x0",
           "category" : "trackpad",
-          "productName" : "Apple Internal Keyboard \/ Trackpad"
+          "productID" : "0x0",
+          "productName" : "Apple Internal Keyboard \/ Trackpad",
+          "vendorID" : "0x0"
         }
       },
       "pointer" : {
-        "speed" : 0.8133,
+        "acceleration" : 1.6063,
         "disableAcceleration" : false,
-        "acceleration" : 1.6063
+        "speed" : 0.8133
       }
     },
     {
       "if" : {
         "device" : {
-          "serialNumber" : "DABD35E3A48A0017",
-          "category" : "mouse",
-          "vendorID" : "0x46d",
-          "productName" : "Gaming Mouse G600",
-          "productID" : "0xc24a"
+          "category" : "mouse"
         }
       },
       "pointer" : {
-        "disableAcceleration" : true,
-        "acceleration" : 0.8
+        "disableAcceleration" : true
+      }
+    },
+    {
+      "if" : {
+        "device" : {
+          "category" : "mouse",
+          "productID" : "0xc24a",
+          "productName" : "Gaming Mouse G600",
+          "serialNumber" : "DABD35E3A48A0017",
+          "vendorID" : "0x46d"
+        }
+      },
+      "pointer" : {
+        "acceleration" : 0.8,
+        "disableAcceleration" : true
       },
       "scrolling" : {
-        "speed" : {
-          "vertical" : 0
-        },
         "acceleration" : {
           "vertical" : 1
+        },
+        "distance" : {
+          "vertical" : 7
         },
         "reverse" : {
           "vertical" : true
         },
-        "distance" : {
-          "vertical" : 7
+        "speed" : {
+          "vertical" : 0
         }
       }
     },
     {
-      "scrolling" : {
-        "reverse" : {
-          "vertical" : true
+      "if" : {
+        "device" : {
+          "category" : "mouse",
+          "productID" : "0xc53f",
+          "productName" : "USB Receiver",
+          "vendorID" : "0x46d"
         }
       },
       "pointer" : {
         "acceleration" : 1,
         "disableAcceleration" : true
       },
+      "scrolling" : {
+        "reverse" : {
+          "vertical" : true
+        }
+      }
+    },
+    {
       "if" : {
         "device" : {
-          "vendorID" : "0x46d",
-          "productName" : "USB Receiver",
-          "productID" : "0xc53f",
-          "category" : "mouse"
+          "category" : "mouse",
+          "productID" : "0xc24a",
+          "productName" : "Gaming Mouse G600",
+          "serialNumber" : "C387EDC4FAE40017",
+          "vendorID" : "0x46d"
+        }
+      },
+      "scrolling" : {
+        "reverse" : {
+          "vertical" : true
         }
       }
     }

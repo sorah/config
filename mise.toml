@@ -5,10 +5,13 @@ min_version = "2026.9.11"
 # Machine setup for `mise bootstrap` -- https://mise.jdx.dev/bootstrap.html
 #
 # Gradually replacing setup.sh. Migrated so far: the macOS casks that install
-# as plain app bundles. Homebrew keeps the rest -- sudo-requiring casks,
-# formulae and Mac App Store apps -- in the Brewfile; tools, dotfiles, macOS
-# defaults and the Linux/Arch branches are still in setup.sh.
+# as plain app bundles, the global tool set, the macOS defaults, and the
+# dotfile symlinks. Homebrew keeps the casks that need sudo, the formulae and
+# the Mac App Store apps, in the Brewfile; the Linux/Arch package branches and
+# the imperative leftovers (rustup, gopls, claude plugins, systemd units) are
+# still in setup.sh.
 #
+#   mise bootstrap status
 #   mise bootstrap packages status
 #   mise bootstrap packages apply --dry-run
 #   mise bootstrap packages apply
@@ -35,6 +38,46 @@ min_version = "2026.9.11"
 
 # ----- dotfiles ---------------------------------------------------------------
 #
+# Sources are relative to this file; parent directories are created as needed.
+#
+#   mise bootstrap dotfiles status
+#   mise bootstrap dotfiles apply --dry-run
+#
+# mise refuses to overwrite a target it did not create, and one conflict aborts
+# the whole phase, leaving unrelated entries unapplied -- setup.sh clears those
+# targets before applying. --force-dotfiles is avoided: for a directory target
+# it deletes the directory.
+#
+# Still in setup.sh: ~/.tmux.reattacher, and ghq.root and include.path, which
+# stay `git config --global` so a machine can override them locally.
+
+[dotfiles]
+# vim / neovim. dot.vim and dot.vimrc each serve two targets.
+"~/.vim"                           = "vim/dot.vim"
+"~/.local/share/nvim/site"         = "vim/dot.vim"
+"~/.vimrc"                         = "vim/dot.vimrc"
+"~/.config/nvim/init.vim"          = "vim/dot.vimrc"
+"~/.config/nvim/coc-settings.json" = "vim/coc-settings.json"
+
+# shell / terminal
+"~/.zshrc"                      = "zsh/dot.zshrc"
+"~/.tmux.conf"                  = "tmux/tmux.conf"
+"~/.config/wezterm/wezterm.lua" = "wezterm.lua"
+
+# ruby
+"~/.irbrc" = "misc/dot.irbrc"
+"~/.gemrc" = "misc/dot.gemrc"
+
+# Karabiner and LinearMouse rewrite their config in place, which replaces a
+# symlink with a regular file -- hence copy, with the repo as the source of
+# truth. Copy takes the target over whatever it finds there, plain file or
+# symlink, without --force, and unlinks rather than writing through. An app
+# edit therefore lives only in the target until captured:
+#
+#   mise bootstrap dotfiles add --changed
+"~/.config/karabiner/karabiner.json"     = { source = "mac/dot.config/karabiner/karabiner.json", mode = "copy" }
+"~/.config/linearmouse/linearmouse.json" = { source = "mac/dot.config/linearmouse/linearmouse.json", mode = "copy" }
+
 # The global tool set lives in mise/tools.toml and is deployed here as a global
 # config fragment: ~/.config/mise/conf.d/*.toml is read in every directory,
 # whereas [tools] in this file would only apply under ~/git/config.
@@ -43,11 +86,22 @@ min_version = "2026.9.11"
 # as a dotfile. Under `paranoid`, the deployed path needs trusting once:
 #
 #   mise trust ~/.config/mise/conf.d/sorah-tools.toml
-#
-# The `ln -sf` block at the top of setup.sh has not moved here yet.
-
-[dotfiles]
 "~/.config/mise/conf.d/sorah-tools.toml" = { source = "mise/tools.toml", mode = "symlink" }
+
+# A dotfile entry has no `os` key of its own: the key becomes a logical name
+# and each variant supplies the target. An entry whose variants do not match
+# this machine is not listed by `status` and is not deployed.
+#
+# zsh/gentoo.zshrc_global_env is deliberately not declared: it hardcodes
+# /usr/lib64/qt5, so os = "linux" would be wrong on Arch. ~/.zshrc sources this
+# file only `if [[ -e ]]`.
+[dotfiles.zshrc_global_env]
+source = "zsh/mac.zshrc_global_env"
+variants = [{ os = "macos", target = "~/.zshrc_global_env" }]
+
+[dotfiles.sorah_browser_desktop]
+source = "linux/dot.local/share/applications/sorah-browser.desktop"
+variants = [{ os = "linux", target = "~/.local/share/applications/sorah-browser.desktop" }]
 
 # ----- macOS preferences ------------------------------------------------------
 #
