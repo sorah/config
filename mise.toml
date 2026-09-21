@@ -1,3 +1,7 @@
+# `mise bootstrap` and [bootstrap.macos] need a recent mise; without this a
+# too-old mise fails in confusing ways instead of telling you to update.
+min_version = "2026.9.11"
+
 # Machine setup for `mise bootstrap` -- https://mise.jdx.dev/bootstrap.html
 #
 # Gradually replacing setup.sh. Migrated so far: the macOS casks that install

@@ -1,5 +1,22 @@
 #!/usr/bin/env zsh
-arch=$1
+#
+# All-in-one machine setup. Idempotent: safe to re-run.
+#
+#   ./setup.sh [mac|arch|linux]
+#
+# The declarative half lives in mise.toml (macOS app casks, macOS preferences,
+# the tool-set deploy) and mise/tools.toml (the global tool set), and is applied
+# from here through `mise bootstrap`. The Brewfile keeps what Homebrew still
+# owns: casks whose installers need sudo, the formulae, and the Mac App Store
+# apps. See README.md.
+#
+# Deliberately no `set -e`: one failing step should not strand the rest of the
+# run. Re-run after fixing whatever failed.
+
+repo=${0:A:h}
+cd "$repo" || exit 1
+
+arch=${1:-}
 if [[ -z $arch && -e /etc/pacman.conf ]]; then
   arch=arch
 fi
@@ -10,96 +27,123 @@ if [[ -z $arch && "_$(uname)" = "_Darwin" ]]; then
   arch=mac
 fi
 
-if [ "_$arch" = "_mac" ]; then
-  if ! which brew; then
-    echo "Install homebrew first" 1>&2
-    exit 1
+# link <path-in-repo> <destination> -- idempotent symlink. Creates the parent
+# directory, replaces an existing link, and skips loudly when the source is not
+# in the repo rather than leaving a dangling link behind.
+link() {
+  local src="$repo/$1" dest="$2"
+  if [[ ! -e $src ]]; then
+    print -u2 "setup: skipped $dest -- $1 is not in the repo"
+    return
   fi
-fi
+  mkdir -p "${dest:h}"
+  ln -sfn "$src" "$dest"
+}
 
+setopt null_glob
 set -x
-shopt -s nullglob
 
-ln -sfn `pwd`/vim/dot.vim ~/.vim
-ln -s `pwd`/vim/dot.vim ~/.local/share/nvim/site
-ln -sf `pwd`/vim/dot.vimrc ~/.vimrc
-mkdir -p ~/.config/nvim
-ln -sf `pwd`/vim/dot.vimrc ~/.config/nvim/init.vim
-ln -sf `pwd`/vim/coc-settings.json ~/.config/nvim/coc-settings.json
-ln -sf `pwd`/zsh/dot.zshrc ~/.zshrc
-ln -sf `pwd`/zsh/${arch}.zshrc_global_env ~/.zshrc_global_env
-ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf
-ln -sf `pwd`/misc/dot.irbrc ~/.irbrc
-ln -sf `pwd`/misc/dot.gemrc ~/.gemrc
+##### Dotfiles #################################################################
 
-mkdir -p ~/.config/wezterm; ln -sf `pwd`/wezterm.lua ~/.config/wezterm/wezterm.lua
+link vim/dot.vim           ~/.vim
+link vim/dot.vim           ~/.local/share/nvim/site
+link vim/dot.vimrc         ~/.vimrc
+link vim/dot.vimrc         ~/.config/nvim/init.vim
+link vim/coc-settings.json ~/.config/nvim/coc-settings.json
+link zsh/dot.zshrc         ~/.zshrc
+link tmux/tmux.conf        ~/.tmux.conf
+link misc/dot.irbrc        ~/.irbrc
+link misc/dot.gemrc        ~/.gemrc
+link wezterm.lua           ~/.config/wezterm/wezterm.lua
 
-mkdir -p ~/.local/share/applications
-ln -s $(pwd)/dot.local/share/applications/sorah-browser.desktop ~/.local/share/applications/
+# Only mac and gentoo variants exist; anywhere else gets no global env file.
+link "zsh/${arch}.zshrc_global_env" ~/.zshrc_global_env
+
+link dot.local/share/applications/sorah-browser.desktop \
+  ~/.local/share/applications/sorah-browser.desktop
 
 cat <<'EOF' > ~/.tmux.reattacher
 #!/bin/sh
 exec $*
 EOF
 chmod +x ~/.tmux.reattacher
-#mkdir -p ~/git/ruby/foo/{bin,lib}
 
-git config --global ghq.root $HOME/git
+##### git ######################################################################
+
+git config --global ghq.root "$HOME/git"
 
 if ! git config --global --get-regexp include.path '^~/git/config/misc/dot.gitconfig$' >/dev/null; then
   git config --global --add include.path '~/git/config/misc/dot.gitconfig'
 fi
 
-if [[ ! -e $HOME/.local/bin/mise ]]; then
-  curl https://mise.run | bash
-  eval "$($HOME/.local/bin/mise activate zsh)"
+##### Homebrew (macOS) #########################################################
+
+if [[ $arch = mac ]]; then
+  if ! command -v brew >/dev/null; then
+    NONINTERACTIVE=1 /bin/bash -c \
+      "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+  # Put a freshly installed brew on PATH for the rest of this run.
+  if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+  # The first cask group asks for an admin password; the `mas` entries need the
+  # App Store signed in.
+  brew bundle --file="$repo/Brewfile"
 fi
+
+##### mise #####################################################################
+
+if [[ ! -x $HOME/.local/bin/mise ]]; then
+  curl https://mise.run | sh
+fi
+export PATH="$HOME/.local/bin:$PATH"
 mise settings paranoid=1
 
-# Casks declared in mise.toml; the Brewfile still owns the rest. See mise.toml.
+# Paranoid mode binds trust to a config's contents, so this is needed again
+# after every change to mise.toml.
 mise trust
+
+# macOS app casks. Homebrew is not required for these: mise manages the prefix
+# itself.
 mise bootstrap --only packages --yes
 
 # The global tool set is declared in mise/tools.toml and deployed to
-# ~/.config/mise/conf.d/ by the [dotfiles] entry in mise.toml. One pass: the
-# dotfiles phase lands the fragment before the tools phase reads it.
-mise bootstrap --only dotfiles,tools --yes
+# ~/.config/mise/conf.d/ by the [dotfiles] entry in mise.toml. Deploy it, trust
+# it -- the tools phase skips a fragment it may not parse -- then install.
+mise bootstrap --only dotfiles --yes
+mise trust "$HOME/.config/mise/conf.d/sorah-tools.toml"
+mise bootstrap --only tools --yes
+
+##### rust #####################################################################
 
 if [[ ! -e $HOME/.rustup ]]; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 fi
 mkdir -p ~/.zfunc
-rustup completions zsh > ~/.zfunc/_rustup
+rustup_bin=$(command -v rustup || echo "$HOME/.cargo/bin/rustup")
+if [[ -x $rustup_bin ]]; then
+  "$rustup_bin" completions zsh > ~/.zfunc/_rustup
+fi
 
-if [ "_$arch" = "_mac" ]; then
-  mkdir -p ~/.config/karabiner
-  ln -sf `pwd`/mac/dot.config/karabiner/karabiner.json ~/.config/karabiner/karabiner.json
-  mkdir -p ~/.config/linearmouse
-  ln -sf `pwd`/mac/dot.config/linearmouse/linearmouse.json ~/.config/linearmouse/linearmouse.json
+##### macOS ####################################################################
+
+if [[ $arch = mac ]]; then
+  link mac/dot.config/karabiner/karabiner.json     ~/.config/karabiner/karabiner.json
+  link mac/dot.config/linearmouse/linearmouse.json ~/.config/linearmouse/linearmouse.json
 
   # UI preferences live in mise.toml. Run via --only so the post-defaults hook
   # restarts Dock/Finder/SystemUIServer; `macos defaults apply` skips hooks.
   mise bootstrap --only macos-defaults --yes
 
-  if ! which pipx 2>/dev/null; then
-    pip install --user pipx
-  fi
-
-  if ! which gsed 2>/dev/null; then
-    brew install gnu-sed
-  fi
-
-  if ! which tmux 2>/dev/null; then
-    brew install tmux
-  fi
-
-  if ! which gpg 2>/dev/null; then
-    brew install gnupg2
-    brew install pinentry-mac
+  if ! command -v pipx >/dev/null; then
+    mise exec -- python -m pip install --user pipx
   fi
 fi
 
-if [[ "_$arch" = "_arch" ]]; then
+##### Arch #####################################################################
+
+if [[ $arch = arch ]]; then
   if ! grep -q aur-sorah /etc/pacman.conf; then
     curl -Ssf https://sorah.jp/packaging/arch/17C611F16D92677398E0ADF51AD43CA09D82C624.txt | sudo pacman-key -a -
     sudo pacman-key --lsign-key 17C611F16D92677398E0ADF51AD43CA09D82C624
@@ -158,7 +202,8 @@ EOF
     rbenv \
     docker-buildx \
     amazon-ecr-credential-helper
-  yay -Sy bazelisk-bin cloudflared-bin \
+  # yay comes from mise just above, so it is not on PATH yet on a fresh box.
+  mise exec -- yay -Sy bazelisk-bin cloudflared-bin \
     perl-file-rename \
     aws-session-manager-plugin \
     pristine-tar \
@@ -177,29 +222,51 @@ EOF
   fi
 fi
 
-if which go 2>/dev/null >/dev/null; then
-  [ ! -d ~/.gopath ] && mkdir ~/.gopath
-  [ ! -d ~/.gopath/src ] && ln -s ../git ~/.gopath/src
+##### go #######################################################################
 
-    export GOPATH=$HOME/.gopath
+if command -v go >/dev/null || mise which go >/dev/null 2>&1; then
+  [[ -d ~/.gopath ]] || mkdir ~/.gopath
+  [[ -e ~/.gopath/src ]] || ln -s ../git ~/.gopath/src
 
-  if ! which gopls; then
-    go install golang.org/x/tools/gopls@latest
+  export GOPATH=$HOME/.gopath
+
+  # `which gopls` misses it whenever GOPATH/bin is off PATH, which would
+  # reinstall on every run.
+  if [[ ! -x $GOPATH/bin/gopls ]]; then
+    mise exec -- go install golang.org/x/tools/gopls@latest
   fi
 fi
 
-if which claude 2>/dev/null >/dev/null; then
-  claude mcp get aws-knowledge-mcp-server || claude mcp add -s user aws-knowledge-mcp-server -t http https://knowledge-mcp.global.api.aws
-  claude plugin marketplace add `pwd`
-  claude plugin add sorah-spec@sorah-marketplace
-  claude plugin marketplace add https://github.com/microsoft/playwright-cli
-  claude plugin install playwright-cli@playwright-cli
+##### claude ###################################################################
+
+if command -v claude >/dev/null; then
+  claude mcp get aws-knowledge-mcp-server >/dev/null 2>&1 \
+    || claude mcp add -s user aws-knowledge-mcp-server -t http https://knowledge-mcp.global.api.aws
+  # Re-adding an existing marketplace or plugin is an error, not a no-op.
+  claude plugin marketplace add "$repo" || true
+  claude plugin add sorah-spec@sorah-marketplace || true
+  claude plugin marketplace add https://github.com/microsoft/playwright-cli || true
+  claude plugin install playwright-cli@playwright-cli || true
 fi
 
-if systemctl --version 2>/dev/null >/dev/null; then
-  mkdir -p $HOME/.config/systemd/user
-  for x in `pwd`/systemd/user/*; do
-    cp -v "${x}" ~/.config/systemd/user/
+##### systemd ##################################################################
+
+if command -v systemctl >/dev/null; then
+  mkdir -p "$HOME/.config/systemd/user"
+  for x in "$repo"/systemd/user/*; do
+    cp -v "$x" "$HOME/.config/systemd/user/"
   done
   systemctl --user daemon-reload
+fi
+
+set +x
+
+if [[ $arch = mac ]]; then
+  cat <<'EOF'
+
+Done. Log out and back in for: input sources (AquaSKK/ABC), the fn key action,
+and modifier-key remapping on already-connected keyboards.
+EOF
+else
+  print "\nDone."
 fi
