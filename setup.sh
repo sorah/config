@@ -179,17 +179,15 @@ fi
 
 ##### go #######################################################################
 
+# ~/.zshrc creates these too. This covers the shell this script runs in and the
+# machine before its first login.
 if command -v go >/dev/null || mise which go >/dev/null 2>&1; then
   [[ -d ~/.gopath ]] || mkdir ~/.gopath
   [[ -e ~/.gopath/src ]] || ln -s ../git ~/.gopath/src
 
-  export GOPATH=$HOME/.gopath
-
-  # `which gopls` misses it whenever GOPATH/bin is off PATH, which would
-  # reinstall on every run.
-  if [[ ! -x $GOPATH/bin/gopls ]]; then
-    mise exec -- go install golang.org/x/tools/gopls@latest
-  fi
+  # ~/.zshrc puts ~/.gopath/bin ahead of /usr/bin and the mise shims, so a
+  # `go install` binary there wins over the packaged gopls.
+  rm -f ~/.gopath/bin/gopls
 fi
 
 ##### claude ###################################################################

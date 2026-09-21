@@ -6,7 +6,7 @@ parts live in `mise.toml` and `mise/tools.toml`, applied by
 
 | Path | What |
 | --- | --- |
-| `setup.sh` | The whole run, idempotent: Homebrew and the Brewfile, the aur-sorah pacman repository, mise and every bootstrap phase, and the imperative leftovers (rustup, gopls, claude plugins). |
+| `setup.sh` | The whole run, idempotent: Homebrew and the Brewfile, the aur-sorah pacman repository, mise and every bootstrap phase, and the imperative leftovers (rustup, claude plugins). |
 | `mise.toml` | `[dotfiles]` for the dotfiles, `[bootstrap.packages]` for macOS app casks and the Arch pacman and AUR packages, `[bootstrap.macos]` for UI preferences, `[bootstrap.linux.systemd.units]` for the systemd user units. |
 | `mise/tools.toml` | The global tool set and the `[settings]` that govern it. Deployed to `~/.config/mise/conf.d/sorah-tools.toml`, so it applies in every directory rather than only in this repo. |
 | `Brewfile` | What Homebrew still owns: sudo-requiring casks, formulae, Mac App Store apps. |
@@ -70,6 +70,10 @@ mise bootstrap --only linux-systemd-units --yes     # Linux
   skips the `post-defaults` hook that restarts Dock, Finder and SystemUIServer.
 - `min_version` in `mise.toml` stops an older mise with self-update
   instructions, so the `self-update` above is only to get it over with early.
+- `gopls` is `pacman:gopls` on Arch and a `go:` entry in `mise/tools.toml` on
+  macOS. `~/.gopath/bin` precedes both `/usr/bin` and the mise shims in
+  `~/.zshrc`, so `setup.sh` deletes `~/.gopath/bin/gopls`; a `go install` copy
+  left there would keep winning.
 - On Arch, `packages status` should show everything `installed` too: both
   backends read pacman's database, and `pacman:` resolves groups and virtual
   provides, so `base-devel`, `netcat`, `bind-tools` and `ebtables` count as

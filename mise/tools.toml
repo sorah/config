@@ -90,6 +90,9 @@ smithy-language-server = "latest"
 "aqua:protocolbuffers/protobuf/protoc" = { version = "latest", os = ["macos"] }
 "aqua:x-motemen/ghq" = { version = "latest", os = ["macos"] }
 "core:go" = { version = "latest", os = ["macos"] }
+# Built from source with the go above. aqua's golang/tools/gopls is a
+# go_install package, which mise's aqua backend rejects.
+"go:golang.org/x/tools/gopls" = { version = "latest", os = ["macos"] }
 github-cli = { version = "latest", os = ["macos"] }
 python = { version = "latest", os = ["macos"] }
 

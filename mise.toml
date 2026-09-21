@@ -7,7 +7,7 @@ min_version = "2026.9.11"
 # package lists, the macOS defaults, the dotfile symlinks and the systemd user
 # units. The Brewfile holds the casks whose installers need sudo, the formulae
 # and the Mac App Store apps. setup.sh holds the rest: the aur-sorah repo,
-# rustup, gopls and the claude plugins.
+# rustup and the claude plugins.
 #
 #   mise bootstrap status
 #   mise bootstrap packages status
@@ -104,6 +104,7 @@ min_version = "2026.9.11"
 # languages. The macOS equivalents are in mise/tools.toml.
 "pacman:go" = "latest"
 "pacman:go-tools" = "latest"
+"pacman:gopls" = "latest"
 "pacman:ruby" = "latest"
 "pacman:ruby-irb" = "latest"
 "pacman:ruby-erb" = "latest"
