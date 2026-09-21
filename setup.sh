@@ -20,7 +20,6 @@ fi
 set -x
 shopt -s nullglob
 
-
 ln -sfn `pwd`/vim/dot.vim ~/.vim
 ln -s `pwd`/vim/dot.vim ~/.local/share/nvim/site
 ln -sf `pwd`/vim/dot.vimrc ~/.vimrc
@@ -61,12 +60,10 @@ mise settings paranoid=1
 mise trust
 mise bootstrap --only packages --yes
 
-mise use --global terraform@latest
-mise use --global 1password@latest
-mise use --global aqua:astral-sh/rye
-mise use --global aqua:astral-sh/uv
-mise use --global node@lts
-mise use --global bun@latest
+# The global tool set is declared in mise/tools.toml and deployed to
+# ~/.config/mise/conf.d/ by the [dotfiles] entry in mise.toml. One pass: the
+# dotfiles phase lands the fragment before the tools phase reads it.
+mise bootstrap --only dotfiles,tools --yes
 
 if [[ ! -e $HOME/.rustup ]]; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -84,22 +81,12 @@ if [ "_$arch" = "_mac" ]; then
   # restarts Dock/Finder/SystemUIServer; `macos defaults apply` skips hooks.
   mise bootstrap --only macos-defaults --yes
 
-  mise use --global github-cli@latest
-  mise use --global python@latest
   if ! which pipx 2>/dev/null; then
     pip install --user pipx
   fi
 
   if ! which gsed 2>/dev/null; then
     brew install gnu-sed
-  fi
-
-  if ! which jq 2>/dev/null; then
-    mise use --global aqua:jqlang/jq
-  fi
-
-  if ! which go 2>/dev/null; then
-    mise use --global core:go
   fi
 
   if ! which tmux 2>/dev/null; then
@@ -110,37 +97,7 @@ if [ "_$arch" = "_mac" ]; then
     brew install gnupg2
     brew install pinentry-mac
   fi
-
-  if ! which fzf 2>/dev/null; then
-    mise use --global aqua:junegunn/fzf@latest
-  fi
-
-  if ! which rg 2>/dev/null; then
-    mise use --global aqua:BurntSushi/ripgrep
-  fi
-
-  if ! which ghq 2>/dev/null; then
-    mise use --global aqua:x-motemen/ghq
-  fi
-
-  if ! which protoc 2>/dev/null; then
-    mise use --global aqua:protocolbuffers/protobuf/protoc
-  fi
-
-  if ! which neovim 2>/dev/null; then
-    mise use --global aqua:neovim/neovim
-  fi
-
-  if ! which cloudflared 2>/dev/null; then
-    mise use --global aqua:cloudflare/cloudflared
-  fi
 fi
-
-# (prioritize python installed above in macOS)
-mise use --global aws-cli@latest
-mise use --global gcloud@latest
-
-mise use --global aqua:suzuki-shunsuke/pinact
 
 if [[ "_$arch" = "_arch" ]]; then
   if ! grep -q aur-sorah /etc/pacman.conf; then
@@ -219,22 +176,6 @@ EOF
     git clone https://github.com/rbenv/ruby-build ~/.rbenv/plugins/ruby-build
   fi
 fi
-
-mise use --global pipx:aws-sam-cli
-mise use --global npm:@google/gemini-cli@latest
-mise use --global npm:@playwright/mcp@latest
-mise use --global npm:difit@latest
-
-mise use --global psqldef
-mise use --global sqlite3def
-mise use --global mysqldef
-
-mise alias set smithy "github:smithy-lang/smithy[bin_path=bin,bin=smithy,strip_components=1]"
-mise alias set smithy-language-server "github:smithy-lang/smithy-language-server[bin_path=bin,bin=smithy-language-server]"
-mise use --global smithy
-mise use --global smithy-language-server
-
-mise use --global buf
 
 if which go 2>/dev/null >/dev/null; then
   [ ! -d ~/.gopath ] && mkdir ~/.gopath

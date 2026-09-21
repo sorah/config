@@ -1,0 +1,317 @@
+# Machine setup for `mise bootstrap` -- https://mise.jdx.dev/bootstrap.html
+#
+# Gradually replacing setup.sh. Migrated so far: the macOS casks that install
+# as plain app bundles. Homebrew keeps the rest -- sudo-requiring casks,
+# formulae and Mac App Store apps -- in the Brewfile; tools, dotfiles, macOS
+# defaults and the Linux/Arch branches are still in setup.sh.
+#
+#   mise bootstrap packages status
+#   mise bootstrap packages apply --dry-run
+#   mise bootstrap packages apply
+#
+# Homebrew is not required for these: mise pours into /opt/homebrew itself and
+# counts what a real brew installed as already installed, leaving existing app
+# bundles (and their TCC grants) in place rather than re-pouring them.
+
+[bootstrap.packages]
+"brew-cask:1password" = { os = "macos" }
+"brew-cask:google-chrome@dev" = { os = "macos" }
+"brew-cask:firefox@developer-edition" = { os = "macos" }
+"brew-cask:aquaskk" = { os = "macos" }
+"brew-cask:logseq" = { os = "macos" }
+"brew-cask:linearmouse" = { os = "macos" }
+"brew-cask:the-unarchiver" = { os = "macos" }
+"brew-cask:wezterm" = { os = "macos" }
+"brew-cask:visual-studio-code@insiders" = { os = "macos" }
+"brew-cask:discord@ptb" = { os = "macos" }
+"brew-cask:slack" = { os = "macos" }
+"brew-cask:spotify" = { os = "macos" }
+"brew-cask:vlc" = { os = "macos" }
+"brew-cask:figma" = { os = "macos" }
+
+# ----- dotfiles ---------------------------------------------------------------
+#
+# The global tool set lives in mise/tools.toml and is deployed here as a global
+# config fragment: ~/.config/mise/conf.d/*.toml is read in every directory,
+# whereas [tools] in this file would only apply under ~/git/config.
+#
+# This is mise's "self-managing config" pattern -- a mise config file deployed
+# as a dotfile. Under `paranoid`, the deployed path needs trusting once:
+#
+#   mise trust ~/.config/mise/conf.d/sorah-tools.toml
+#
+# The `ln -sf` block at the top of setup.sh has not moved here yet.
+
+[dotfiles]
+"~/.config/mise/conf.d/sorah-tools.toml" = { source = "mise/tools.toml", mode = "symlink" }
+
+# ----- macOS preferences ------------------------------------------------------
+#
+# Captured from this Mac on macOS 27.0 (26A5406e) in 2026-08, and holding only
+# settings that DIFFER from stock macOS: of the ~180 keys captured, around 130
+# were at their factory value and were dropped. Two consequences:
+#
+#   1. This converges a fresh Mac, not a drifted one. Because stock-valued
+#      settings are omitted, applying will not undo one that has already been
+#      changed elsewhere -- it does not force tap-to-click off, for instance,
+#      since off is the factory value. `macos defaults status` is the drift
+#      check for the keys that ARE declared.
+#   2. Stock values are not queryable: they live in each app's compiled-in
+#      registerDefaults, not in any plist, so the trim rests on knowledge of
+#      macOS rather than measurement. A few entries are kept despite being
+#      uncertain -- AppleFnUsageType, dock expose-group-apps, WindowManager
+#      HideDesktop and AppWindowGroupingBehavior, and Magic Mouse
+#      MouseButtonMode. If one turns out to be stock, writing it is harmless.
+#
+# Some of this is overridden by MDM on managed machines.
+#
+#   mise bootstrap macos defaults status
+#   mise bootstrap macos defaults apply --dry-run
+#   mise bootstrap macos defaults apply
+#
+# A logout/login is still needed for: input sources (AquaSKK/ABC), the fn key
+# action, and modifier-key remapping on already-connected keyboards.
+#
+# Types are load-bearing: mise only counts a preference as in sync when the
+# plist type matches too, so the keys macOS stores as reals are
+# floats here (25.0, not 25). Raw domains are used throughout rather than the
+# friendly [bootstrap.macos.dock]/[macos.keyboard] shorthands, which would
+# write integers for some of these.
+
+[bootstrap.macos.defaults.NSGlobalDomain]
+# Locale / language
+AppleLanguages = ["en-GB", "ja-GB"]
+AppleLocale = "en_GB"
+# Stock for en_GB, but not for a US-provisioned machine, so set explicitly
+AppleMeasurementUnits = "Centimeters"
+AppleMetricUnits = true
+
+# Fast key repeat: 375ms delay, 30ms interval (stock is 68 / 6)
+InitialKeyRepeat = 25.0
+KeyRepeat = 2.0
+# F1/F2 etc. behave as standard function keys
+"com.apple.keyboard.fnState" = true
+# Full Keyboard Access: Tab moves between all controls, not just text boxes
+AppleKeyboardUIMode = 3
+
+# Trackpad speeds (tracking, scroll) and spring-loaded folder delay. Every
+# gesture on this machine is at its factory setting, so only the speeds are
+# here. A customised gesture would have to be written to three domains that
+# agree: com.apple.AppleMultitouchTrackpad (built-in),
+# com.apple.driver.AppleBluetoothMultitouch.trackpad (Magic Trackpad), and the
+# per-host com.apple.trackpad.* keys that the System Settings pane reads back.
+"com.apple.trackpad.scaling" = 2.0
+"com.apple.trackpad.scrolling" = 0.1838
+"com.apple.springing.delay" = 0.7575731128454208
+# No two-finger swipe-to-navigate-back in apps
+AppleEnableSwipeNavigateWithScrolls = false
+
+# Windows / Finder
+AppleShowScrollBars = "Always"
+AppleShowAllExtensions = true
+# Open/Save dialogs default to list view
+NSNavPanelFileListModeForOpenMode2 = 2
+NSNavPanelFileListModeForSaveMode2 = 2
+NSNavPanelFileLastListModeForOpenModeKey = 2
+NSNavPanelFileLastListModeForSaveModeKey = 2
+
+# Misc
+"com.apple.sound.beep.sound" = "/System/Library/Sounds/Sosumi.aiff"
+shouldShowRSVPDataDetectors = false
+
+[bootstrap.macos.defaults."com.apple.HIToolbox"]
+# fn key action. Value copied verbatim; the UI offers Do Nothing / Change Input
+# Source / Show Emoji & Symbols / Start Dictation and Apple documents no
+# mapping, so which one 0 means is unconfirmed.  [logout]
+AppleFnUsageType = 0
+# Input sources: ABC layout + AquaSKK (Japanese, declared in com.apple.inputsources
+# below). AquaSKK must be installed first, and HIToolbox is only re-read at
+# login.  [logout]
+AppleEnabledInputSources = [
+  { InputSourceKind = "Keyboard Layout", "KeyboardLayout ID" = 252, "KeyboardLayout Name" = "ABC" },
+  { "Bundle ID" = "com.apple.CharacterPaletteIM", InputSourceKind = "Non Keyboard Input Method" },
+  { "Bundle ID" = "com.apple.PressAndHold", InputSourceKind = "Non Keyboard Input Method" },
+]
+
+[bootstrap.macos.defaults."com.apple.inputsources"]
+AppleEnabledThirdPartyInputSources = [
+  { "Bundle ID" = "jp.sourceforge.inputmethod.aquaskk", InputSourceKind = "Keyboard Input Method" },
+  { "Bundle ID" = "jp.sourceforge.inputmethod.aquaskk", "Input Mode" = "com.apple.inputmethod.Japanese", InputSourceKind = "Input Mode" },
+]
+
+[bootstrap.macos.defaults."com.apple.keyboard.preferences"]
+IsMixmojiSuggestionsEnabled = false
+
+[bootstrap.macos.defaults."com.apple.universalaccess"]
+closeViewHotkeysEnabled = false
+"com.apple.custommenu.apps" = ["NSGlobalDomain"]
+
+# Magic Mouse: single button (no right-click), no one-finger smart zoom.
+#
+# com.apple.swipescrolldirection and com.apple.mouse.scaling are deliberately
+# left UNSET: the trackpad keeps macOS "natural" scrolling, while per-mouse
+# scroll direction, pointer speed and acceleration are handled by LinearMouse
+# (mac/dot.config/linearmouse/linearmouse.json), which reverses scrolling for
+# the Logitech mice only. Setting swipescrolldirection here would fight it.
+# com.apple.driver.AppleHIDMouse is likewise untouched -- all stock, and
+# LinearMouse governs those mice anyway.
+[bootstrap.macos.defaults."com.apple.AppleMultitouchMouse"]
+MouseButtonMode = "OneButton"
+MouseOneFingerDoubleTapGesture = 0
+UserPreferences = true   # marks the set as user-customised
+
+[bootstrap.macos.defaults."com.apple.driver.AppleBluetoothMultitouch.mouse"]
+MouseButtonMode = "OneButton"
+MouseOneFingerDoubleTapGesture = 0
+UserPreferences = true
+
+[bootstrap.macos.defaults."com.apple.dock"]
+autohide = true
+"autohide-time-modifier" = 0.5
+tilesize = 39.0
+mineffect = "scale"
+"mru-spaces" = false          # don't reorder Spaces by use
+"expose-group-apps" = false   # Mission Control: don't group by app
+"workspaces-auto-swoosh" = true
+
+[bootstrap.macos.defaults."com.apple.WindowManager"]
+EnableTiledWindowMargins = false
+HideDesktop = true
+AppWindowGroupingBehavior = 1
+
+[bootstrap.macos.defaults."com.apple.finder"]
+ShowPathbar = true
+ShowStatusBar = true
+FXPreferredViewStyle = "Nlsv"   # list view
+
+[bootstrap.macos.defaults."com.apple.menuextra.clock"]
+ShowAMPM = true   # 12-hour, vs 24h for en_GB
+
+# Menu bar: hide the Spotlight item (per-host, like `defaults -currentHost`)
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.Spotlight"
+key = "MenuItemHidden"
+host = "current"
+value = true
+
+# Modifier keys: Caps Lock -> Control (0x700000039 -> 0x7000000E4) for every
+# keyboard, EXCEPT vendor 1452 / product 591, which is the Karabiner DriverKit
+# VirtualHIDKeyboard -- exempted so Karabiner output is not remapped twice.
+[[bootstrap.macos.defaults_entries]]
+domain = "NSGlobalDomain"
+key = "com.apple.keyboard.modifiermapping.0-0-0"
+host = "current"
+value = [{ HIDKeyboardModifierMappingSrc = 30064771129, HIDKeyboardModifierMappingDst = 30064771300 }]
+
+[[bootstrap.macos.defaults_entries]]
+domain = "NSGlobalDomain"
+key = "com.apple.keyboard.modifiermapping.1452-591-0"
+host = "current"
+value = [{ HIDKeyboardModifierMappingSrc = 30064771129, HIDKeyboardModifierMappingDst = 30064771129 }]
+
+# Accessibility zoom / invert-colours / contrast hotkeys (IDs 15-26): all off,
+# so Cmd-Opt-8 and Cmd-Opt-+/- stay available to apps. Each id is patched
+# individually -- writing AppleSymbolicHotKeys whole would drop every other
+# shortcut, the way `defaults write -dict-add` avoided.
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["15"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["16"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["17"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["18"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["19"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["20"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["21"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["22"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["23"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["24"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["25"]
+value = { enabled = false }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["26"]
+value = { enabled = false }
+
+# Unidentified system hotkey, disabled. 65535/65535/0 is how macOS records
+# a shortcut with no key assigned, so it is kept verbatim.
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["164"]
+value = { enabled = false, value = { parameters = [65535, 65535, 0], type = "standard" } }
+
+# System "Show Emoji & Symbols" (Ctrl-Cmd-Space) off, replaced by the
+# Cmd-Shift-. menu equivalent below -- which frees Ctrl-Cmd-Space entirely.
+[[bootstrap.macos.defaults_entries]]
+domain = "com.apple.symbolichotkeys"
+key = "AppleSymbolicHotKeys"
+path = ["176"]
+value = { enabled = false, value = { type = "SAE1.0" } }
+
+[[bootstrap.macos.defaults_entries]]
+domain = "NSGlobalDomain"
+key = "NSUserKeyEquivalents"
+path = ["Emoji & Symbols"]
+value = "@$."
+
+# Some apps only read changed preferences after a relaunch; mise never
+# restarts them itself. Runs on every `mise bootstrap`, changed preferences or not.
+[bootstrap.hooks.post-defaults]
+run = [
+  "killall Dock Finder SystemUIServer ControlCenter 2>/dev/null || true",
+  "/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true",
+]

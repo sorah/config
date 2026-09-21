@@ -1,0 +1,63 @@
+# The global tool set.
+#
+# Deployed to ~/.config/mise/conf.d/sorah-tools.toml by the [dotfiles] entry in
+# ../mise.toml, so these apply in every directory. Declaring them in
+# ../mise.toml instead would scope them to ~/git/config only.
+#
+# Migrated from the `mise use --global` lines in setup.sh.
+#
+# Note the filename: mise/config.toml and mise/conf.d/*.toml WOULD be loaded
+# as project config for this repo. mise/tools.toml is not, which is what we
+# want -- it is only active once deployed into the global conf.d.
+#
+# Precedence wrinkle: ~/.config/mise/config.toml OVERRIDES conf.d fragments,
+# and `mise use -g` writes to config.toml -- so an ad-hoc `-g` install shadows
+# this file until it is folded back in here.
+
+[tool_alias]
+smithy = "github:smithy-lang/smithy[bin_path=bin,bin=smithy,strip_components=1]"
+smithy-language-server = "github:smithy-lang/smithy-language-server[bin_path=bin,bin=smithy-language-server]"
+
+[tools]
+"1password" = "latest"
+"aqua:astral-sh/rye" = "latest"
+"aqua:astral-sh/uv" = "latest"
+"aqua:suzuki-shunsuke/pinact" = "latest"
+# setup.sh said `aws-cli`, but the global config and the existing install use
+# the explicit aqua backend -- the short name resolves to a separate tool and
+# would pour a second copy.
+"aqua:aws/aws-cli" = "latest"
+bun = "latest"
+buf = "latest"
+gcloud = "latest"
+node = "lts"
+"pipx:aws-sam-cli" = "latest"
+terraform = "latest"
+
+"npm:@google/gemini-cli" = "latest"
+"npm:@playwright/mcp" = "latest"
+"npm:difit" = "latest"
+
+mysqldef = "latest"
+psqldef = "latest"
+sqlite3def = "latest"
+
+smithy = "latest"
+smithy-language-server = "latest"
+
+# macOS only: on Arch these come from pacman/yay instead, which setup.sh still
+# handles. These were `if ! which X` guarded before -- on this Mac all of them
+# already resolved to mise installs, so dropping the guard changes nothing.
+"aqua:BurntSushi/ripgrep" = { version = "latest", os = ["macos"] }
+"aqua:cloudflare/cloudflared" = { version = "latest", os = ["macos"] }
+"aqua:junegunn/fzf" = { version = "latest", os = ["macos"] }
+"aqua:neovim/neovim" = { version = "latest", os = ["macos"] }
+"aqua:protocolbuffers/protobuf/protoc" = { version = "latest", os = ["macos"] }
+"aqua:x-motemen/ghq" = { version = "latest", os = ["macos"] }
+"core:go" = { version = "latest", os = ["macos"] }
+github-cli = { version = "latest", os = ["macos"] }
+python = { version = "latest", os = ["macos"] }
+
+# Deliberately shadows macOS's own /usr/bin/jq, which the old
+# `if ! which jq` guard always deferred to. Arch gets jq from pacman.
+"aqua:jqlang/jq" = { version = "latest", os = ["macos"] }
