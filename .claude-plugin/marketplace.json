@@ -10,8 +10,8 @@
     {
       "name": "sorah-guides",
       "source": "./claude/marketplace/plugins/sorah-guides",
-      "description": "Coding guidelines and review tools. Skills for general coding, Ruby, Rails, Rust, Terraform, security, and Japanese text writing. Includes a security review agent.",
-      "version": "0.8.0",
+      "description": "Coding guidelines and review tools. Skills for general coding, Ruby, Rails, Rust, Terraform, security, README writing, and Japanese text writing. Includes a security review agent.",
+      "version": "0.9.0",
       "license": "CC0-1.0"
     },
     {
