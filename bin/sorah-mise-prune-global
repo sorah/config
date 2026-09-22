@@ -1,0 +1,107 @@
+#!/usr/bin/env ruby
+# Prunes ~/.config/mise/config.toml of tools and aliases that mise/tools.toml or
+# the Arch [bootstrap.packages] already provide, and moves ubi: entries to the
+# github backend. Dry run unless --apply.
+#
+#   sorah-mise-prune-global [--apply]
+require 'bundler/inline'
+gemfile do
+  source 'https://rubygems.org'
+  gem 'racc'
+  gem 'tomlrb'
+end
+require 'fileutils'
+require 'open3'
+
+REPO = File.expand_path('..', __dir__)
+GLOBAL = File.expand_path('~/.config/mise/config.toml')
+apply = ARGV.include?('--apply')
+
+def backend_of(key)
+  # Offline, as `mise tool` otherwise lists every release through the GitHub API.
+  out, err, status = Open3.capture3({'MISE_OFFLINE' => '1'}, 'mise', 'tool', key, '--backend', chdir: Dir.home)
+  raise "mise tool #{key} failed: #{err}" unless status.success?
+  out.strip.sub(/\[.*\]\z/, '').sub(/\Aubi:/, 'github:').downcase
+end
+
+def names_of(key, backend)
+  [key.sub(/\A[a-z]+:/, '').sub(/\[.*\]\z/, ''), backend.sub(/\A[a-z]+:/, '')]
+    .map { |n| n.split('/').last.downcase }
+    .uniq
+end
+
+tools_toml = Tomlrb.load_file(File.join(REPO, 'mise/tools.toml'))
+repo_toml = Tomlrb.load_file(File.join(REPO, 'mise.toml'))
+global = Tomlrb.load_file(GLOBAL)
+
+managed = tools_toml.fetch('tools').keys.to_h { [backend_of(_1), _1] }
+managed_aliases = tools_toml.fetch('tool_alias', {})
+
+# mise skips a package manager the machine lacks, so these count only on Arch.
+native = {}
+if system('command -v pacman >/dev/null')
+  repo_toml.dig('bootstrap', 'packages').each_key do |pkg|
+    manager, name = pkg.split(':', 2)
+    native[name.downcase] = pkg if %w[pacman aur].include?(manager)
+  end
+end
+
+Change = Struct.new(:section, :key, :action, :reason, keyword_init: true)
+changes = []
+kept = []
+
+global.fetch('tools', {}).each_key do |key|
+  backend = backend_of(key)
+  if (dup = managed[backend])
+    changes << Change.new(section: 'tools', key:, action: :drop, reason: "mise/tools.toml: #{dup}")
+  elsif (pkg = names_of(key, backend).filter_map { native[_1] }.first)
+    changes << Change.new(section: 'tools', key:, action: :drop, reason: "mise.toml: #{pkg}")
+  elsif key.start_with?('ubi:')
+    changes << Change.new(section: 'tools', key:, action: :ubi, reason: "ubi -> #{backend}")
+  else
+    kept << "#{key} (#{backend})"
+  end
+end
+
+global.fetch('tool_alias', {}).each do |name, value|
+  next unless managed_aliases.key?(name)
+  if managed_aliases.fetch(name) == value
+    changes << Change.new(section: 'tool_alias', key: name, action: :drop, reason: 'mise/tools.toml')
+  else
+    warn "tool_alias.#{name} differs from mise/tools.toml, left as is"
+  end
+end
+
+section = nil
+lines = File.readlines(GLOBAL).filter_map do |line|
+  if (m = line.match(/\A\s*\[([^\[\]]+)\]\s*(#.*)?\z/))
+    section = m[1].strip
+    next line
+  end
+  m = line.match(/\A\s*(?:"([^"]+)"|([A-Za-z0-9_.-]+))\s*=/)
+  change = m && changes.find { _1.section == section && _1.key == (m[1] || m[2]) }
+  case change&.action
+  when :drop
+    nil
+  when :ubi
+    warn "#{change.key}: github backend has no tag_regex, fix by hand" if line.include?('tag_regex')
+    line.sub('"ubi:', '"github:').gsub(/\bexe\s*=/, 'bin =')
+  else
+    line
+  end
+end
+
+changes.each { puts format('%-10s %-45s %s', _1.action, "#{_1.section}.#{_1.key}", _1.reason) }
+puts "\nkept in #{GLOBAL}:", kept.map { "  #{_1}" } unless kept.empty?
+
+content = lines.join
+Tomlrb.parse(content)
+if changes.empty?
+  puts 'nothing to prune'
+elsif apply
+  FileUtils.cp(GLOBAL, "#{GLOBAL}.bak-#{Time.now.strftime('%Y%m%d%H%M%S')}")
+  File.write(GLOBAL, content)
+  puts "\nwrote #{GLOBAL}"
+else
+  puts "\ndry run, pass --apply to write"
+end
