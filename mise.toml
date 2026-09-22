@@ -533,3 +533,15 @@ run = [
   "killall Dock Finder SystemUIServer ControlCenter 2>/dev/null || true",
   "/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true",
 ]
+
+# `skills`, and gh on macOS, are mise tools, so this waits for the tools phase.
+# It runs on every `mise bootstrap`, so what is installed is skipped rather than
+# re-fetched. `skills update -g` and `gh extension upgrade --all` refresh them.
+[bootstrap.hooks.post-tools]
+run = [
+  "[ -e ~/.agents/skills/esa-cli ] || mise exec -- skills add esaio/esa-skills -g -y -s esa-cli -a claude-code -a gemini-cli -a github-copilot",
+  "[ -e ~/.agents/skills/gh-stack ] || mise exec -- skills add github/gh-stack -g -y -s gh-stack -a claude-code -a gemini-cli -a github-copilot",
+  "[ -e ~/.agents/skills/show-me ] || mise exec -- skills add humanlayer/skills -g -y -s show-me -a claude-code -a gemini-cli -a github-copilot",
+  "[ -e ~/.claude/skills/dsql ] || mise exec -- skills add awslabs/mcp -g -y -s dsql -a claude-code",
+  "[ -e ~/.local/share/gh/extensions/gh-stack ] || mise exec -- gh extension install github/gh-stack",
+]
