@@ -543,5 +543,7 @@ run = [
   "[ -e ~/.agents/skills/gh-stack ] || mise exec -- skills add github/gh-stack -g -y -s gh-stack -a claude-code -a gemini-cli -a github-copilot",
   "[ -e ~/.agents/skills/show-me ] || mise exec -- skills add humanlayer/skills -g -y -s show-me -a claude-code -a gemini-cli -a github-copilot",
   "[ -e ~/.claude/skills/dsql ] || mise exec -- skills add awslabs/mcp -g -y -s dsql -a claude-code",
+  # Bundled with the CLI and copied offline, so it re-runs to follow CLI upgrades.
+  "mise exec -- playwright-cli install --skills --global",
   "[ -e ~/.local/share/gh/extensions/gh-stack ] || mise exec -- gh extension install github/gh-stack",
 ]
