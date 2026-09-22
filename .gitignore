@@ -5,3 +5,5 @@ vim/dot.vim/.netrwhist
 vim/dot.vim/other/private.vim
 .bundle/
 vim/dot.vim/view
+# Playwright CLI output (may contain credentials)
+.playwright-cli/

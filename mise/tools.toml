@@ -69,6 +69,7 @@ watchexec = "latest"
 "npm:skills" = "latest"
 "npm:typescript" = "latest"
 "npm:typescript-language-server" = "latest"
+"npm:@esaio/esa-cli" = "latest"
 "npm:@esaio/esa-mcp-server" = "latest"
 
 actionlint = "latest"
