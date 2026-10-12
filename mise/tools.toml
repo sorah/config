@@ -29,7 +29,7 @@ smithy = "github:smithy-lang/smithy[bin_path=bin,bin=smithy,strip_components=1]"
 smithy-language-server = "github:smithy-lang/smithy-language-server[bin_path=bin,bin=smithy-language-server]"
 
 [tools]
-"1password" = "latest"
+#"1password" = "latest"
 "aqua:astral-sh/rye" = "latest"
 "aqua:astral-sh/uv" = "latest"
 "aqua:suzuki-shunsuke/pinact" = "latest"
