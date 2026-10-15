@@ -188,6 +188,7 @@ min_version = "2026.9.11"
 "aur:git-buildpackage" = "latest"
 "aur:pristine-tar" = "latest"
 "aur:perl-file-rename" = "latest"
+"aur:1password-cli" = "latest"
 
 # ----- dotfiles ---------------------------------------------------------------
 #
