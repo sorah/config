@@ -8,7 +8,7 @@ version: 0.1.0
 
 Conventions for answering errors from a Rails API as [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) problem documents with the [`problem`](https://github.com/sorah/problem) gem. Project-specific conventions (CLAUDE.md, `docs/`) always take priority.
 
-Examples come from [ruby-no-kai/sponsor-app](https://github.com/ruby-no-kai/sponsor-app), which takes the catalogue from a protobuf enum. When the API's schema lives in `.proto` files, read /sorah-guides:rails-protobuf as well; it covers the enum catalogue and answering problems over Connect RPC.
+`problem` works on its own: error classes declare `type`, `status` and `title` with its DSL, and nothing else is needed. An app whose schema lives in `.proto` files can instead take those from a protobuf enum through protobufable; the sections below cover both, and /sorah-guides:rails-protobuf covers the enum catalogue and answering problems over Connect RPC. Application examples come from [ruby-no-kai/sponsor-app](https://github.com/ruby-no-kai/sponsor-app), which uses the protobuf form.
 
 ## The model
 
@@ -22,6 +22,42 @@ An error is a class. Its `type`, `status` and `title` belong to the class and ar
 
 One base class carries the mixin; every error is a subclass that declares what differs. Keep them together in `app/models/errors.rb` (a module `Errors`), with a one-line doc comment per class saying when it is raised.
 
+### Plain declarations
+
+Without protobuf, the base includes `Problem::Detailable` (or `Problem::I18nable` for translated titles, which brings `Detailable` with it), and each class declares its members with the DSL:
+
+```ruby
+# app/models/errors.rb
+module Errors
+  # An error the API answers as a problem.
+  class ApiError < StandardError
+    include Problem::Detailable
+  end
+
+  # The resource the request names does not exist.
+  class NotFound < ApiError
+    type "not-found"
+    status 404
+    title "Not Found"
+  end
+
+  # The resource is not in a state that allows the request.
+  class FailedPrecondition < ApiError
+    type "failed-precondition"
+    status 412
+    title "Failed Precondition"
+  end
+end
+```
+
+- `type` is a slug resolved against `config.problem.type_prefix`; without a `type` the document says `about:blank`.
+- A subclass inherits every declaration and overrides only what differs: `class Orders::AlreadyShipped < Errors::FailedPrecondition` with its own `type` and `title` keeps the 412.
+- A class that declares a literal `title` keeps it even under `Problem::I18nable`, so titles can move to locale files gradually.
+
+### From a protobuf enum
+
+With protobufable, the base includes `Protobufable::Problem::Typeable` and points at an enum whose values carry the `uri` and `http_status`; each class names a value instead of declaring members. sponsor-app:
+
 ```ruby
 # app/models/errors.rb (sponsor-app)
 module Errors
@@ -29,22 +65,24 @@ module Errors
   # proto/rubykaigi/sponsor_app/problem.proto.
   class ApiError < StandardError
     include Protobufable::Problem::Typeable
-    # ...
+
+    #: () -> String
+    def self.problem_type_enum = 'rubykaigi.sponsor_app.ProblemType'
+
+    #: () -> String
+    def self.problem_type_annotation = 'rubykaigi.sponsor_app.problem_type'
   end
 
   # The resource the request names does not exist.
   class NotFound < ApiError
     problem_type :PROBLEM_TYPE_NOT_FOUND
   end
-
-  # The resource is not in a state that allows the request.
-  class FailedPrecondition < ApiError
-    problem_type :PROBLEM_TYPE_FAILED_PRECONDITION
-  end
 end
 ```
 
-Without a protobuf catalogue, the base includes `Problem::Detailable` (or `Problem::I18nable`) and each class declares `type "not-found"`, `status 404`, `title "Not Found"` directly. Either way:
+`Typeable` includes `Problem::I18nable`, and so `Problem::Detailable`, so everything below (rendering, hooks, the exceptions app, extension members) applies unchanged. Titles come from locale files, keyed by the `uri`.
+
+### Either way
 
 - Raise with a `detail:` that names the specific thing: `raise Errors::NotFound.new(detail: "No conference has the slug #{slug.inspect}.")`. Never put internals (SQL, stack details, other tenants' data) in `detail`; it goes to the client.
 - Declare a new class rather than raising a generic one with a special `detail`. A subclass that declares nothing renders exactly as its parent, which is the tool for hiding a distinction: when a caller must not tell two failures apart, make an empty subclass instead of a new `type`.
@@ -54,7 +92,7 @@ Without a protobuf catalogue, the base includes `Problem::Detailable` (or `Probl
 
 Include `Problem::Rescuable` once in the API's base controller. It rescues every class that mixed in `Problem::Detailable`, so do not add a `rescue_from` per error class; make the error class detailable instead.
 
-Convert framework exceptions into problems at one place in the base controller. sponsor-app turns `ActiveRecord::RecordInvalid` from `save!` into its own `InvalidRecord` problem:
+Convert framework exceptions into problems at one place in the base controller, and render them with `render_problem_detailable`. sponsor-app turns `ActiveRecord::RecordInvalid` from `save!` into its own `InvalidRecord` problem:
 
 ```ruby
 rescue_from ActiveRecord::RecordInvalid, with: :render_invalid_record
@@ -123,7 +161,29 @@ RFC 9457 has no member for field errors. Return extension members from the error
 def problem_extensions = super.merge(decline_code: @decline_code)
 ```
 
-Always `super.merge`, so mixins contributing members compose. `Problem::RetryAfter` (`retry_after:`) sends `Retry-After` and a `retry_after` member. With protobufable, `Protobufable::Problem::Information` carries packed `google.rpc.*` messages such as `BadRequest` in `information`; sponsor-app's `Errors::InvalidRecord` maps each model error to a `FieldViolation` on the request's Input field (see /sorah-guides:rails-protobuf).
+Always `super.merge`, so mixins contributing members compose. `Problem::RetryAfter` (`retry_after:`) sends `Retry-After` and a `retry_after` member.
+
+Without protobuf, field errors from a failed save become an extension member of the invalid-record problem:
+
+```ruby
+# The record the request would save fails validation.
+class InvalidRecord < ApiError
+  type "invalid-record"
+  status 422
+  title "Invalid Record"
+
+  def initialize(record:)
+    @record = record
+    super(detail: record.errors.full_messages.join("; "))
+  end
+
+  def problem_extensions
+    super.merge(errors: @record.errors.map { {field: it.attribute.to_s, message: it.message, reason: it.type.to_s} })
+  end
+end
+```
+
+With protobufable, `Protobufable::Problem::Information` carries packed `google.rpc.*` messages such as `BadRequest` in `information`; sponsor-app's `Errors::InvalidRecord` maps each model error to a `FieldViolation` on the request's Input field (see /sorah-guides:rails-protobuf).
 
 ## Testing
 
