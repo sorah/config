@@ -341,7 +341,7 @@ OKO_COUNT=0
 sorah-terminal-restore() {
   printf '%s' \
     $'\e[?1000l\e[?1001l\e[?1002l\e[?1003l\e[?1005l\e[?1006l\e[?1015l' \
-    $'\e[?1004l\e[?1049l\e[?47l\e[?25h\e[?1l\e>' \
+    $'\e[?1004l\e[?25h\e[?1l\e>' \
     $'\e[<u\e[>4;0m\e[0m\e(B'
 }
 
