@@ -221,8 +221,6 @@ if command -v claude >/dev/null; then
   # Re-adding an existing marketplace or plugin is an error, not a no-op.
   claude plugin marketplace add "$repo" || true
   claude plugin add sorah-spec@sorah-marketplace || true
-  claude plugin marketplace add https://github.com/microsoft/playwright-cli || true
-  claude plugin install playwright-cli@playwright-cli || true
 fi
 
 ##### systemd ##################################################################
