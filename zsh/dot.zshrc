@@ -337,6 +337,14 @@ change_window_title() { tmux rename-window -t "$TMUX_PANE" "$*" }
 
 OKO_COUNT=0
 
+# Like `reset` without clearing: undo modes a dead ssh session may have left enabled.
+sorah-terminal-restore() {
+  printf '%s' \
+    $'\e[?1000l\e[?1001l\e[?1002l\e[?1003l\e[?1005l\e[?1006l\e[?1015l' \
+    $'\e[?1004l\e[?1049l\e[?47l\e[?25h\e[?1l\e>' \
+    $'\e[<u\e[>4;0m\e[0m\e(B'
+}
+
 precmd() {
   if [[ "_${SORAH_ZSHRC_LOADED}" = "_1" ]]; then
     if [[ $? = "0" ]];then
@@ -344,6 +352,8 @@ precmd() {
     else
       let OKO_COUNT+=1
     fi
+
+    sorah-terminal-restore
 
     #if [ 1 -le "$OKO_COUNT" ]; then
     #  set_prompt "ヾ(｡>﹏<｡)ﾉﾞ"
