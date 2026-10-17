@@ -36,9 +36,9 @@ smithy-language-server = "github:smithy-lang/smithy-language-server[bin_path=bin
 # The short name `aws-cli` resolves to a different tool and would pour a
 # second copy.
 "aqua:aws/aws-cli" = "latest"
+"vfox:gcloud" = "latest"
 bun = "latest"
 buf = "latest"
-gcloud = "latest"
 node = "lts"
 "pipx:aws-sam-cli" = "latest"
 terraform = "latest"
