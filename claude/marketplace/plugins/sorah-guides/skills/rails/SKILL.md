@@ -8,6 +8,12 @@ version: 0.1.0
 
 Coding conventions and best practices for Ruby on Rails projects. Project-specific conventions (CLAUDE.md, style guides) always take priority over this guidance.
 
+Related skills:
+
+- API error responses (RFC 9457 problem details with the `problem` gem): /sorah-guides:rails-problem
+- Protobuf-native APIs (Connect RPC with connect_rpc_rails, protobufable, protovalidate): /sorah-guides:rails-protobuf
+- Sorbet typing: /sorah-guides:sorbet
+
 ## Data Model — ActiveRecord
 
 - **Migrations**: Specify column types, defaults, null constraints, and index definitions explicitly
@@ -19,7 +25,8 @@ Coding conventions and best practices for Ruby on Rails projects. Project-specif
 
 - **Concerns**: Extract shared behaviors as ActiveRecord or ActionController concerns
 - **Where logic lives**: Model callbacks vs service objects vs controller-level orchestration — prefer service objects for complex business logic
-- **Controller design**: Keep actions thin; use before_action filters and strong parameters
+- **Controller design**: Keep actions thin; use before_action filters and strong parameters (or a declared protobuf message, see /sorah-guides:rails-protobuf)
+- **Errors**: Raise error classes that render as problem details; no per-class `rescue_from` (see /sorah-guides:rails-problem)
 
 ## Configuration
 
