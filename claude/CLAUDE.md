@@ -120,3 +120,7 @@ When the rationale is genuinely valuable but too long for a line or two, it belo
 ## Git GPG Signing
 
 - When encountered git commit error due to 'gpg: signing failed: Inappropriate ioctl for device', ask human to unlock their signing key instead of skipping signature.
+
+## Cloud access
+
+- When interacting with Cloudflare, use the `cf` CLI unless the project has a Wrangler configuration file.
