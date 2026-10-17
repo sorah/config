@@ -11,7 +11,7 @@
       "name": "sorah-guides",
       "source": "./claude/marketplace/plugins/sorah-guides",
       "description": "Coding guidelines and review tools. Skills for general coding, Ruby, Rails, Sorbet typing and adoption, Rust, Terraform, security, git commit style, README writing, and Japanese and English text writing. Includes a security review agent.",
-      "version": "0.11.0",
+      "version": "0.11.1",
       "license": "CC0-1.0"
     },
     {

@@ -39,6 +39,7 @@ Prefer specific verbs over generic ones:
 - `learns` for new options/parameters: `TitoApi: learns v3.1 pagination`
 - `no longer` for behavioral removals: `event_submission_open? no longer gates asset uploads`
 - `roll` for dependency updates and referenced image/git tag updates, `releng` for release engineering, `trigger` for CI/build triggers
+  - `roll` is short for "roll out": the object is what gets rolled, followed directly by the version, never `to`: `roll sorah/glazed 0.3.0`, `roll himari-lambda image 5b9d6b9`, not `roll image to 0.3.0`
 
 ## Prefix Pattern
 
