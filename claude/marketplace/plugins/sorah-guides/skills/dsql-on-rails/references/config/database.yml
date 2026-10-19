@@ -1,0 +1,36 @@
+<%
+require_relative '../lib/dsql_host_resolver'
+%>
+default: &default
+  adapter: postgresql
+  database: postgres
+  encoding: unicode
+  username: <%= DsqlHostResolver.dsql_user %>
+  # Budget across the fleet: (process count) * pool must stay under the per-cluster
+  # connection quota, with headroom for other clients.
+  pool: <%= ENV.fetch("RAILS_DB_POOL") { 16 } %>
+  # DSQL closes a session after one hour. pool_jitter (default 0.2) spreads the actual
+  # deadline over 36-45 minutes.
+  max_age: <%= ENV.fetch("RAILS_DB_MAX_AGE") { 45 * 60 } %>
+  advisory_locks: false
+  sslnegotiation: direct
+  sslmode: verify-full
+  sslrootcert: <%= DsqlHostResolver.ssl_root_cert %> # AmazonRootCA1
+
+development:
+  <<: *default
+  # Resolved only locally; config_for renders every environment's ERB, including in production.
+  host: <%= DsqlHostResolver.dev_host if Rails.env.local? %> # pinned in tmp/dev-dsql-cluster.txt
+  schema_search_path: <%= DsqlHostResolver.dsql_schema(env_key: "DSQL_SCHEMA", default_suffix: "_dev") %>
+  aws_rds_iam_auth_token_generator: dsql
+
+test:
+  <<: *default
+  host: <%= DsqlHostResolver.test_host if Rails.env.local? %> # pinned in tmp/test-dsql-cluster.txt
+  schema_search_path: <%= DsqlHostResolver.dsql_schema(env_key: "DSQL_TEST_SCHEMA", default_suffix: "_test#{ENV['TEST_ENV_NUMBER']}") %>
+  aws_rds_iam_auth_token_generator: dsql
+
+# Host, username and schema come from DATABASE_URL, e.g.
+#   postgres://app_myapp@<id>.dsql.<region>.on.aws/postgres?schema_search_path=myapp_prd&aws_rds_iam_auth_token_generator=dsql
+production:
+  <<: *default

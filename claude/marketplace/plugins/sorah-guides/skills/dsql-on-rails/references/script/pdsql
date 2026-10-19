@@ -1,0 +1,76 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Runs psql (or any libpq tool after `--`) against DSQL with a freshly minted IAM auth token.
+#
+#   script/pdsql                          # psql to $PGHOST as admin
+#   script/pdsql -h development -U developer -- psql -c '\dt'
+#   script/pdsql -h <id>.dsql.<region>.on.aws -- psqldef --dry-run ... postgres
+#
+# Options for psql itself go after `--`. PGOPTIONS from the caller wins over the default search_path.
+
+require 'bundler/setup'
+require 'aws-sdk-dsql'
+require 'optparse'
+require 'tempfile'
+require_relative '../lib/dsql_host_resolver'
+
+host = ENV['PGHOST']
+role = ENV['PGUSER'] || 'admin'
+
+opt = OptionParser.new do |o|
+  o.on('-h', '--host HOST', 'DSQL host, or a Rails environment name') do
+    host = _1
+    unless host.include?('.')
+      require_relative '../config/environment'
+      host = Rails.application.config_for(:database, env: host).host
+    end
+    ENV['PGHOST'] = host
+  end
+  o.on('-U', '--username USER', 'role') { ENV['PGUSER'] = role = _1 }
+end
+
+argv = ARGV.dup
+external_command = argv.index('--')&.then { argv[_1 + 1..] }
+opt.parse!(argv)
+abort "PGHOST or -h is required\n#{opt.help}" if host.nil? || host.empty?
+# Accepts the public host (<id>.dsql.<region>.on.aws) and the PrivateLink host
+# (<id>.dsql-<svc>.<region>.on.aws); either is the SigV4 token endpoint as is.
+host_match = host.match(/\A(?<id>[a-z0-9-]+)\.dsql(?:-[a-z0-9]+)?\.(?<region>[a-z0-9-]+)\.on\.aws\z/) or abort "Invalid DSQL host format #{host.inspect}"
+region = host_match[:region]
+
+@dsql = Aws::DSQL::Client.new(region:)
+token_generator = Aws::DSQL::AuthTokenGenerator.new(credentials: @dsql.config.credentials)
+
+password_token = {
+  endpoint: host,
+  region:,
+  expires_in: 3600,
+}.then do |params|
+  case role
+  when "admin"
+    token_generator.generate_db_connect_admin_auth_token(params)
+  else
+    token_generator.generate_db_connect_auth_token(params)
+  end
+end
+
+# Some tools (psqldef among them) read PGPASSFILE but not PGPASSWORD.
+pgpassfile = Tempfile.new('pgpass').tap do |f|
+  f.write("*:*:*:#{role}:#{password_token}\n")
+  f.flush
+end
+ObjectSpace.undefine_finalizer(pgpassfile)
+ENV['PGPASSFILE'] = pgpassfile.path
+ENV['PGPASSWORD'] = password_token
+ENV['PGSSLMODE'] = 'verify-full'
+ENV['PGSSLROOTCERT'] = DsqlHostResolver.ssl_root_cert
+ENV['PGDATABASE'] = 'postgres'
+ENV['PGUSER'] = role
+ENV['PGOPTIONS'] ||= "--search_path=#{DsqlHostResolver.dsql_schema(env_key: "DSQL_SCHEMA", default_suffix: "_dev")}"
+
+if external_command
+  exec(*external_command)
+else
+  exec 'psql', *argv
+end

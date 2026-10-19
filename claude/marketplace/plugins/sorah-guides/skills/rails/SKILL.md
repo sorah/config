@@ -12,6 +12,8 @@ Related skills:
 
 - API error responses (RFC 9457 problem details with the `problem` gem): /sorah-guides:rails-problem
 - Protobuf-native APIs (Connect RPC with connect_rpc_rails, protobufable, protovalidate): /sorah-guides:rails-protobuf
+- Declarative schema with psqldef instead of migrations: /sorah-guides:sqldef-on-rails
+- Aurora DSQL (OCC-aware transactions, IAM auth, tests against real clusters): /sorah-guides:dsql-on-rails
 - Sorbet typing: /sorah-guides:sorbet
 
 ## Data Model — ActiveRecord
