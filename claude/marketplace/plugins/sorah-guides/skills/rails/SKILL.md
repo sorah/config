@@ -14,6 +14,7 @@ Related skills:
 - Protobuf-native APIs (Connect RPC with connect_rpc_rails, protobufable, protovalidate): /sorah-guides:rails-protobuf
 - Declarative schema with psqldef instead of migrations: /sorah-guides:sqldef-on-rails
 - Aurora DSQL (OCC-aware transactions, IAM auth, tests against real clusters): /sorah-guides:dsql-on-rails
+- Running on AWS Lambda (function URL behind CloudFront, Lambdakiq jobs, runner for migrations): /sorah-guides:rails-on-lambda
 - Sorbet typing: /sorah-guides:sorbet
 
 ## Data Model — ActiveRecord
