@@ -68,6 +68,9 @@ Prefer test-driven development: write a failing test first (Red), implement mini
 - **Model specs**: Validation, association, and scope coverage
 - **Integration tests**: Real database interactions — do not mock ActiveRecord
 - **Test data**: FactoryBot patterns; `let_it_be` for read-only fixtures shared across examples
+- **`build` over `create`**: Use `FactoryBot.build` unless the example needs a persisted record (scopes, queries, uniqueness constraints). In-memory behavior and delegation (`build` plus a mock) need no write.
+- **No query-count assertions**: Profile statement counts ad hoc (e.g. a `sql.active_record` subscriber), quote the numbers in the PR, and keep only behavioral specs. A count encodes the current implementation and breaks on unrelated refactors.
+- **No wall-clock assertions**: Never assert timing parity or speed by measuring elapsed time; it flakes under CI jitter. Assert the mechanism instead, e.g. both paths call the same primitive the same number of times.
 - **Test domains**: Use `.invalid` TLD for fake hostnames and URLs in test data (RFC 2606 reserved, guaranteed to never resolve)
 - **Time-dependent tests**: Timecop or `travel_to` depending on project convention
 

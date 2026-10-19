@@ -179,6 +179,8 @@ Remove `ActiveRecord::Migration.maintain_test_schema!`; `db:migrate` keeps the t
   ```
 
 - Use Timecop, not `ActiveSupport::Testing::TimeHelpers`. A token signed at travelled time is rejected ("Signature not yet current"), and only Timecop can be suspended (`Timecop.return`) while the token generator signs.
+- Prefer `FactoryBot.build` over `create` unless the example needs a persisted record. Every `create` is a COMMIT round trip, so it is the largest cost in a spec.
+- Do not assert statement counts. Measure round trips per request ad hoc, quote them in the PR, and keep only behavioral specs.
 
 ## CI
 
