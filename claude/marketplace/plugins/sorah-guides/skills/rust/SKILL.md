@@ -1,7 +1,7 @@
 ---
 name: rust
 description: This skill should be used when writing or reviewing Rust code, or when the project uses "Rust", "Cargo", "cargo clippy", "crate", or Rust module patterns. Provides Rust coding conventions, patterns, and best practices. Project-specific conventions always take priority.
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Rust Conventions
@@ -39,6 +39,17 @@ For a type that cannot take an inherent `impl`, such as an external crate's stru
 1. A trait: a std or crate-provided one when it fits (`From`, `Display`, ...), otherwise a local extension trait (e.g., `trait ClientExt` implemented for `reqwest::Client`)
 2. A wrapper struct with methods, when a trait does not fit (e.g., a `Cache` owning a `rusqlite::Connection` whose schema it manages)
 3. Free functions taking the type, only when wrapping has a concrete performance cost
+
+### TLS Trust Store
+
+Trust the system CA store. Do not compile a root set into the binary with `webpki-roots` or `webpki-root-certs`: it only changes on rebuild, so distrust of a compromised CA reaches the OS but not the binary.
+
+- reqwest 0.13: the `rustls` feature (rustls-platform-verifier). Do not enable the `webpki-roots` or `rustls-native-certs` features: they are inert leftovers from 0.12
+- reqwest 0.12: `rustls-tls-native-roots`, never `rustls-tls` (webpki-roots only). Enabling both root features trusts both sets
+- Other crates: prefer `rustls-platform-verifier` or `rustls-native-certs` over `with_webpki_roots()` constructors
+- Check dependencies' default features too, e.g. `oauth2` and `openidconnect` enable `reqwest/rustls-tls`; set `default-features = false` and keep only `reqwest`
+- Verify with `cargo tree -e features -i webpki-roots` (and `-i webpki-root-certs`) that nothing pulls them in for the targets you build
+- `rustls-webpki` is the chain verifier rustls depends on, not a root store. Keep it current
 
 ## Development Practices
 
