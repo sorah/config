@@ -42,6 +42,7 @@ buf = "latest"
 node = "lts"
 "pipx:aws-sam-cli" = "latest"
 terraform = "latest"
+"aqua:cli/cli" = { version = "latest" }
 # The console build. Without matching the tray app is picked.
 "github:kagehq/port-kill" = { version = "latest", matching = "console", bin = "port-kill" }
 "github:sorah/mairu" = "latest"
@@ -113,7 +114,6 @@ smithy-language-server = "latest"
 # Built from source with the go above. aqua's golang/tools/gopls is a
 # go_install package, which mise's aqua backend rejects.
 "go:golang.org/x/tools/gopls" = { version = "latest", os = ["macos"] }
-github-cli = { version = "latest", os = ["macos"] }
 python = { version = "latest", os = ["macos"] }
 
 # Shadows macOS's own /usr/bin/jq. Arch gets jq from pacman.
