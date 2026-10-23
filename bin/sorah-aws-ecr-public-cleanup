@@ -1,29 +1,73 @@
 #!/usr/bin/env ruby
+# Deletes untagged images of an ECR Public repository, except those a tagged image index refers to.
 require 'aws-sdk-ecrpublic'
+require 'json'
+require 'net/http'
+require 'set'
+
+INDEX_MEDIA_TYPES = %w(
+  application/vnd.oci.image.index.v1+json
+  application/vnd.docker.distribution.manifest.list.v2+json
+)
+MANIFEST_MEDIA_TYPES = [
+  *INDEX_MEDIA_TYPES,
+  'application/vnd.oci.image.manifest.v1+json',
+  'application/vnd.docker.distribution.manifest.v2+json',
+]
+CONCURRENCY = 16
 
 @ecr = Aws::ECRPublic::Client.new(region: 'us-east-1')
 
 dry_run = ARGV.delete('--dry-run')
 repository_name = ARGV[0] or abort "usage #$0 REPOSITORY"
 
-@ecr.describe_images(repository_name:).each do |page|
-  image_ids = page.image_details.filter_map do |i|
-    if i.image_tags && !i.image_tags.empty?
-      nil
-    else
-      p i
-      {
-        image_digest: i.image_digest
-      }
+host, path = @ecr.describe_repositories(repository_names: [repository_name]).repositories.fetch(0).repository_uri.split('/', 2)
+token = JSON.parse(Net::HTTP.get(URI("https://#{host}/token/?scope=repository:#{path}:pull"))).fetch('token')
+
+# ECR Public has no API to read a manifest, so this goes through the registry.
+def index_children(digests, host:, path:, token:)
+  queue = Queue.new
+  digests.each { queue << _1 }
+  queue.close
+  children = Queue.new
+  CONCURRENCY.times.map do
+    Thread.new do
+      Net::HTTP.start(host, 443, use_ssl: true) do |http|
+        while (digest = queue.pop)
+          res = http.get("/v2/#{path}/manifests/#{digest}", 'Authorization' => "Bearer #{token}", 'Accept' => MANIFEST_MEDIA_TYPES.join(', '))
+          raise "GET #{host}/v2/#{path}/manifests/#{digest}: #{res.code}" unless res.is_a?(Net::HTTPSuccess)
+          JSON.parse(res.body).fetch('manifests', []).each { children << _1 }
+        end
+      end
     end
+  end.each(&:join)
+  children.size.times.map { children.pop }
+end
+
+images = @ecr.describe_images(repository_name:).flat_map(&:image_details)
+tagged, untagged = images.partition { _1.image_tags && !_1.image_tags.empty? }
+
+# Children of an index, such as per-platform images and their attestation manifests, carry no tags of their own.
+referenced = Set.new
+indexes = tagged.select { INDEX_MEDIA_TYPES.include?(_1.image_manifest_media_type) }.map(&:image_digest)
+until indexes.empty?
+  indexes = index_children(indexes, host:, path:, token:).filter_map do |child|
+    digest = child.fetch('digest')
+    digest if referenced.add?(digest) && INDEX_MEDIA_TYPES.include?(child['mediaType'])
   end
+end
 
-  next if image_ids.empty?
+image_ids = untagged.reject { referenced.include?(_1.image_digest) }.map do |i|
+  p i
+  { image_digest: i.image_digest }
+end
+puts "#{images.size} images: #{tagged.size} tagged, #{referenced.size} referenced by tagged indexes, #{image_ids.size} to delete"
 
-  unless dry_run
+unless dry_run
+  image_ids.each_slice(100) do |slice|
     @ecr.batch_delete_image(
       repository_name:,
-      image_ids:,
+      image_ids: slice,
     )
   end
 end
