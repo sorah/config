@@ -12,6 +12,31 @@ Coding conventions and best practices for Ruby projects. Project-specific conven
 
 - Explicit `require` statements at top of file
 
+## RuboCop
+
+New projects start from sorah's baseline in [sorah/config](https://github.com/sorah/config) (checked out at `~/git/config`), copied rather than inherited, so each project owns its configuration. Leave an existing project's configuration alone.
+
+- Copy `misc/rubocop.yml` (rubocop-shopify plus overrides) to `.rubocop.yml`, and add `rubocop-shopify` as a development dependency.
+- For a Rails app, merge in `misc/rubocop.rails.yml` (the factory_bot, rails, rspec and rspec_rails plugins, with the cops it relaxes) as one `.rubocop.yml`, not as two files.
+- Add an `AllCops` block:
+  ```yaml
+  AllCops:
+    TargetRubyVersion: 3.3  # a gem's minimum supported Ruby
+    SuggestExtensions: false
+    Exclude:
+      # protoc output, checked as generated rather than linted.
+      - "lib/**/*_pb.rb"
+      - "vendor/**/*"
+      - ".gem_rbs_collection/**/*"
+  ```
+- Exclude generated code and installed signatures, each with a comment saying what it is. Never disable a cop to fit generated code.
+- RuboCop runs from hk; see the `toolchain` skill.
+
+## Type Checking
+
+- Libraries and gems: Steep with rbs-inline. See the `steep` and `steep-adoption` skills.
+- Applications: Sorbet with inline RBS comments. See the `sorbet` and `sorbet-adoption` skills.
+
 ## Naming
 
 - Class names in PascalCase, method names in snake_case
