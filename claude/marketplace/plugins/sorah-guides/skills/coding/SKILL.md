@@ -1,7 +1,7 @@
 ---
 name: coding
 description: This skill should be used when writing or reviewing code in any language. Provides language-agnostic coding conventions for code quality, comments, error handling, and formatting. Project-specific conventions always take priority.
-version: 0.2.0
+version: 0.3.0
 ---
 
 # General Coding Guidelines
@@ -78,3 +78,9 @@ When the rationale is genuinely valuable but too long for a line or two, it belo
   - Performing cleanup operations
   - Converting one exception type to another with additional information
   - Recovering from expected error conditions
+
+When a boundary converts failures into one exception type:
+
+- Wrap every failure unconditionally. Code behind the boundary raises ordinary errors, never the wrapper type, so the boundary has no "already wrapped?" branch to keep correct.
+- Keep the cause out of the wrapper's message. The message says what failed at the boundary, and the cause already carries the original type and message.
+- Log the cause. The wrapper's message alone says nothing about what went wrong.

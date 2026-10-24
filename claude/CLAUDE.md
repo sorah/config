@@ -109,6 +109,12 @@ When the rationale is genuinely valuable but too long for a line or two, it belo
   - Converting one exception type to another with additional information
   - Recovering from expected error conditions
 
+When a boundary converts failures into one exception type:
+
+- Wrap every failure unconditionally. Code behind the boundary raises ordinary errors, never the wrapper type, so the boundary has no "already wrapped?" branch to keep correct.
+- Keep the cause out of the wrapper's message. The message says what failed at the boundary, and the cause already carries the original type and message.
+- Log the cause. The wrapper's message alone says nothing about what went wrong.
+
 ## File Management
 
 - Never create files unless absolutely necessary
