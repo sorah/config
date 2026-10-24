@@ -6,7 +6,7 @@ version: 0.1.0
 
 # Sorbet with Inline RBS
 
-How to write types in a project that typechecks with Sorbet using inline RBS comments. Signatures live in `#:` comments that Ruby ignores, so `sorbet-runtime` is not loaded and nothing about the types runs in production. The project's `docs/type-checking.md` takes priority over this guide. To introduce Sorbet to a project that does not have it yet, use the `sorbet-adoption` skill.
+How to write types in a project that typechecks with Sorbet using inline RBS comments. Signatures live in `#:` comments that Ruby ignores, so `sorbet-runtime` is not loaded and nothing about the types runs in production. The project's `docs/type-checking.md` takes priority over this guide. To introduce Sorbet to a project that does not have it yet, use the `sorbet-adoption` skill. Libraries and gems typecheck with Steep instead; see the `steep` skill.
 
 ## Ground rules
 

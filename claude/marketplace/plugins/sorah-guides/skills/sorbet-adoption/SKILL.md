@@ -1,12 +1,14 @@
 ---
 name: sorbet-adoption
-description: This skill should be used when introducing Sorbet static type checking to an existing Ruby or Rails project or gem, or when continuing such a rollout. It applies when the user asks to "add type checking", "adopt Sorbet", "set up Sorbet and tapioca", "add RBS types to the codebase", "type the app gradually", "raise everything to typed: strict", or "plan typing PRs", or mentions a typing stack or issue in progress. Provides a proven rollout playbook: a repository survey, decisions to settle up front, the infra PR, sigil stamping, dependency-ordered slices as stacked PRs, parallel per-slice agents, serial integration, review, and keeping the stack current. Pair with the sorbet skill, which defines how the types themselves are written.
+description: This skill should be used when introducing Sorbet static type checking to an existing Ruby or Rails application, or when continuing such a rollout. It applies when the user asks to "add type checking", "adopt Sorbet", "set up Sorbet and tapioca", "add RBS types to the codebase", "type the app gradually", "raise everything to typed: strict", or "plan typing PRs", or mentions a typing stack or issue in progress. Provides a proven rollout playbook: a repository survey, decisions to settle up front, the infra PR, sigil stamping, dependency-ordered slices as stacked PRs, parallel per-slice agents, serial integration, review, and keeping the stack current. Pair with the sorbet skill, which defines how the types themselves are written. For a Ruby library or gem, prefer Steep through the steep-adoption skill.
 version: 0.1.0
 ---
 
 # Sorbet Adoption
 
-This is a playbook for bringing an untyped Ruby or Rails codebase to Sorbet `# typed: strict` through a series of reviewable PRs. It is distilled from a rollout that took a Rails app and its client gem from no annotations to about 300 strict files in 22 stacked PRs.
+This is a playbook for bringing an untyped Ruby or Rails application to Sorbet `# typed: strict` through a series of reviewable PRs. It is distilled from a rollout that took a Rails app and its client gem from no annotations to about 300 strict files in 22 stacked PRs.
+
+Libraries and gems use Steep instead, through `sorah-guides:steep-adoption`: RBS is what gems ship in `sig/` and what consumers load, while Sorbet suits an application that nobody depends on. A gem that lives inside an application's repository and is consumed only by that app may follow the app onto Sorbet.
 
 Load `sorah-guides:sorbet` before writing any annotation. That skill defines how types are written. This one decides order, scope and mechanics. For branch and stack mechanics use `/gh-stack`; for commits and PR bodies use `/sorah-guides:commit` and `/sorah-guides:pull-request`.
 
@@ -60,7 +62,7 @@ Settle these with the user through AskUserQuestion. Put the recommended option f
 
 | Decision | Recommended default |
 |----------|---------------------|
-| Checker and syntax | Sorbet with inline RBS comments (`#:`). Static only: `sorbet` and `tapioca` in the development/test group with `require: false`, and no `sorbet-runtime` of the project's own. For a published gem that ships `sig/` RBS, or one already on Steep, ask before choosing Sorbet |
+| Checker and syntax | For an application, Sorbet with inline RBS comments (`#:`). Static only: `sorbet` and `tapioca` in the development/test group with `require: false`, and no `sorbet-runtime` of the project's own. For a published gem, switch to `steep-adoption` |
 | Scope | Every Ruby project in the repo, covering `app/`, `lib/`, `config/` and in-repo engines. Specs are never typed |
 | Generated RBIs | Committed at `//third_party/sorbet/rbi/<project>/{gems,dsl}` and marked `linguist-generated=true`. Drop `<project>/` when there is only one project; move elsewhere if the survey shows a build-context problem |
 | PR shape | One infra PR for all projects, then slices stacked on it in one straight line. Sub-projects such as a gem go on top of that line. In a busy repo where one long stack cannot stay rebased, cut waves instead: each wave is a short stack (or siblings) off main, merged before the next wave starts |
