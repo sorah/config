@@ -56,7 +56,9 @@ psqldef = "latest"
 sqlite3def = "latest"
 
 deno = "latest"
-pnpm = "latest"
+# The short name `pnpm` is a separate tool from a project's aqua:pnpm/pnpm pin
+# and would shadow it on PATH.
+"aqua:pnpm/pnpm" = "latest"
 watchexec = "latest"
 "aqua:fujiwara/lambroll" = "latest"
 "github:aviator-co/av" = "latest"
