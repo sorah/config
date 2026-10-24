@@ -5,6 +5,15 @@ FROM public.ecr.aws/debian/debian:bullseye
 ARG BUILDDATE=99999999
 
 ENV DEBIAN_FRONTEND=noninteractive
+
+# deb.debian.org's bullseye-security index lists files its pool no longer has, while the archive keeps them all.
+RUN printf "%s\n" \
+      "deb http://archive.debian.org/debian bullseye main" \
+      "deb http://archive.debian.org/debian bullseye-updates main" \
+      "deb http://archive.debian.org/debian-security bullseye-security main" \
+      > /etc/apt/sources.list \
+  && echo "Acquire::Check-Valid-Until \"false\";" > /etc/apt/apt.conf.d/99archive
+
 RUN mkdir -p /build \
   && apt-get update \
   && apt-get install -y tzdata debhelper dh-make devscripts gnupg2 vim equivs
