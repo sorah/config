@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+# Re-publishes aptly distros of a target with its signing key. Needs AWS credentials for S3.
+require 'optparse'
+require_relative 'lib/sorah_aptly'
+
+dry_run = false
+parser = OptionParser.new do |o|
+  o.banner = "Usage: #{File.basename($0)} [options] TARGET [DISTRO...]"
+  o.separator '  Updates every published distro of TARGET when no DISTRO is given.'
+  o.on('-n', '--dry-run') { dry_run = true }
+end
+parser.parse!
+target_name = ARGV.shift
+abort parser.help unless target_name
+target = SorahAptly.target(target_name)
+
+published = SorahAptly.published_distros(target)
+distros = ARGV.empty? ? published : ARGV
+unpublished = distros - published
+abort "not published at #{target.endpoint}: #{unpublished.join(', ')}; use sorah-aptly-new-distro" unless unpublished.empty?
+
+distros.each do |distro|
+  SorahAptly.publish_update(target, distro, dry_run:)
+end

@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+# Creates an aptly repo for a new distro and publishes it. Needs AWS credentials for S3.
+require 'optparse'
+require_relative 'lib/sorah_aptly'
+
+proposed = false
+dry_run = false
+parser = OptionParser.new do |o|
+  o.banner = "Usage: #{File.basename($0)} [options] TARGET DISTRO..."
+  o.on('--proposed', 'Also create DISTRO-proposed') { proposed = true }
+  o.on('-n', '--dry-run') { dry_run = true }
+end
+parser.parse!
+target_name = ARGV.shift
+abort parser.help if target_name.nil? || ARGV.empty?
+target = SorahAptly.target(target_name)
+
+distros = ARGV.flat_map { proposed ? [_1, "#{_1}-proposed"] : [_1] }
+existing_repos = SorahAptly.repo_distros(target)
+published = SorahAptly.published_distros(target)
+
+distros.each do |distro|
+  repo = target.repo_name(distro)
+  if existing_repos.include?(distro)
+    puts "repo #{repo} exists"
+  else
+    SorahAptly.run('repo', 'create', repo, dry_run:)
+  end
+
+  if published.include?(distro)
+    puts "#{distro} already published at #{target.endpoint}"
+    drift = SorahAptly.publish_drift(target, distro)
+    unless drift.empty?
+      warn "warning: #{distro} at #{target.endpoint} differs from target settings; drop with -skip-cleanup and rerun to republish"
+      drift.each { warn "  #{_1}" }
+    end
+    next
+  end
+  SorahAptly.run(
+    'publish', 'repo',
+    "-distribution=#{distro}",
+    "-architectures=#{SorahAptly::ARCHITECTURES}",
+    *target.publish_flags,
+    "-gpg-key=#{target.gpg_key}",
+    repo, target.endpoint,
+    dry_run:,
+  )
+end

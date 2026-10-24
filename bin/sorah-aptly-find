@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+# Searches every repo of a target for packages matching an aptly package query.
+require 'optparse'
+require_relative 'lib/sorah_aptly'
+
+distros = nil
+parser = OptionParser.new do |o|
+  o.banner = "Usage: #{File.basename($0)} [options] TARGET|all QUERY"
+  o.separator %q(  QUERY is an aptly package query, e.g. 'etherip-xdp' or '$Source (ruby3.4), $Version (% *nkmi2*)')
+  o.on('-d', '--distro LIST', 'Limit to these distros (comma-separated)') { distros = SorahAptly.parse_distros(_1) }
+end
+parser.parse!
+target_name, query = ARGV
+abort parser.help if target_name.nil? || query.nil?
+targets = target_name == 'all' ? SorahAptly::TARGETS.values : [SorahAptly.target(target_name)]
+
+targets.each do |target|
+  (distros || SorahAptly.repo_distros(target)).each do |distro|
+    repo = target.repo_name(distro)
+    SorahAptly.search(repo, query).each { puts "#{repo}\t#{_1}" }
+  end
+end

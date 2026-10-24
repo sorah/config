@@ -1,0 +1,43 @@
+#!/usr/bin/env ruby
+# Removes packages matching an aptly package query from a target's repos, optionally publishing the touched distros.
+require 'optparse'
+require_relative 'lib/sorah_aptly'
+
+distros = nil
+publish = false
+dry_run = false
+parser = OptionParser.new do |o|
+  o.banner = "Usage: #{File.basename($0)} [options] TARGET QUERY"
+  o.separator %q(  QUERY is an aptly package query, e.g. 'etherip-xdp' or '$Source (ruby3.4), $Version (% *nkmi2*)')
+  o.on('-d', '--distro LIST', 'Limit to these distros (comma-separated); default all repos') { distros = SorahAptly.parse_distros(_1) }
+  o.on('-p', '--publish', 'Run publish update for touched distros (needs AWS credentials)') { publish = true }
+  o.on('-n', '--dry-run') { dry_run = true }
+end
+parser.parse!
+target_name, query = ARGV
+abort parser.help if target_name.nil? || query.nil?
+target = SorahAptly.target(target_name)
+
+touched = (distros || SorahAptly.repo_distros(target)).select do |distro|
+  repo = target.repo_name(distro)
+  matches = SorahAptly.search(repo, query)
+  next false if matches.empty?
+  puts "#{repo}: #{matches.size} package(s)"
+  matches.each { puts "  #{_1}" }
+  SorahAptly.run('repo', 'remove', repo, query, dry_run:)
+  true
+end
+abort "no packages matched #{query.inspect}" if touched.empty?
+
+if publish
+  published = SorahAptly.published_distros(target)
+  touched.each do |distro|
+    unless published.include?(distro)
+      warn "skipping publish of #{distro}: not published at #{target.endpoint}"
+      next
+    end
+    SorahAptly.publish_update(target, distro, dry_run:)
+  end
+else
+  puts "Not published; run: sorah-aptly-publish-update #{target.name} #{touched.join(' ')}"
+end

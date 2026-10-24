@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+# Adds .deb/.ddeb/.dsc files to per-distro aptly repos, optionally publishing the touched distros.
+require 'optparse'
+require_relative 'lib/sorah_aptly'
+
+distros = nil
+publish = false
+dry_run = false
+parser = OptionParser.new do |o|
+  o.banner = "Usage: #{File.basename($0)} [options] TARGET FILE..."
+  o.separator '  Files go to the repo of the "~distro" suffix in their name unless -d is given.'
+  o.on('-d', '--distro LIST', 'Add every file to these distros (comma-separated)') { distros = SorahAptly.parse_distros(_1) }
+  o.on('-p', '--publish', 'Run publish update for touched distros (needs AWS credentials)') { publish = true }
+  o.on('-n', '--dry-run') { dry_run = true }
+end
+parser.parse!
+target_name = ARGV.shift
+abort parser.help if target_name.nil? || ARGV.empty?
+target = SorahAptly.target(target_name)
+
+files = ARGV.map { File.expand_path(_1) }
+missing = files.reject { File.exist?(_1) }
+abort "missing files: #{missing.join(', ')}" unless missing.empty?
+unsupported = files.grep_v(/\.(?:d?deb|dsc)\z/)
+abort "unsupported files (only .deb, .ddeb, .dsc): #{unsupported.join(', ')}" unless unsupported.empty?
+
+files_by_distro = if distros
+  distros.to_h { [_1, files] }
+else
+  unknown = files.reject { SorahAptly.distro_from_filename(_1) }
+  abort "cannot tell distro from filename, pass -d: #{unknown.join(', ')}" unless unknown.empty?
+  files.group_by { SorahAptly.distro_from_filename(_1) }
+end
+
+known = SorahAptly.repo_distros(target)
+unknown_distros = files_by_distro.keys - known
+abort "no repo for #{unknown_distros.map { target.repo_name(_1) }.join(', ')}; create with sorah-aptly-new-distro" unless unknown_distros.empty?
+
+files_by_distro.each do |distro, distro_files|
+  SorahAptly.run('repo', 'add', target.repo_name(distro), *distro_files, dry_run:)
+end
+
+if publish
+  published = SorahAptly.published_distros(target)
+  files_by_distro.each_key do |distro|
+    unless published.include?(distro)
+      warn "skipping publish of #{distro}: not published at #{target.endpoint}"
+      next
+    end
+    SorahAptly.publish_update(target, distro, dry_run:)
+  end
+else
+  puts "Not published; run: sorah-aptly-publish-update #{target.name} #{files_by_distro.keys.join(' ')}"
+end
