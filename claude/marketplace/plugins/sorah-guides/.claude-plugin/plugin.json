@@ -1,7 +1,7 @@
 {
   "name": "sorah-guides",
   "version": "0.16.0",
-  "description": "Coding guidelines and review tools. Skills for general coding, Ruby, Rails (including problem-details errors, protobuf-native APIs, psqldef schemas, Aurora DSQL, and running on AWS Lambda), Sorbet and Steep typing and adoption, Rust, Terraform, GitHub Actions workflows, security, git commit style, README writing, and Japanese and English text writing. Includes a security review agent.",
+  "description": "Coding guidelines and review tools. Skills for general coding, Ruby, Rails (including problem-details errors, protobuf-native APIs, psqldef schemas, Aurora DSQL, and running on AWS Lambda), Sorbet and Steep typing and adoption, developer toolchain (mise, hk), Rust, Terraform, GitHub Actions workflows, security, git commit style, README writing, and Japanese and English text writing. Includes a security review agent.",
   "author": {
     "name": "sorah"
   },
