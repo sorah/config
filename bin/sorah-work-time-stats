@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+# Merges activity timestamps from --json outputs of sorah-*-history-time-stats into work spans per day.
+require 'time'
+require 'json'
+require 'date'
+require 'optparse'
+
+gap = 15 * 60
+parser = OptionParser.new do |o|
+  o.banner = "Usage: #$0 [--gap MINUTES] timespec-after [JSON-FILE...]"
+  o.on('--gap MINUTES', Integer, 'split spans on idle gaps longer than this (default: 15)') { gap = _1 * 60 }
+end
+parser.parse!
+timespecstr = ARGV.shift
+abort parser.banner unless timespecstr
+timespec = Time.parse(timespecstr)
+
+inputs = if ARGV.empty?
+  %w[sorah-zsh-history-time-stats sorah-claude-history-time-stats].map do |name|
+    IO.popen([File.join(__dir__, name), '--json', timespecstr], &:read).tap do
+      abort "#{name} failed" unless $?.success?
+    end
+  end
+else
+  ARGV.map { File.read(_1) }
+end
+
+sources = Hash.new { |h, k| h[k] = [] }
+inputs.each do |input|
+  JSON.parse(input).each do |source, times|
+    sources[source].concat(times.map { Time.iso8601(_1).localtime }.select { _1 >= timespec })
+  end
+end
+sources.each_value(&:sort!)
+
+Span = Data.define(:from, :to) do
+  def duration = to - from
+  def cover?(t) = (from..to).cover?(t)
+end
+
+def hm(t, base = t)
+  days = (t.to_date - base.to_date).to_i
+  days.zero? ? t.strftime('%H:%M') : t.strftime("%H:%M+#{days}d")
+end
+
+def format_duration(sec)
+  m = (sec / 60).round
+  format('%dh%02dm', m / 60, m % 60)
+end
+
+def format_range(times)
+  return '-' if times.empty?
+  "#{hm(times.first)}-#{hm(times.last, times.first)}"
+end
+
+spans = sources.values.flatten.sort.slice_when { |a, b| b - a > gap }.map { Span.new(from: _1.first, to: _1.last) }
+
+spans.group_by { _1.from.to_date }.sort_by(&:first).each do |(day, day_spans)|
+  puts "= #{day}  #{hm(day_spans.first.from)}-#{hm(day_spans.last.to, day_spans.first.from)}  total #{format_duration(day_spans.sum(&:duration))}"
+  day_spans.each do |span|
+    ranges = sources.map { |source, times| "#{source}=#{format_range(times.select { span.cover?(_1) })}" }
+    puts "  #{hm(span.from)}-#{hm(span.to, span.from)}  #{format_duration(span.duration).rjust(6)}  #{ranges.join(', ')}"
+  end
+  puts
+end

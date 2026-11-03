@@ -2,31 +2,105 @@
 # frozen_string_literal: true
 require 'time'
 require 'json'
+require 'date'
 
+json = ARGV.delete('--json')
 timespecstr = ARGV[0]
-abort "Usage: #$0 timespec-after" unless timespecstr
+abort "Usage: #$0 [--json] timespec-after [gap-minutes]" unless timespecstr
 timespec = Time.parse(timespecstr)
+gap = (ARGV[1] || 15).to_i * 60
 
-ts = []
+Span = Data.define(:from, :to) do
+  def duration = to - from
+end
+
+def build_spans(times, gap)
+  times.sort.slice_when { |a, b| b - a > gap }.map { Span.new(from: _1.first, to: _1.last) }
+end
+
+def hm(t, base = t)
+  days = (t.to_date - base.to_date).to_i
+  days.zero? ? t.strftime("%H:%M") : t.strftime("%H:%M+#{days}d")
+end
+
+def format_duration(sec)
+  m = (sec / 60).round
+  format('%dh%02dm', m / 60, m % 60)
+end
+
+def format_range(times)
+  return '-' if times.empty?
+  "#{hm(times.min)}-#{hm(times.max, times.min)}"
+end
+
+prompts = []
 File.open(File.expand_path('~/.claude/history.jsonl'), 'r') do |io|
   io.each_line do |line|
     entry = JSON.parse(line)
     t = Time.at(entry['timestamp'] / 1000.0)
     next if t < timespec
-    ts.push t
+    prompts.push t
   end
 end
 
-stats = ts.group_by do |t|
-  t.strftime("%Y-%m-%d")
-end.transform_values do |ts|
-  ts.group_by(&:hour).transform_values(&:size)
+# Assistant turns and tool results in session transcripts mark the agent working without user input.
+# Turns fired by /loop or other scheduled tasks are excluded.
+agents = []
+Dir.glob(File.expand_path('~/.claude/projects/**/*.jsonl')).each do |path|
+  next if File.mtime(path) < timespec
+  scheduled = false
+  File.open(path, 'r') do |io|
+    io.each_line do |line|
+      next unless line.include?('"type":"assistant"') || line.include?('"tool_result"') || line.include?('"turnOrigin"')
+      entry = JSON.parse(line)
+      scheduled = entry['turnOrigin'] == 'scheduled' if entry.key?('turnOrigin')
+      next if scheduled
+      case entry['type']
+      when 'assistant'
+      when 'user'
+        content = entry.dig('message', 'content')
+        next unless content.is_a?(Array) && content.any? { _1['type'] == 'tool_result' }
+      else
+        next
+      end
+      t = Time.iso8601(entry.fetch('timestamp')).localtime
+      next if t < timespec
+      agents.push t
+    end
+  end
 end
 
-stats.to_a.sort_by(&:first).each do |(day,hours)|
+prompts.sort!
+agents.sort!
+
+if json
+  puts JSON.generate(prompts: prompts.map(&:iso8601), agents: agents.map(&:iso8601))
+  exit
+end
+agent_spans = build_spans(agents, gap)
+active_spans = build_spans(prompts + agents, gap)
+
+days = (prompts + active_spans.map(&:from)).map { _1.strftime('%Y-%m-%d') }.uniq.sort
+days.each do |day|
   puts "= #{day}"
-  hours.to_a.sort_by(&:first).each do |(hour,size)|
-    puts "  #{hour.to_s.rjust(2,' ')}: #{size}"
+
+  hourly = prompts.select { _1.strftime('%Y-%m-%d') == day }.group_by(&:hour).transform_values(&:size)
+  puts "  hourly (prompts):"
+  hourly.to_a.sort_by(&:first).each do |(hour, size)|
+    puts "    #{hour.to_s.rjust(2, ' ')}: #{size}"
   end
+
+  spans = active_spans.select { _1.from.strftime('%Y-%m-%d') == day }
+  puts "  spans:"
+  spans.each do |span|
+    range = span.from..span.to
+    ps = prompts.select { range.cover?(_1) }
+    as = agents.select { range.cover?(_1) }
+    agent_time = agent_spans.select { range.cover?(_1.from) }.sum(&:duration)
+    puts "    #{hm(span.from)}-#{hm(span.to, span.from)}  #{format_duration(span.duration)}  prompts=#{format_range(ps)}, agents=#{format_range(as)} (#{format_duration(agent_time)})"
+  end
+  active_total = spans.sum(&:duration)
+  agent_total = agent_spans.select { _1.from.strftime('%Y-%m-%d') == day }.sum(&:duration)
+  puts "  total: active #{format_duration(active_total)}, agents #{format_duration(agent_total)}"
   puts
 end

@@ -1,31 +1,40 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 require 'time'
+require 'json'
 
+json = ARGV.delete('--json')
 timespecstr = ARGV[0]
-abort "Usage: #$0 timespec-after" unless timespecstr
+abort "Usage: #$0 [--json] timespec-after" unless timespecstr
 timespec = Time.parse(timespecstr)
-
 
 ts = []
 File.open(File.expand_path('~/.zsh_history'), 'rb') do |io|
   io.each_line do |x|
-    t = Time.at(x.split(':'.b)[1].to_i)
+    # Continuation lines of multi-line commands lack the ": <epoch>:<duration>;" header.
+    m = x.match(/\A: (\d+):/n) or next
+    t = Time.at(m[1].to_i)
     next if t < timespec
     ts.push t
   end
+end
+ts.sort!
+
+if json
+  puts JSON.generate(zsh: ts.map(&:iso8601))
+  exit
 end
 
 stats = ts.group_by do |t|
   t.strftime("%Y-%m-%d")
 end.transform_values do |ts|
-  ts.group_by(&:hour).transform_values(&:size)
+  ts.group_by(&:hour)
 end
 
 stats.to_a.sort_by(&:first).each do |(day,hours)|
   puts "= #{day}"
-  hours.to_a.sort_by(&:first).each do |(hour,size)|
-    puts "  #{hour.to_s.rjust(2,' ')}: #{size}"
+  hours.to_a.sort_by(&:first).each do |(hour,hts)|
+    puts "  #{hour.to_s.rjust(2,' ')}: #{hts.size.to_s.ljust(4,' ')} (#{hts.min.strftime('%H:%M')}-#{hts.max.strftime('%H:%M')})"
   end
   puts
 end
