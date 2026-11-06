@@ -225,10 +225,6 @@ wcd() {
 
 alias hub-fork='gh repo fork --remote --remote-name sorah'
 
-zsorah_ruby_path=`which ruby`
-if [[ -d "$(rbenv root 2>/dev/null)" ]]; then
-  zsorah_ruby_path="zsorah-ruby"
-fi
 zsorah-ruby() { RBENV_DIR=$HOME RBENV_VERSION="$(rbenv global)" ruby "$@" }
 
 # Prompt
@@ -328,8 +324,60 @@ if [[ -s ~/git/config/third_party/cdd/cdd ]] then
   }
 fi
 
-# change_window_title() { echo -ne "\ek$1\e\\" }
-change_window_title() { tmux rename-window -t "$TMUX_PANE" "$*" }
+# Window names are derived by tmux automatic-rename-format from each pane's @sorah_title; see tmux.conf.
+sorah-tmux-title-path() {
+  local m=$'\uE001' p=${PWD/#$HOME/\~} x
+  local -a a out
+  [[ $p == '~/git/'* ]] && p="@/${p#\~/git/}"
+  if [[ $p =~ '^@/github\.com/[^/]+/[^/]+' ]]; then
+    p="${m}${MATCH##*/}/${p#$MATCH}"
+  fi
+  a=("${(@s:/:)p}")
+  while (( $#a )) && [[ -z ${a[-1]} ]]; do a[-1]=(); done
+  (( $#a )) || a=(/)
+  if (( $#a > 4 )); then
+    for x in "${(@)a[1,-2]}"; do
+      [[ $x == $m* ]] && out+=("$x") || out+=("${x[1]}")
+    done
+    out+=("${a[-1]}")
+  else
+    out=("${(@)a}")
+  fi
+  x=${(j:/:)out}
+  print -rn -- "${x//$m/}"
+}
+
+# tmux re-evaluates automatic-rename only on active pane output; re-setting the option forces it without clobbering a static name.
+sorah-tmux-title-refresh() {
+  tmux "$@" \; if -t "$TMUX_PANE" -F '#{automatic-rename}' "set -w -t $TMUX_PANE automatic-rename on"
+}
+
+sorah-tmux-title-set() {
+  sorah-tmux-title-refresh set -p -t "$TMUX_PANE" @sorah_title "$1"
+}
+
+# tt NAME: static window name. tt: back to automatic.
+tt() {
+  if (( $# )); then
+    tmux rename-window -t "$TMUX_PANE" "$*"
+  else
+    tmux set -wu -t "$TMUX_PANE" automatic-rename
+  fi
+}
+
+# Toggle this pane as the window name source, exclusive within the window.
+tpin() {
+  local p pinned
+  pinned="$(tmux display -p -t "$TMUX_PANE" '#{@sorah_title_pin}')"
+  for p in $(tmux list-panes -t "$TMUX_PANE" -F '#{pane_id}'); do
+    [[ $p == $TMUX_PANE ]] || tmux set -pu -t "$p" @sorah_title_pin
+  done
+  if [[ -z $pinned ]]; then
+    sorah-tmux-title-refresh set -p -t "$TMUX_PANE" @sorah_title_pin 1
+  else
+    sorah-tmux-title-refresh set -pu -t "$TMUX_PANE" @sorah_title_pin
+  fi
+}
 
 OKO_COUNT=0
 
@@ -360,7 +408,7 @@ precmd() {
 
     # pwd & cmd @ screen
     if [[ -n "$TMUX" ]]; then
-      change_window_title "$($zsorah_ruby_path --disable-gems ~/git/config/script/cdd_title.rb)"
+      sorah-tmux-title-set "$(sorah-tmux-title-path)"
     fi
   fi
 }
@@ -368,7 +416,7 @@ precmd() {
 function preexec() {
   if [[ "_${SORAH_ZSHRC_LOADED}" = "_1" ]]; then
     if [[ -n "$TMUX" ]]; then
-      change_window_title "$($zsorah_ruby_path --disable-gems ~/git/config/script/cdd_title.rb):$(echo "$1"|cut -d' ' -f 1)"
+      sorah-tmux-title-set "$(sorah-tmux-title-path):${1%%[[:space:]]*}"
     fi
   fi
 }
