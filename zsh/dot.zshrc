@@ -35,14 +35,10 @@ if [ "_$run_tmux" = "_1" ]; then
   fi
   export PATH=~/.cargo/bin:$PATH
 
-  if [ "$SSH_CLIENT" ]; then
-    echo "set -g prefix ^X" > ~/.tmux.prefix
-  else
-    echo "set -g prefix ^Z" > ~/.tmux.prefix
-  fi
-
   if tmux has-session; then
     exec tmux -2 attach
+  elif [ "$SSH_CLIENT" ]; then
+    exec tmux -2 new-session \; set -g @sorah_prefix C-x \; set -g prefix C-x
   else
     exec tmux -2
   fi
