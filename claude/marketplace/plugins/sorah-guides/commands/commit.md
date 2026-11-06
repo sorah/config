@@ -21,6 +21,10 @@ Before committing, present the proposed split plan (which files/hunks go into wh
 
 Commit all changes together in a single commit.
 
+## Force Pushing
+
+The user allows `git push --force-with-lease` against topic branches if necessary, such as after amending or rebasing commits that were already pushed. Never force-push to the primary branch (main or master), and never use plain `--force`.
+
 ## GPG Signing Errors
 
 If a git commit fails with `gpg: signing failed: Inappropriate ioctl for device`, ask the user to unlock their signing key. Do not skip or disable GPG signing.

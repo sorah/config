@@ -70,3 +70,7 @@ Description body here...
 3. Return the PR URL.
 
 For a stacked branch, submit through the **gh-stack** skill rather than these steps, then apply the composed titles and descriptions with `gh pr edit` — `gh stack submit` auto-generates them.
+
+## Force Pushing
+
+The user allows `git push --force-with-lease` against topic branches if necessary, such as when the branch was amended or rebased after an earlier push. Never force-push to the primary branch (main or master), and never use plain `--force`.
