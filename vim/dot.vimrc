@@ -70,7 +70,7 @@ Plug 'PProvost/vim-ps1'
 Plug 'cespare/vim-toml'
 Plug 'momota/junos.vim'
 Plug 'vim-scripts/Bird-Syntax'
-Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
+Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'main', 'do': ':TSUpdate' }
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
 Plug 'nvim-telescope/telescope-ghq.nvim'
@@ -359,27 +359,18 @@ augroup END
 
 "treesitter
 lua << EOL
-require('nvim-treesitter.configs').setup({
-  ensure_installed = {"smithy", "pkl"},
-  highlight = {
-    enable = true,
-    disable = function(lang, bufnr)
-      -- including vim for the sake of Lua blocks inside VimL
-      if lang == "vim" or lang == "lua" or lang == "typescriptreact" or lang == "typescript" or lang == "smithy" or lang == "pkl" then
-        return false
-      end
-      return true
-    end,
-  },
-  indent = {
-    enable = true,
-    disable = function(lang, bufnr)
-      if lang == "ruby" or lang == "smithy" or lang == "typescriptreact" or lang == "typescript" or lang == "smithy" or lang == "pkl" then
-        return false
-        end
-      return true
-    end,
-  },
+require('nvim-treesitter').install({ 'smithy', 'pkl', 'ruby', 'typescript', 'tsx' })
+
+vim.api.nvim_create_autocmd('FileType', {
+  -- including vim for the sake of Lua blocks inside VimL
+  pattern = { 'vim', 'lua', 'typescript', 'typescriptreact', 'smithy', 'pkl' },
+  callback = function() pcall(vim.treesitter.start) end,
+})
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'ruby', 'typescript', 'typescriptreact', 'smithy', 'pkl' },
+  callback = function()
+    vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+  end,
 })
 EOL
 

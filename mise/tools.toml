@@ -101,6 +101,8 @@ zizmor = "latest"
 smithy = "latest"
 smithy-language-server = "latest"
 
+"aqua:tree-sitter/tree-sitter" = "latest"
+
 # mise's AUR backend shells out to this for the aur: entries in ../mise.toml.
 "github:Jguer/yay" = { version = "latest", os = ["linux"] }
 
