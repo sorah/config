@@ -15,6 +15,7 @@ Related skills:
 - Declarative schema with psqldef instead of migrations: /sorah-guides:sqldef-on-rails
 - Aurora DSQL (OCC-aware transactions, IAM auth, tests against real clusters): /sorah-guides:dsql-on-rails
 - Running on AWS Lambda (function URL behind CloudFront, Lambdakiq jobs, runner for migrations): /sorah-guides:rails-on-lambda
+- Canonical log lines (request context, outcome and counters on the rails_semantic_logger Completed line): /sorah-guides:rails-canonical-log-line
 - Sorbet typing: /sorah-guides:sorbet
 
 ## Data Model — ActiveRecord
@@ -56,7 +57,7 @@ if Rails.env.production?
 
 - **Encryption**: ActiveRecord Encryption or application-level keyring for sensitive attributes
 - **Background jobs**: ActiveJob / Sidekiq job classes, queue names, retry policies
-- **Logging**: Structured logging patterns (SemanticLogger or Rails.logger with payload hashes)
+- **Logging**: Structured logging patterns (SemanticLogger or Rails.logger with payload hashes); one canonical line per request (see /sorah-guides:rails-canonical-log-line)
 - **Existing concerns**: Identify which existing model or controller concerns new code should include
 - **Mailers**: ActionMailer classes, delivery method (inline vs background)
 
