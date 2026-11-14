@@ -1,7 +1,7 @@
 ---
 name: ruby
 description: This skill should be used when writing or reviewing Ruby code, or when the project uses "Ruby", "RSpec", "service objects", "Struct", "Data class", or Ruby class/module patterns. Provides Ruby coding conventions, patterns, and best practices. Project-specific conventions always take priority.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Ruby Conventions
@@ -30,7 +30,14 @@ New projects start from sorah's baseline in [sorah/config](https://github.com/so
       - ".gem_rbs_collection/**/*"
   ```
 - Exclude generated code and installed signatures, each with a comment saying what it is. Never disable a cop to fit generated code.
-- RuboCop runs from hk; see the `toolchain` skill.
+- RuboCop runs from hk (`hk check`, `hk fix`), not directly; see the `toolchain` skill.
+
+### Project Cops
+
+A custom cop earns its place when the wrong code looks right at the call site and the consequence is silent (an unretried transaction, a job on a queue no worker reads, a lost audit entry) rather than a test failure.
+
+- Keep them in one directory (e.g. `config/cops/`), listed under `require:` in `.rubocop.yml`, with a table in the project docs naming what each bans, what to use instead, and why.
+- Treat an offense as a design signal. Exclude in `.rubocop.yml` only the implementation of the very thing the cop guards; elsewhere use an inline `# rubocop:disable Project/Cop -- <reason>`.
 
 ## Type Checking
 
@@ -57,6 +64,12 @@ New projects start from sorah's baseline in [sorah/config](https://github.com/so
 - `attr_reader` over direct instance variable access
 - Short single-line methods when appropriate
 
+## Control Flow
+
+- Prefer `case`/`when` over `if`/`elsif`. For heterogeneous conditions use a bare `case` with `when condition?` branches (`Style/CaseLikeIf` with `MinBranchesCount: 2`).
+- An early return from a check that answers a value or nil reads `refusal_for(env)&.then { return it }`. It keeps the method's original last line untouched as more checks join, unlike `refusal || @app.call(env)`.
+- Never interpolate into backticks or `%x()`. Run commands with `system` or `IO.popen` and an argv array.
+
 ## Data Handling
 
 - `Hash#fetch` and `Array#fetch` for required keys/indexes
@@ -65,18 +78,39 @@ New projects start from sorah's baseline in [sorah/config](https://github.com/so
 
 ## Error Handling
 
-- Rescue specific exceptions only (e.g., `Aws::S3::Errors::NoSuchKey`), never `rescue Exception` or bare `rescue`
-- Raise with descriptive messages
-- Let exceptions propagate unless there is a meaningful reason to catch them:
-  - Adding context to the error
-  - Performing cleanup operations
-  - Converting one exception type to another
-  - Recovering from expected error conditions
+The general policy is in the `coding` skill. In Ruby:
+
+- Never `rescue Exception`, `rescue StandardError`, or a bare `rescue` (which is `StandardError`).
+- Rescue the most specific class: `Aws::S3::Errors::NoSuchKey`, not `Aws::Errors::ServiceError`.
+- Raise with a descriptive message. When converting, pass `cause: e` instead of copying the cause into the message.
+- Cleanup that must also run on failure re-raises with a bare `raise` (or uses `ensure`).
+
+```ruby
+# Bad - passes its own class through and copies the cause into the message
+def refresh
+  response = exchange
+  raise RefreshError, "Response has no access_token" unless response["access_token"]
+
+  response["access_token"]
+rescue RefreshError
+  raise
+rescue Faraday::Error => e
+  raise RefreshError, "Refresh failed: #{e.class}: #{e.message}", cause: e
+end
+
+# Good - every failure is wrapped the same way, and the details stay in the cause
+def refresh
+  exchange.fetch("access_token")
+rescue Faraday::Error, KeyError => e
+  raise RefreshError, "Refresh failed", cause: e
+end
+```
 
 ## Nil Handling
 
 - Explicit nil checks vs safe navigation (`&.`) vs `fetch` with defaults
 - Prefer `fetch` to surface unexpected missing keys early
+- Default a missing number with `foo&.count || 0`, never `foo&.count.to_i`. `to_i` reads as a coercion of the value and hides that it exists only for nil.
 
 ## Testing — RSpec
 
@@ -96,6 +130,12 @@ New projects start from sorah's baseline in [sorah/config](https://github.com/so
 
 - Use structured logging with JSON when appropriate
 - Log important operations (locks, state changes)
+- Enumerated payload values are Symbols (`reason: :expired`), not Strings
+- Pass an exception to the logger as its own argument, never interpolated into the message (SemanticLogger: `logger.warn("Cache unavailable", {key:}, e)`)
+
+## Scripts
+
+- Throwaway and ad-hoc scripts are Ruby with `bundler/inline` for dependencies, unless the project or request says otherwise.
 
 ## Security
 

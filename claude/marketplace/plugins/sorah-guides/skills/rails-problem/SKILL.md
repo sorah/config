@@ -1,7 +1,7 @@
 ---
 name: rails-problem
 description: This skill should be used when designing, writing, or reviewing error handling in a Rails API that answers RFC 9457 / RFC 7807 problem details through the `problem` gem, or when adding an error class, a `rescue_from`, an exceptions app, or an error response shape to a Rails API. Signs include `Problem::Detailable`, `Problem::Rescuable`, `Problem::I18nable`, `Problem::ExceptionsApp`, `config.problem.type_prefix`, `application/problem+json`, an `Errors::ApiError` base class, or the user mentioning "problem details", "problem+json", "error catalogue", or "error response format". Provides the error class layout, rescuing, exceptions app, i18n titles, reporting, and machine-readable detail. Project-specific conventions always take priority.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Rails API Errors with `problem`
@@ -87,6 +87,53 @@ end
 - Raise with a `detail:` that names the specific thing: `raise Errors::NotFound.new(detail: "No conference has the slug #{slug.inspect}.")`. Never put internals (SQL, stack details, other tenants' data) in `detail`; it goes to the client.
 - Declare a new class rather than raising a generic one with a special `detail`. A subclass that declares nothing renders exactly as its parent, which is the tool for hiding a distinction: when a caller must not tell two failures apart, make an empty subclass instead of a new `type`.
 - Keep the set small and general (unauthenticated, permission-denied, not-found, conflict, failed-precondition, invalid-record, internal). Add a specific type only when a client will branch on it.
+
+## Where errors are raised
+
+The code that detects a failure raises the problem. A model or service raises a detailable class named for what went wrong, and the controller does nothing: the error already carries its `type`, `status` and `title` wherever it is raised, and `Problem::Rescuable` renders it.
+
+```ruby
+# Bad - the service raises a plain error, and the action rescues everything to re-raise a
+# class named after an HTTP status
+class Orders::Cancel
+  def call(order)
+    raise "already shipped" if order.shipped?
+    # ...
+  end
+end
+
+def cancel
+  Orders::Cancel.new.call(order)
+rescue => e
+  raise Errors::BadRequest.new(detail: e.message)
+end
+
+# Good - the service raises the problem itself, and the action has no rescue
+module Errors
+  # The order has left the warehouse and can no longer be cancelled.
+  class OrderAlreadyShipped < FailedPrecondition
+    type "order-already-shipped"
+    title "Order Already Shipped"
+  end
+end
+
+class Orders::Cancel
+  def call(order)
+    raise Errors::OrderAlreadyShipped.new(detail: "Order #{order.id} shipped at #{order.shipped_at.iso8601}.") if order.shipped?
+    # ...
+  end
+end
+
+def cancel
+  Orders::Cancel.new.call(order)
+  head :no_content
+end
+```
+
+- Name a domain failure for the domain (`Errors::OrderAlreadyShipped`), not for its status. Subclass the closest general class so it inherits the status. The status-named general set (`NotFound`, `Forbidden`, `FailedPrecondition`) is for raising directly only when no client will branch on the distinction.
+- Do not rescue in an action to re-raise a generic status-named error. It erases the `type` clients dispatch on, turns bugs into 4xx answers, and makes the controller know every failure below it.
+- Do not `rescue StandardError` (or a bare `rescue`) to answer 500. An unexpected error propagates, and `Problem::Rescuable` and the exceptions app already answer it as a 500 and report it.
+- Convert a third-party exception once: framework ones (`ActiveRecord::RecordNotFound`, `RecordInvalid`) in the base controller, a gem's or client's errors at the service boundary that calls it. That boundary wraps every failure unconditionally into a problem class named for what failed there, with `cause:` set (see /sorah-guides:coding).
 
 ## Rendering
 

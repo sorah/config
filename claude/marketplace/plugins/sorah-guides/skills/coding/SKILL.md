@@ -1,7 +1,7 @@
 ---
 name: coding
 description: This skill should be used when writing or reviewing code in any language. Provides language-agnostic coding conventions for code quality, comments, error handling, and formatting. Project-specific conventions always take priority.
-version: 0.3.0
+version: 0.4.0
 ---
 
 # General Coding Guidelines
@@ -46,6 +46,7 @@ Three rules govern everything below.
 - **Retold discussion.** Summarising the spec, the ticket, or the review instead of citing it: "beyond what the spec anticipated", "as discussed", "which is accepted", "the spec called this out".
 - **Alternatives-considered essays.** Defending the chosen design against a design that is not in the file, or explaining at length why some other class was not extended instead.
 - **Tutorial voice.** Addressing a future implementer rather than a reader: "the obvious implementation is X and it is wrong", "a consumer that wants Y calls Z".
+- **Language tutorials.** Re-explaining how the language, format, or framework works: protobuf wire numbers being stable, SQL `ON DELETE` semantics, what `frozen_string_literal` does. The reader knows the tool, and the linter or compiler catches the mistake anyway.
 - **Speculative threat or failure narratives.** Name the risk in a clause. Do not write out the attack or the hypothetical incident.
 - **Inventories of sibling code.** Listing the other classes that do the same thing, or asserting what none of them do. It goes stale silently, and grep answers it anyway.
 - **Markdown emphasis** (`**bold**`, `*italics*`) inside comments.
@@ -55,6 +56,8 @@ Test and spec files follow the same rules. Let the example name carry the intent
 When the rationale is genuinely valuable but too long for a line or two, it belongs where a reader will look for it: the pull request description, the commit message, `docs/`, or the spec.
 
 **Cite a discussion rather than retelling it.** A bare reference to a pull request, a GitHub or Linear issue, or an upstream bug is the compact form of context too large for a comment, and beats a paragraph whenever the reasoning behind the code is genuinely complex: `# Bound set from the measurements in #1234.` The reference still has to earn its line. Straightforward code with nothing hidden behind it gets no comment and no link.
+
+**Deferred cleanup is a `TODO:`.** Code kept only until something else lands carries a comment starting with `TODO:` that names the trigger and the replacement, so the cleanup is a grep away: `# TODO: remove once the v2 endpoint graduates; superseded by the presence rule on Order#total.`
 
 **Example.** The same fact, before and after:
 
@@ -78,9 +81,29 @@ When the rationale is genuinely valuable but too long for a line or two, it belo
   - Performing cleanup operations
   - Converting one exception type to another with additional information
   - Recovering from expected error conditions
+- Do not rescue only to log and re-raise. The framework's request or job context already tags the error that propagates.
 
 When a boundary converts failures into one exception type:
 
 - Wrap every failure unconditionally. Code behind the boundary raises ordinary errors, never the wrapper type, so the boundary has no "already wrapped?" branch to keep correct.
 - Keep the cause out of the wrapper's message. The message says what failed at the boundary, and the cause already carries the original type and message.
 - Log the cause. The wrapper's message alone says nothing about what went wrong.
+
+Space retries of a failed operation with exponential backoff that is capped, jittered, and computed in floats:
+
+```ruby
+backoff = [INITIAL_BACKOFF * (2**(attempts - 1)), MAX_BACKOFF].min * (0.5 + (0.5 * rand))
+```
+
+A fixed delay makes processes that failed together retry together. In Python, cap the exponent as well: `2 ** 1024` cannot be converted to a float, so the `min` never applies.
+
+## Design
+
+- Use a library's own configuration surface. Do not layer custom option handling over options it already provides.
+- Prefer repeating a few lines in each caller over a thin wrapper module or a shared helper. Extract only logic that is non-trivial and identical everywhere.
+- Give a new gate or check one entry point that returns its verdict, so each call site changes by a single line.
+- Name shared infrastructure after the capability, not after its first consumer.
+
+## Tests
+
+- Use the `.invalid` TLD (RFC 2606) for fake hostnames and URLs in test data. It never resolves, so a test cannot reach a real domain.
