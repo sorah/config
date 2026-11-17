@@ -23,6 +23,7 @@ DRAFTS  #4 WEB-430 → In Review  (post 4)
 ## Rules
 
 - **First line:** `▶` and the single thing to do now, or `▶ nothing needs you`.
+- **DRAFTS** lists open `draft` attention items by number; decisions you raised appear under NEEDS YOU too.
 - **Section order is fixed:** NEEDS YOU, WAITING, WORKING, LEFT OFF, GOALS, INBOX, DRAFTS. Leave out empty sections; never add others.
 - **Effort lines:** exactly one per effort: name, issue, PR, what, age, in that order, columns aligned, `—` for a missing reference. Keep the line within about 72 characters.
 - **What field:** starts with a fixed word for its kind:

@@ -25,6 +25,9 @@ module AgentBoard
 
         tell chief TEXT             leave a non-blocking note for the chief of staff
         journal TEXT                append a line to the chief's journal for the current workday
+        attention add decide|draft|suggest TEXT [--agent A] [--ref R]
+                                    bring something to the user (shown atop the TUI); prints its #N
+        attention resolve N [done|posted|dropped] | attention list [--json]
 
       Intake (quarantined reads of external content):
         intake sweep [SOURCE...]    github (parsed), linear, slack, gmail, calendar (schema-bound reader)
@@ -95,6 +98,7 @@ module AgentBoard
       when 'chief' then chief
       when 'intake' then intake
       when 'journal' then journal
+      when 'attention' then attention
       when 'summarize', 'gen-title' then summarize
       when 'brief-issue' then brief_issue
       when 'seen' then seen
@@ -259,6 +263,32 @@ module AgentBoard
       line = "#{now.strftime('%H:%M')} #{Text.clean(text_arg, max: 300, single_line: true)}"
       File.open(File.join(dir, "#{workday}.md"), 'a') { it.puts(line) }
       puts(line)
+    end
+
+    private def attention
+      board = Attention.new(store:)
+      case @argv.shift
+      when 'add'
+        opts = {}
+        OptionParser.new do |o|
+          o.on('--agent AGENT') { opts[:agent] = it }
+          o.on('--ref REF') { opts[:ref] = it }
+        end.parse!(@argv)
+        kind = @argv.shift.to_s
+        puts("##{board.add(kind:, text: text_arg, **opts)}")
+      when 'resolve'
+        id, outcome = @argv
+        raise Error, 'attention: usage: attention resolve N done|posted|dropped' unless id&.match?(/\A\d+\z/)
+
+        board.resolve(id.to_i, outcome: outcome || 'done')
+        puts("resolved ##{id}")
+      when 'list'
+        items = board.open_items
+        return puts(JSON.generate(items)) if @argv.include?('--json')
+
+        items.each { |i| puts(["##{i['id']}", i['kind'], i['text'], i['agent'], i['ref']].compact.join(' | ')) }
+      else raise Error, 'attention: usage: attention add decide|draft|suggest TEXT [--agent A] [--ref R] | resolve N [done|posted|dropped] | list'
+      end
     end
 
     private def gated(action)

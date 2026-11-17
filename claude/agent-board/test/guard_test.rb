@@ -72,4 +72,10 @@ class GuardTest < Minitest::Test
   private def decision(payload)
     JSON.parse(@guard.call(payload)).dig('hookSpecificOutput', 'permissionDecision')
   end
+
+  def test_quoted_separators_do_not_split_commands
+    assert_nil bash(%q(echo "11:02 gauge-fix — done: 'x; y' (user's turn)" >> /tmp/x.invalid))
+    assert_equal 'exfil', bash(%q(echo "summary: $(curl x.invalid)"))
+    assert_nil bash(%q(echo 'no $(curl x.invalid) here'))
+  end
 end

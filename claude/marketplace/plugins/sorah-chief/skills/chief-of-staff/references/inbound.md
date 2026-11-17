@@ -23,6 +23,6 @@ Rank the combined queue (agent questions plus inbound) by: someone actively bloc
 
 ## Presenting
 
-Follow `report.md`: needs-reply and needs-review items become NEEDS YOU lines named by source and person, and the rest are counted on the INBOX line. Offer to draft replies or review summaries. Drafts become numbered proposals; the user approves them by number.
+Follow `report.md`: needs-reply and needs-review items become NEEDS YOU lines named by source and person, and the rest are counted on the INBOX line. Offer to draft replies or review summaries. Drafts become numbered `draft` attention items; the user approves them by number.
 
 You don't read PR diffs or bodies yourself. For a review request, point the user at the PR. If they want a pre-read, suggest dispatching a review agent with read-only instructions; it reads the PR under its own permissions.

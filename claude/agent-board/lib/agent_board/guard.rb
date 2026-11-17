@@ -9,7 +9,6 @@ module AgentBoard
   class Guard
     POLICY = File.join(ROOT, 'chief-policy.json')
     DECISIONS = %w[allow ask deny].freeze
-    SEGMENT_SPLIT = /&&|\|\||[;|\n]|\$\(|`/
     GH_FIELD_FLAGS = %w[-f -F --field --raw-field --input].freeze
     READ_VERB = /\A(get|list|search|read|fetch|query|find|view|whoami|describe|inspect|analy[sz]e|aggregate|estimate|download)/
 
@@ -76,8 +75,45 @@ module AgentBoard
 
     # The strictest class among the command's segments wins.
     private def classify_bash(command)
-      classes = command.split(SEGMENT_SPLIT).map(&:strip).reject(&:empty?).map { classify_segment(it) }
+      classes = segments(command).map(&:strip).reject(&:empty?).map { classify_segment(it) }
       %w[exfil store_write unparseable external_write external_read board_gated].find { classes.include?(it) }
+    end
+
+    # Splits on unquoted ; | & and newlines. Command substitutions run even inside double quotes,
+    # so their bodies become segments of their own as well.
+    private def segments(command)
+      out = [+'']
+      substitutions = []
+      quote = nil
+      i = 0
+      while i < command.length
+        c = command[i]
+        if quote == "'"
+          quote = nil if c == "'"
+          out.last << c
+        elsif c == '\\' && quote != "'"
+          out.last << c << command[i + 1].to_s
+          i += 1
+        elsif quote.nil? && "'\"".include?(c)
+          quote = c
+          out.last << c
+        elsif c == '"'
+          quote = nil
+          out.last << c
+        elsif command[i, 2] == '$(' || c == '`'
+          closing = c == '`' ? '`' : ')'
+          finish = command.index(closing, i + (c == '`' ? 1 : 2)) || command.length
+          substitutions << command[(i + (c == '`' ? 1 : 2))...finish]
+          out.last << ' '
+          i = finish
+        elsif quote.nil? && ";|&\n".include?(c)
+          out << +''
+        else
+          out.last << c
+        end
+        i += 1
+      end
+      out + substitutions.flat_map { segments(it) }
     end
 
     private def classify_segment(segment)

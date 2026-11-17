@@ -7,6 +7,7 @@ import { spawnSync } from "node:child_process";
 import { BOARD_BIN, useSnapshots, type SnapshotSource } from "./useSnapshots.ts";
 import { AgentRow, columnsFor, rowHeight } from "./components/AgentRow.tsx";
 import { AgentDetail, detailHeight } from "./components/AgentDetail.tsx";
+import { ChiefSection } from "./components/ChiefSection.tsx";
 
 type Item = { kind: "group"; group: Group } | { kind: "agent"; agent: Agent };
 
@@ -20,6 +21,7 @@ function summary(snapshot: Snapshot): string {
     c.working && `${c.working} working`,
     c.idle && `${c.idle} idle`,
     c.parked && `${c.parked} parked`,
+    snapshot.attention?.length && `${snapshot.attention.length} from chief`,
     snapshot.chief && `chief-of-staff ${snapshot.chief.status}`,
   ];
   return parts.filter(Boolean).join(" · ") || "no agents";
@@ -153,6 +155,7 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
 
   const width = columns - 1;
   const cols = columnsFor(width);
+  const attention = snapshot.attention ?? [];
   const items: Item[] = groups.flatMap((group) => [{ kind: "group", group } as Item, ...group.agents.map((agent) => ({ kind: "agent", agent }) as Item)]);
   const heightOf = (item: Item) => {
     if (item.kind === "group") return 3;
@@ -163,7 +166,7 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
   // Line offsets come from estimated heights; the viewport clips, so an estimate only shifts scrolling.
   const budget = rows - CHROME_ROWS;
   const offsets = new Map<string, [number, number]>();
-  let total = 0;
+  let total = attention.length > 0 ? attention.length + 3 : 0;
   for (const item of items) {
     const height = heightOf(item);
     if (item.kind === "agent") offsets.set(item.agent.id, [total, height]);
@@ -184,6 +187,7 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
       </Box>
       <Box height={budget} overflow="hidden" flexDirection="column">
       <Box flexDirection="column" marginTop={-visibleScroll} flexShrink={0}>
+      {attention.length > 0 && <ChiefSection items={attention} width={width} now={now} />}
       {visible.map((item) =>
         item.kind === "group" ? (
           <Box key={`g-${item.group.key}`} flexDirection="column" marginTop={1}>

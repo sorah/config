@@ -3,7 +3,7 @@
     "sorah-chief@sorah-marketplace": true
   },
   "permissions": {
-    "defaultMode": "default",
+    "defaultMode": "auto",
     "allow": [
       "Bash(sorah-agent-board:*)",
       "Bash(git log:*)",

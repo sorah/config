@@ -69,9 +69,19 @@ export type Group = {
   agents: Agent[];
 };
 
+export type AttentionItem = {
+  id: number;
+  kind: "decide" | "draft" | "suggest";
+  text: string;
+  agent: string | null;
+  ref: string | null;
+  at: string;
+};
+
 export type Snapshot = {
   generated_at: string;
   counts: Record<GroupKey, number>;
   chief: { status: Status; since: string | null } | null;
+  attention: AttentionItem[];
   groups: Group[];
 };

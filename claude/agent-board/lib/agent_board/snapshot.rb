@@ -39,14 +39,17 @@ module AgentBoard
         'generated_at' => @now.iso8601,
         'counts' => groups.to_h { [it.fetch('key'), it.fetch('agents').size] },
         'chief' => chief.max_by(&:updated_at)&.then { {'status' => it.status.to_s, 'since' => it.status_since} },
+        'attention' => Text.deep_clean(Attention.new(store: @store).open_items),
         'groups' => groups,
       }
     end
 
-    CHIEF_ATTENTION = %i[blocked asking error].freeze
+    # The chief session itself only matters when stuck; what it wants from the user is in Attention.
+    CHIEF_ATTENTION = %i[blocked error].freeze
 
     def needs_you_count
-      sessions.count { it.name == CHIEF_NAME ? chief_attention?(it) : NEEDS_YOU.include?(it.status) }
+      sessions.count { it.name == CHIEF_NAME ? chief_attention?(it) : NEEDS_YOU.include?(it.status) } +
+        Attention.new(store: @store).open_items.count { Attention::BLOCKING.include?(it['kind']) }
     end
 
     private def chief_attention?(session) = CHIEF_ATTENTION.include?(session.status)

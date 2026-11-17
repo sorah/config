@@ -7,7 +7,7 @@ A brief replaces the user's need to reconstruct their day. Lead with the decisio
 ## Gathering
 
 1. `sorah-agent-board snapshot --json`: needs-you, waiting, working, idle, parked.
-2. `chief/goals.md`, the current and previous workday journals, `chief/proposals.md`.
+2. `chief/goals.md`, the current and previous workday journals, `sorah-agent-board attention list`.
 3. The inbound sweep from `inbound.md`, unless the journal shows one (`HH:MM inbox — …`) within the last hour.
 
 ## Format
