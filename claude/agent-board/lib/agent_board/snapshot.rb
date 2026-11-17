@@ -201,7 +201,9 @@ module AgentBoard
       title = File.exist?(cached) ? JSON.parse(File.read(cached))['title'] : nil
       title ||= @titles&.fetch(key, nil)
       others = Array(session.refs).map { it['key'] }.reject { it == key }
-      short = [short_key(key), *others.first(1).map { short_key(it) }].join(' ')
+      # Linear keys read first, whichever reference is primary.
+      shown = ([key] + others).uniq.sort_by.with_index { |k, i| [k.include?('/') ? 1 : 0, i] }.first(2)
+      short = shown.map { short_key(it) }.join(' ')
       issue.slice('key', 'url', 'tracker', 'source').merge('title' => title, 'short' => short, 'related' => others)
     end
 

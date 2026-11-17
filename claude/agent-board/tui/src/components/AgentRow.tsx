@@ -123,7 +123,7 @@ export function AgentRow({ agent, columns, isSelected, now }: { agent: Agent; co
         {activity.length > 0 && (
           <Text color={COLORS.muted}>{truncate(activity.map((e) => `${clock(e.at)} ${RECAP_LABELS[e.kind] ? `${RECAP_LABELS[e.kind]} ` : ""}${e.text}`).join("  ·  "), body)}</Text>
         )}
-        {meta && <Text color={COLORS.rule}>{truncate(meta, body)}</Text>}
+        {meta && <Text color={COLORS.muted}>{truncate(meta, body)}</Text>}
       </Box>
     </Box>
   );

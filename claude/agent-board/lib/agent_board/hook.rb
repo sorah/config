@@ -76,6 +76,7 @@ module AgentBoard
         events
       end
       write_env_file(session) if event == 'SessionStart'
+      learn_team_keys(session)
       Summarizer.spawn(id) if summarize
       if event == 'UserPromptSubmit'
         if session.name == Snapshot::CHIEF_NAME
@@ -178,6 +179,18 @@ module AgentBoard
         end),
        "Read it with #{read} before starting, keep the work within its scope, and name new branches after it.",
        'Do not comment on or change the issue unless the user explicitly asks.'].compact.join(' ')
+    end
+
+    # Teams seen in linked Linear issues make bare keys like ARCH-1234 recognizable in prose.
+    private def learn_team_keys(session)
+      teams = ([session.issue] + Array(session.refs)).compact.select { it['tracker'] == 'linear' }
+                                                     .map { it['key'].split('-').first }
+      new = teams - @lookup.team_keys
+      return if new.empty?
+
+      file = @store.path('cache', 'linear-teams.json')
+      known = File.exist?(file) ? JSON.parse(File.read(file)) : []
+      @store.write_atomically(file, JSON.generate((known + new).uniq.sort))
     end
 
     private def write_env_file(session)

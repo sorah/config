@@ -150,6 +150,8 @@ module AgentBoard
 
       session.last_report = {'text' => text, 'at' => @now.iso8601, 'source' => 'turn'}
       event('summary', text)
+      # Only a full Linear URL counts here; bare keys in prose are too ambiguous.
+      link(IssueRef.from_text(text[IssueRef::LINEAR_URL].to_s), source: 'report')
     end
 
     private def stop_failure
@@ -182,6 +184,9 @@ module AgentBoard
         link(IssueRef.from_text(url), source: 'tool') if url
       when /\bgh\s+issue\s+view\b/
         link(IssueRef.from_text(command), source: 'tool') unless failed
+      when /\bgh\s+(?:pr|issue)\s+(?:create|edit)\b/
+        # PR and issue bodies usually carry the Linear link for the work.
+        link(IssueRef.from_text(command[IssueRef::LINEAR_URL].to_s), source: 'tool') unless failed
       when TEST_COMMAND
         outcome = failed ? "failed (#{payload['error']})" : 'passed'
         event('check', "#{command.lines.first.strip.slice(0, 100)} #{outcome}")
