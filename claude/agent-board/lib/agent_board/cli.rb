@@ -18,7 +18,8 @@ module AgentBoard
         plan STEP...                declare 3-7 steps; indent a step with two spaces to nest it
         step N done|doing|todo      update step N (1-based)
         title TEXT                  a 3-6 word title for this work, shown on the board
-        gen-title ID | --all        generate titles with a tool-less model (the hook does this after a first turn)
+        summarize ID | --all        digest the latest report (did/now/decide) and title untitled work;
+                                    the hook runs this after every finished turn
         link [--agent AGENT] KEY_OR_URL
                                     bind this (or another) session to a Linear or GitHub issue
 
@@ -92,7 +93,7 @@ module AgentBoard
       when 'dispatch' then gated('dispatch') { dispatch }
       when 'chief' then chief
       when 'intake' then intake
-      when 'gen-title' then gen_title
+      when 'summarize', 'gen-title' then summarize
       when 'brief-issue' then brief_issue
       when 'seen' then seen
       when 'archive' then gated('archive') { archive }
@@ -231,22 +232,19 @@ module AgentBoard
       end
     end
 
-    # One session by id, or with --all every session that has no title yet.
-    private def gen_title
+    # One session by id, or with --all every session lacking a title or an up-to-date digest.
+    private def summarize
       targets = if @argv.delete('--all')
-                  store.sessions.select { it.title.nil? && it.title_generated.nil? && it.name != Chief::NAME }
+                  store.sessions.reject { it.name == Chief::NAME }.select do |s|
+                    s.title.nil? && s.title_generated.nil? || (s.last_report && s.last_report['digest'].nil?)
+                  end
                 else
                   [store.load(@argv.first.to_s) || find_agent(text_arg)]
                 end
-      generator = TitleGen.new(store:)
+      summarizer = Summarizer.new(store:)
       targets.each do |session|
-        title = generator.generate(session)
-        store.update(session.id) do |s|
-          s.title_generated = title if title
-          s.title_attempted_at = Time.now.iso8601
-          nil
-        end
-        puts("#{session.short_id} #{title || '(no title)'}")
+        result = summarizer.summarize(session.id) || {}
+        puts("#{session.short_id} #{result.compact.map { |k, v| "#{k}: #{v}" }.join(' | ')}")
       end
     end
 

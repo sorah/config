@@ -33,6 +33,8 @@ export type PullRequest = {
   ci: { passed: number; failed: number; pending: number };
 };
 
+export type Digest = { did: string | null; now: string | null; decide: string | null; at: string };
+
 export type Agent = {
   id: string;
   short_id: string;
@@ -53,7 +55,7 @@ export type Agent = {
   wait: { on: string; text: string } | null;
   error: string | null;
   plan: Plan | null;
-  last_report: { text: string; brief: string; at: string; source: string } | null;
+  last_report: { text: string; brief: string; at: string; source: string; digest?: Digest | null } | null;
   issue: { key: string; short: string; url: string | null; tracker: string; source: string; title: string | null } | null;
   pr: PullRequest | null;
   edited_files: number;

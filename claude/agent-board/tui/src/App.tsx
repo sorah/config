@@ -10,7 +10,7 @@ import { AgentDetail, detailHeight } from "./components/AgentDetail.tsx";
 
 type Item = { kind: "group"; group: Group } | { kind: "agent"; agent: Agent };
 
-const CHROME_ROWS = 3;
+const CHROME_ROWS = 2;
 
 function summary(snapshot: Snapshot): string {
   const c = snapshot.counts;
@@ -62,12 +62,21 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
   const [message, setMessage] = useState<string | null>(null);
   const [pendingArchive, setPendingArchive] = useState<Agent | null>(null);
   const [lastArchived, setLastArchived] = useState<Agent | null>(null);
-  const topRef = useRef(0);
+  const [scroll, setScroll] = useState(0);
+  const layoutRef = useRef<{ offsets: Map<string, [number, number]>; total: number; budget: number }>({ offsets: new Map(), total: 0, budget: 0 });
 
   const groups = snapshot?.groups.filter((g) => g.agents.length > 0) ?? [];
   const agents = groups.flatMap((g) => g.agents);
   const selectedIndex = Math.max(0, agents.findIndex((a) => a.id === selectedId));
   const selected = agents[selectedIndex];
+
+  // An expanded row scrolls to the top of the screen so its details are visible.
+  useEffect(() => {
+    if (!expandedId) return;
+    const { offsets, total, budget } = layoutRef.current;
+    const span = offsets.get(expandedId);
+    if (span) setScroll(Math.max(0, Math.min(span[0], Math.max(0, total - budget))));
+  }, [expandedId, isTimelineExpanded]);
 
   const board = (args: string[], done: string) => {
     const result = spawnSync(BOARD_BIN, args, { encoding: "utf8" });
@@ -86,12 +95,35 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
       }
       return;
     }
+    const { offsets, total, budget } = layoutRef.current;
+    const clamp = (value: number) => Math.max(0, Math.min(value, Math.max(0, total - budget)));
+    // Brings an item into view: its top, or as much of it as fits.
+    const reveal = (id: string) => {
+      const span = offsets.get(id);
+      if (!span) return;
+      const [top, height] = span;
+      setScroll((current) => clamp(top < current ? top - 3 : top + Math.min(height, budget) > current + budget ? top + Math.min(height, budget) - budget : current));
+    };
     const move = (delta: number) => {
       const next = agents[Math.min(agents.length - 1, Math.max(0, selectedIndex + delta))];
-      if (next) setSelectedId(next.id);
+      if (!next) return;
+      setSelectedId(next.id);
+      reveal(next.id);
     };
-    if (input === "j" || key.downArrow) move(1);
-    else if (input === "k" || key.upArrow) move(-1);
+    // Within an item taller than the screen, j/k scroll through it before moving on.
+    const step = (delta: number) => {
+      const span = selected && offsets.get(selected.id);
+      if (span) {
+        const [top, height] = span;
+        if (delta > 0 && top + height > scroll + budget) return setScroll(clamp(scroll + 3));
+        if (delta < 0 && top < scroll) return setScroll(clamp(scroll - 3));
+      }
+      move(delta);
+    };
+    if (input === "j" || key.downArrow) step(1);
+    else if (input === "k" || key.upArrow) step(-1);
+    else if ((key.ctrl && input === "f") || key.pageDown) setScroll(clamp(scroll + budget - 2));
+    else if ((key.ctrl && input === "b") || key.pageUp) setScroll(clamp(scroll - budget + 2));
     else if (key.return && selected) {
       setExpandedId(expandedId === selected.id ? null : selected.id);
       setIsTimelineExpanded(false);
@@ -128,20 +160,18 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
     return rowHeight(item.agent) + extra;
   };
 
-  // Keeps the selected row (and its group heading when it fits) inside the viewport.
+  // Line offsets come from estimated heights; the viewport clips, so an estimate only shifts scrolling.
   const budget = rows - CHROME_ROWS;
-  const selectedItem = items.findIndex((i) => i.kind === "agent" && i.agent.id === selected?.id);
-  let top = Math.min(topRef.current, Math.max(0, selectedItem - 1));
-  const span = (from: number) => items.slice(from, selectedItem + 1).reduce((sum, i) => sum + heightOf(i), 0);
-  while (top < selectedItem && span(top) > budget) top += 1;
-  topRef.current = top;
-  const visible: Item[] = [];
-  let used = 0;
-  for (const item of items.slice(top)) {
-    used += heightOf(item);
-    if (used > budget && visible.length > 0) break;
-    visible.push(item);
+  const offsets = new Map<string, [number, number]>();
+  let total = 0;
+  for (const item of items) {
+    const height = heightOf(item);
+    if (item.kind === "agent") offsets.set(item.agent.id, [total, height]);
+    total += height;
   }
+  layoutRef.current = { offsets, total, budget };
+  const visibleScroll = Math.max(0, Math.min(scroll, Math.max(0, total - budget)));
+  const visible = items;
 
   return (
     <Box flexDirection="column" width={width}>
@@ -152,6 +182,8 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
         </Text>
         <Text color={COLORS.muted}>{`updated ${ago(snapshot.generated_at, now)} ago`}</Text>
       </Box>
+      <Box height={budget} overflow="hidden" flexDirection="column">
+      <Box flexDirection="column" marginTop={-visibleScroll} flexShrink={0}>
       {visible.map((item) =>
         item.kind === "group" ? (
           <Box key={`g-${item.group.key}`} flexDirection="column" marginTop={1}>
@@ -168,9 +200,11 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
           </Box>
         ),
       )}
-      <Box marginTop={1}>
+      </Box>
+      </Box>
+      <Box>
         <Text color={message || error ? COLORS.orange : COLORS.muted}>
-          {message ?? error ?? "j/k move · enter expand · m more · g go to pane · r resume · a archive · q quit"}
+          {message ?? error ?? "j/k move · C-f/C-b page · enter expand · m more · g go to pane · r resume · a archive · q quit"}
         </Text>
       </Box>
     </Box>

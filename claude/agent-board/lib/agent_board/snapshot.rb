@@ -103,7 +103,7 @@ module AgentBoard
       return if last_report.nil?
 
       text = Text.plain(last_report.fetch('text'))
-      last_report.merge('text' => text, 'brief' => Text.brief(text))
+      last_report.merge('text' => text, 'brief' => Text.brief(text), 'digest' => last_report['digest'])
     end
 
     # An explicit name, else the tmux session, plus the window when two agents share a session.

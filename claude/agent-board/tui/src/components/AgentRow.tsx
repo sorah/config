@@ -15,7 +15,7 @@ const ACTIVITY_LINES = 2;
 // Mirrors the line count AgentRow renders, for scrolling.
 export function rowHeight(agent: Agent): number {
   const activity = activityEvents(agent).length > 0 ? 1 : 0;
-  return 1 + (headlineLine(agent) ? 1 : 0) + (agent.plan ? 1 : 0) + (reportLine(agent) ? 1 : 0) + activity + (metaLine(agent) ? 1 : 0);
+  return 1 + (decideLine(agent) ? 1 : 0) + (headlineLine(agent) ? 1 : 0) + (agent.plan ? 1 : 0) + (reportLine(agent) ? 1 : 0) + activity + (metaLine(agent) ? 1 : 0);
 }
 
 // The question, dialog or wait, unless the title already says it.
@@ -23,7 +23,15 @@ function headlineLine(agent: Agent): string | null {
   return agent.headline && agent.headline !== agent.title && agent.headline !== agent.goal ? agent.headline : null;
 }
 
+// What the agent's last report says the user must decide, unless the headline already asks it.
+function decideLine(agent: Agent): string | null {
+  const decide = agent.last_report?.digest?.decide;
+  return decide && !["asking", "blocked"].includes(agent.status) ? decide : null;
+}
+
 function reportLine(agent: Agent): string | null {
+  const digest = agent.last_report?.digest;
+  if (digest) return [digest.did && `did: ${digest.did}`, digest.now && `now: ${digest.now}`].filter(Boolean).join("  ·  ") || null;
   const text = agent.last_report?.brief;
   return text && !agent.headline.includes(text.slice(0, 40)) ? text : null;
 }
@@ -108,6 +116,7 @@ export function AgentRow({ agent, columns, isSelected, now }: { agent: Agent; co
             </Text>
           </Box>
         )}
+        {decideLine(agent) && <Text color={COLORS.orange}>{truncate(`decide: ${decideLine(agent)}`, body)}</Text>}
         {report && <Text color={COLORS.muted}>{truncate(`↳ ${report}`, body)}</Text>}
         {activity.length > 0 && (
           <Text color={COLORS.muted}>{truncate(activity.map((e) => `${clock(e.at)} ${e.kind} ${e.text}`).join("  ·  "), body)}</Text>

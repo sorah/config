@@ -65,19 +65,16 @@ module AgentBoard
       park_pane_predecessors(id) if event == 'SessionStart'
 
       context = nil
-      generate_title = false
+      summarize = false
       session = @store.update(id, now: @now) do |s|
         events = State.new(lookup: @lookup).apply(s, payload, now: @now)
-        if event == 'Stop' && s.title.nil? && s.title_attempted_at.nil? && s.name != Snapshot::CHIEF_NAME
-          s.title_attempted_at = @now.iso8601
-          generate_title = true
-        end
+        summarize = event == 'Stop' && s.name != Snapshot::CHIEF_NAME && (s.last_report || s.title.nil?)
         events.concat(enrich(s, payload)) if %w[SessionStart PostToolUse].include?(event)
         context = context_for(s, event)
         events
       end
       write_env_file(session) if event == 'SessionStart'
-      TitleGen.spawn(id) if generate_title
+      Summarizer.spawn(id) if summarize
       if event == 'UserPromptSubmit'
         if session.name == Snapshot::CHIEF_NAME
           Presence.record(@store, @now) if Presence.user_prompt?(payload['prompt'])

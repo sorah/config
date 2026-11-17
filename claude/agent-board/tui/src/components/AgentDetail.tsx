@@ -59,7 +59,15 @@ function ReportSection({ agent, isExpanded }: { agent: Agent; isExpanded: boolea
   return (
     <Box flexDirection="column">
       <Heading>{`LAST REPORT · ${clock(report.at)}`}</Heading>
-      <Text>{isExpanded ? report.text : report.brief}</Text>
+      {isExpanded || !report.digest ? (
+        <Text>{isExpanded ? report.text : report.brief}</Text>
+      ) : (
+        <>
+          {report.digest.did && <Text>{`did: ${report.digest.did}`}</Text>}
+          {report.digest.now && <Text>{`now: ${report.digest.now}`}</Text>}
+          {report.digest.decide && <Text color={COLORS.orange}>{`decide: ${report.digest.decide}`}</Text>}
+        </>
+      )}
       {!isExpanded && isShortened && <Text color={COLORS.muted}>m: full report</Text>}
     </Box>
   );
