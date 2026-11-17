@@ -136,6 +136,9 @@ module AgentBoard
     end
 
     private def context_for(session, event)
+      # The chief manages the board; the worker protocol and issue nudges are for the agents it watches.
+      return if session.name == Snapshot::CHIEF_NAME
+
       parts = []
       parts << File.read(File.join(ROOT, 'agent-protocol.md')).strip if event == 'SessionStart'
       if session.issue && session.issue_announced != session.issue['key']

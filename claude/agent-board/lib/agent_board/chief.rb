@@ -36,7 +36,7 @@ module AgentBoard
       resume_id = fresh ? nil : last_session_id
       claude = ['claude', '--name', NAME, '--remote-control', NAME, '--settings', SETTINGS]
       claude += ['--resume', resume_id] if resume_id
-      claude << (resume_id ? "#{COMMAND} resumed by the supervisor; re-arm your watch" : COMMAND)
+      claude << "#{COMMAND} #{resume_id ? 'resumed' : 'started'} by the supervisor; the user is not here yet"
       inner = "SORAH_AGENT_BOARD_NAME=#{NAME} exec #{claude.shelljoin}"
       # An interactive login zsh gives the chief the same PATH, mise tools and agents as a terminal.
       shell = ['zsh', '-lic', inner].shelljoin
@@ -115,7 +115,17 @@ module AgentBoard
       FileUtils.mkdir_p(@store.path('inbox', 'chief', 'read'))
     end
 
+    # One watcher at a time: each inbox message is consumed by whichever watcher reads it first.
     def once
+      lock = File.open(@store.path('chief', 'watch.lock'), File::RDWR | File::CREAT)
+      return {'error' => 'another `watch --for chief` is already running'} unless lock.flock(File::LOCK_EX | File::LOCK_NB)
+
+      wait_for_triage
+    ensure
+      lock&.close
+    end
+
+    private def wait_for_triage
       # A fresh chief reads the whole board at startup, so a missing cursor starts from the current state.
       cursor = File.exist?(@cursor_file) ? JSON.parse(File.read(@cursor_file)) : nil
       loop do

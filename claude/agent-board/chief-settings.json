@@ -17,7 +17,6 @@
       "Bash(gh issue list:*)",
       "Bash(gh search:*)",
       "Bash(gh api notifications)",
-      "Bash(gh api notifications?*)",
       "Read(~/.local/state/sorah-agent-board/**)",
       "Read(~/.claude/projects/**)",
       "Edit(~/.local/state/sorah-agent-board/chief/**)",
@@ -46,6 +45,12 @@
       "mcp__claude_ai_Slack__slack_search_channels"
     ],
     "ask": [
+      "Bash(sorah-agent-board trash:*)",
+      "Bash(sorah-agent-board untrash:*)",
+      "Bash(sorah-agent-board clear:*)",
+      "Bash(sorah-agent-board resume:*)",
+      "Bash(sorah-agent-board dispatch:*)",
+      "Bash(sorah-agent-board chief:*)",
       "Bash(gh pr comment:*)",
       "Bash(gh pr review:*)",
       "Bash(gh pr edit:*)",

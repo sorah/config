@@ -1,0 +1,62 @@
+{
+  "transcript_path": null,
+  "repo": "acme/infra",
+  "tmux_socket": null,
+  "tmux_pane": null,
+  "turn_active": false,
+  "seen": true,
+  "blockers": [],
+  "pending_tools": {},
+  "ask": null,
+  "wait": null,
+  "error": null,
+  "plan": {
+    "steps": [
+      {
+        "title": "Inventory certs",
+        "status": "done",
+        "depth": 0
+      },
+      {
+        "title": "Write renewal job",
+        "status": "done",
+        "depth": 0
+      },
+      {
+        "title": "Automate renewal cron",
+        "status": "todo",
+        "depth": 0
+      },
+      {
+        "title": "Alert on expiry",
+        "status": "todo",
+        "depth": 0
+      }
+    ],
+    "started_at": "2026-11-14T14:05:00+09:00"
+  },
+  "last_report": {
+    "text": "Renewal job works by hand; the cron wiring is next.",
+    "at": "2026-11-15T14:05:00+09:00",
+    "source": "turn"
+  },
+  "issue": {
+    "key": "OPS-61",
+    "url": null,
+    "tracker": "linear",
+    "source": "branch"
+  },
+  "issue_announced": null,
+  "pr_url": null,
+  "edited_files": [],
+  "parked_at": "2026-11-15T14:05:00+09:00",
+  "id": "33333333-cccc",
+  "name": "tls-rotation",
+  "lane": "work:tls",
+  "cwd": "/work/infra.invalid",
+  "branch": "sorah/ops-61-tls",
+  "goal": "Automate TLS certificate rotation",
+  "started_at": "2026-11-14T14:05:00+09:00",
+  "updated_at": "2026-11-15T14:05:00+09:00",
+  "status_since": "2026-11-15T14:05:00+09:00"
+}

@@ -1,6 +1,6 @@
 # Chief files
 
-All under `${XDG_STATE_HOME:-~/.local/state}/sorah-agent-board/`.
+All under `${XDG_STATE_HOME:-~/.local/state}/sorah-agent-board/` (or `$SORAH_AGENT_BOARD_HOME`).
 
 ## chief/goals.md
 
@@ -14,26 +14,32 @@ All under `${XDG_STATE_HOME:-~/.local/state}/sorah-agent-board/`.
 - [x] Review webapp#7598
 ```
 
-Check items off as the journal shows them done; ask before removing a goal.
+Check items off as the journal shows them done; ask before removing a goal. Drop sections older than two weeks.
 
-## chief/journal/YYYY-MM-DD.md
+## chief/journal/<workday>.md
 
-One line per event, oldest first, local time:
+Named by `workday` from `chief/day.json`. The workday runs 05:00 to 05:00, so late-night work stays in the same file. One line per event, oldest first, local time:
 
 ```
-09:41 gauge-fix — asked: keep old metric one release? (relayed to user)
+09:41 gauge-fix — asked: keep old metric one release? (brought to user)
 09:52 gauge-fix — user: keep one release (sent)
+10:05 brief — start
 10:30 tls-rotation — parked; next step "automate renewal cron"
 11:05 inbox — 2 review requests (webapp#7598 sam, infra#88 priya)
 ```
 
 ## chief/proposals.md
 
+Each proposal has a stable number. Never reuse or renumber: the next proposal takes the highest number ever used plus one, so "post 3" always means the same thing.
+
 ```markdown
-1. [ ] Linear WEB-420 → In Review (PR webapp#7612 ready)
+1. [x] Create issue in WEB: "Flaky integration tests in CI" (posted 11:20 on request)
 2. [ ] Comment on WEB-377: "Design agreed; implementation in #1277"
-3. [x] Create issue in WEB: "Flaky integration tests in CI" (posted 11:20 on request)
+3. [ ] Linear WEB-420 → In Review (PR webapp#7612 ready)
+4. [-] WEB-412 → Done (dropped by user)
 ```
+
+`[x]` posted, `[-]` dropped by the user. Once a day, move items that have been `[x]` or `[-]` for over a week to `chief/proposals-archive.md`, keeping their numbers.
 
 ## cache/issues/<KEY>.json
 
@@ -43,7 +49,7 @@ The filename is the issue key with `/` and `#` replaced by `_` (`WEB-420.json`, 
 {"title": "Gauge reports last sample instead of window max", "summary": "Dashboards read the gauge as a window max; it currently reports the last sample. Fix the aggregation and keep the old metric for one release."}
 ```
 
-Keep `summary` under about 600 characters: the problem, the agreed approach, and constraints. Agents receive it when they're linked to the issue.
+Agents receive `summary` cut at 600 characters, so put the problem, the agreed approach and constraints first. An agent already linked to the issue receives it only after `link --agent AGENT KEY` is run again.
 
 ## chief/day.json (written by the board)
 
