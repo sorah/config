@@ -14,6 +14,8 @@ module AgentBoard
     :name,
     :goal,
     :title,
+    :title_generated,
+    :title_attempted_at,
     :turn_active,
     :seen,
     :blockers,

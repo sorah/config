@@ -18,6 +18,7 @@ module AgentBoard
         plan STEP...                declare 3-7 steps; indent a step with two spaces to nest it
         step N done|doing|todo      update step N (1-based)
         title TEXT                  a 3-6 word title for this work, shown on the board
+        gen-title ID | --all        generate titles with a tool-less model (the hook does this after a first turn)
         link [--agent AGENT] KEY_OR_URL
                                     bind this (or another) session to a Linear or GitHub issue
 
@@ -91,6 +92,7 @@ module AgentBoard
       when 'dispatch' then gated('dispatch') { dispatch }
       when 'chief' then chief
       when 'intake' then intake
+      when 'gen-title' then gen_title
       when 'brief-issue' then brief_issue
       when 'seen' then seen
       when 'archive' then gated('archive') { archive }
@@ -226,6 +228,25 @@ module AgentBoard
           u.status_since = Time.now.iso8601
           nil
         end
+      end
+    end
+
+    # One session by id, or with --all every session that has no title yet.
+    private def gen_title
+      targets = if @argv.delete('--all')
+                  store.sessions.select { it.title.nil? && it.title_generated.nil? && it.name != Chief::NAME }
+                else
+                  [store.load(@argv.first.to_s) || find_agent(text_arg)]
+                end
+      generator = TitleGen.new(store:)
+      targets.each do |session|
+        title = generator.generate(session)
+        store.update(session.id) do |s|
+          s.title_generated = title if title
+          s.title_attempted_at = Time.now.iso8601
+          nil
+        end
+        puts("#{session.short_id} #{title || '(no title)'}")
       end
     end
 

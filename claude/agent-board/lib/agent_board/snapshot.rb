@@ -119,7 +119,7 @@ module AgentBoard
 
     # A few words for the work: the issue title, the agent's own title, or the start of its first prompt.
     private def title(session)
-      text = issue(session)&.fetch('title') || session.title || branch_words(session)
+      text = issue(session)&.fetch('title') || session.title || session.title_generated || branch_words(session)
       return if text.nil?
 
       words = text.split
