@@ -10,8 +10,7 @@
       "Bash(git status:*)",
       "Bash(git branch:*)",
       "Read(~/.local/state/sorah-agent-board/**)",
-      "Edit(~/.local/state/sorah-agent-board/chief/**)",
-      "Write(~/.local/state/sorah-agent-board/chief/**)"
+      "Edit(~/.local/state/sorah-agent-board/chief/**)"
     ],
     "ask": [
       "Bash(sorah-agent-board archive:*)",
@@ -92,9 +91,7 @@
       "Bash(ssh:*)",
       "Bash(scp:*)",
       "Bash(rsync:*)",
-      "Write(~/.local/state/sorah-agent-board/cache/**)",
       "Edit(~/.local/state/sorah-agent-board/cache/**)",
-      "Write(~/.local/state/sorah-agent-board/intake/**)",
       "Edit(~/.local/state/sorah-agent-board/intake/**)"
     ]
   },
