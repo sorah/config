@@ -65,7 +65,9 @@ function ReportSection({ agent, isExpanded }: { agent: Agent; isExpanded: boolea
         <>
           {report.digest.did && <Text>{`did: ${report.digest.did}`}</Text>}
           {report.digest.now && <Text>{`now: ${report.digest.now}`}</Text>}
-          {report.digest.decide && <Text color={COLORS.orange}>{`decide: ${report.digest.decide}`}</Text>}
+          {report.digest.decide && (
+            <Text color={["done", "idle"].includes(agent.status) ? COLORS.orange : COLORS.muted}>{`decide: ${report.digest.decide}`}</Text>
+          )}
         </>
       )}
       {!isExpanded && isShortened && <Text color={COLORS.muted}>m: full report</Text>}

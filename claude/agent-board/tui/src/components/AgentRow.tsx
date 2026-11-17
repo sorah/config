@@ -23,10 +23,11 @@ function headlineLine(agent: Agent): string | null {
   return agent.headline && agent.headline !== agent.title && agent.headline !== agent.goal ? agent.headline : null;
 }
 
-// What the agent's last report says the user must decide, unless the headline already asks it.
+// What the agent's last report says the user must decide. Only once its turn has ended: while it
+// works, the decision is usually answered already or being handled.
 function decideLine(agent: Agent): string | null {
   const decide = agent.last_report?.digest?.decide;
-  return decide && !["asking", "blocked"].includes(agent.status) ? decide : null;
+  return decide && ["done", "idle"].includes(agent.status) ? decide : null;
 }
 
 function reportLine(agent: Agent): string | null {
