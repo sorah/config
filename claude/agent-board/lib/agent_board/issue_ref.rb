@@ -47,6 +47,26 @@ module AgentBoard
       {'key' => "#{repo}##{number}", 'url' => "https://github.com/#{repo}/#{kind}/#{number}", 'tracker' => 'github'}
     end
 
+    PINNED_SOURCES = %w[explicit dispatch chief].freeze
+
+    # Records a reference on the session and returns a link event when it becomes the primary issue.
+    # Linear wins over GitHub, and a reference the user or chief chose is not replaced automatically.
+    def self.attach(session, ref, source:, now:)
+      return if ref.nil?
+
+      entry = ref.merge('source' => source, 'at' => now.iso8601)
+      session.refs ||= []
+      session.refs << entry unless session.refs.any? { it['key'] == entry['key'] }
+      current = session.issue
+      pinned = PINNED_SOURCES.include?(source)
+      replace = current.nil? || pinned ||
+                (!PINNED_SOURCES.include?(current['source']) && current['tracker'] != 'linear' && entry['tracker'] == 'linear')
+      return unless replace && current&.fetch('key') != entry['key']
+
+      session.issue = entry
+      {'at' => now.iso8601, 'kind' => 'link', 'text' => "Linked to #{entry.fetch('key')} (#{source})"}
+    end
+
     # Accepts what a user or agent passes to `link`: a URL, a Linear key, or owner/repo#N.
     def self.parse_explicit(arg)
       from_text(arg) ||

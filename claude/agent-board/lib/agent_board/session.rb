@@ -24,6 +24,7 @@ module AgentBoard
     :plan,
     :last_report,
     :issue,
+    :refs,
     :issue_announced,
     :pr_url,
     :edited_files,

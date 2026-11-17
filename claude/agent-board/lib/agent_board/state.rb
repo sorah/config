@@ -190,12 +190,8 @@ module AgentBoard
       session.blockers.reject! { it['tool_use_id'] == id }
     end
 
-    # Links only an untracked session; an explicit `link` command overrides through Store directly.
     private def link(ref, source:)
-      return if ref.nil? || session.issue
-
-      session.issue = ref.merge('source' => source, 'at' => @now.iso8601)
-      event('link', "Linked to #{ref.fetch('key')} (#{source})")
+      IssueRef.attach(session, ref, source:, now: @now)&.then { @events << it }
     end
 
     private def event(kind, text)

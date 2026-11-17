@@ -28,6 +28,7 @@ module AgentBoard
       chief, agents = sessions.partition { it.name == CHIEF_NAME }
       @labels = labels(agents)
       prs = @pull_requests ? PullRequests.new(store: @store, now: @now).for_sessions(agents) : {}
+      @titles = @pull_requests ? PullRequests.new(store: @store, now: @now).issue_titles(agents) : {}
       groups = GROUPS.map do |key, title, statuses|
         members = agents.select { statuses.include?(it.status) }
         {'key' => key, 'title' => title, 'agents' => sort(key, members).map { Text.deep_clean(agent(it, prs[it.id])) }}
@@ -89,13 +90,20 @@ module AgentBoard
         'wait' => session.wait,
         'error' => session.error,
         'plan' => plan(session.plan),
-        'last_report' => session.last_report,
-        'issue' => issue(session.issue),
+        'last_report' => report(session.last_report),
+        'issue' => issue(session),
         'pr' => pr,
         'edited_files' => session.edited_files.size,
         'timeline' => @store.timeline(session.id, limit: @timeline_limit),
         'tmux' => {'socket' => session.tmux_socket, 'pane' => session.tmux_pane},
       }
+    end
+
+    private def report(last_report)
+      return if last_report.nil?
+
+      text = Text.plain(last_report.fetch('text'))
+      last_report.merge('text' => text, 'brief' => Text.brief(text))
     end
 
     # An explicit name, else the tmux session, plus the window when two agents share a session.
@@ -111,8 +119,7 @@ module AgentBoard
 
     # A few words for the work: the issue title, the agent's own title, or the start of its first prompt.
     private def title(session)
-      issue_title = session.issue && issue(session.issue)&.fetch('title')
-      text = issue_title || session.title || session.goal
+      text = issue(session)&.fetch('title') || session.title || branch_words(session)
       return if text.nil?
 
       words = text.split
@@ -144,12 +151,36 @@ module AgentBoard
       plan.merge('done' => steps.count { it.fetch('status') == 'done' }, 'total' => steps.size)
     end
 
-    private def issue(issue)
+    # Issue title from the chief's brief, else the GitHub title fetched by code.
+    private def issue(session)
+      issue = session.issue
       return if issue.nil?
 
-      cached = @store.path('cache', 'issues', "#{issue.fetch('key').tr('/#', '__')}.json")
+      key = issue.fetch('key')
+      cached = @store.path('cache', 'issues', "#{key.tr('/#', '__')}.json")
       title = File.exist?(cached) ? JSON.parse(File.read(cached))['title'] : nil
-      issue.slice('key', 'url', 'tracker', 'source').merge('title' => title)
+      title ||= @titles&.fetch(key, nil)
+      others = Array(session.refs).map { it['key'] }.reject { it == key }
+      short = [short_key(key), *others.first(1).map { short_key(it) }].join(' ')
+      issue.slice('key', 'url', 'tracker', 'source').merge('title' => title, 'short' => short, 'related' => others)
+    end
+
+    # owner/repo#N is too long for a column, and a bare #N is ambiguous, so repo#N.
+    private def short_key(key)
+      return key unless (m = key.match(%r{\A[^/]+/([^#]+)#(\d+)\z}))
+
+      "#{m[1]}##{m[2]}"
+    end
+
+    BRANCH_NOISE = %r{\A(?:[^/]+/)?(?:[a-z][a-z0-9]{0,9}-\d+-|\d+-)?}
+
+    # sorah/web-420-fix-gauge-window -> "fix gauge window"
+    private def branch_words(session)
+      branch = session.branch
+      return if branch.nil? || %w[main master develop].include?(branch)
+
+      words = branch.sub(BRANCH_NOISE, '').tr('-_/', '   ').strip
+      words.empty? ? nil : words
     end
   end
 end

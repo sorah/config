@@ -100,10 +100,8 @@ module AgentBoard
       end
 
       session.branch = Git.branch(session.cwd)
-      if session.issue.nil? && (ref = IssueRef.from_branch(session.branch, repo: session.repo, team_keys: @lookup.team_keys))
-        session.issue = ref.merge('source' => 'branch', 'at' => @now.iso8601)
-        events << {'at' => @now.iso8601, 'kind' => 'link', 'text' => "Linked to #{ref.fetch('key')} (branch)"}
-      end
+      ref = IssueRef.from_branch(session.branch, repo: session.repo, team_keys: @lookup.team_keys)
+      IssueRef.attach(session, ref, source: 'branch', now: @now)&.then { events << it }
       events
     end
 
@@ -119,7 +117,7 @@ module AgentBoard
       session.name = brief['name'] if brief['name']
       session.goal = brief['goal'] if brief['goal']
       if (ref = brief['issue'] && IssueRef.parse_explicit(brief['issue']))
-        session.issue = ref.merge('source' => 'dispatch', 'at' => @now.iso8601)
+        IssueRef.attach(session, ref, source: 'dispatch', now: @now)
       end
       File.delete(file)
       [{'at' => @now.iso8601, 'kind' => 'dispatch', 'text' => "Dispatched: #{session.goal}"}]

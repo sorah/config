@@ -180,9 +180,9 @@ module AgentBoard
       id = agent ? find_agent(agent).id : self_session_id
       store.update(id) do |s|
         now = Time.now
-        s.issue = ref.merge('source' => agent ? 'chief' : 'explicit', 'at' => now.iso8601)
+        linked = IssueRef.attach(s, ref, source: agent ? 'chief' : 'explicit', now:)
         s.issue_announced = agent ? nil : ref.fetch('key')
-        [event(now, 'link', "Linked to #{ref.fetch('key')}")]
+        [linked].compact
       end
       puts('ok')
     end

@@ -53,8 +53,8 @@ export type Agent = {
   wait: { on: string; text: string } | null;
   error: string | null;
   plan: Plan | null;
-  last_report: { text: string; at: string; source: string } | null;
-  issue: { key: string; url: string | null; tracker: string; source: string; title: string | null } | null;
+  last_report: { text: string; brief: string; at: string; source: string } | null;
+  issue: { key: string; short: string; url: string | null; tracker: string; source: string; title: string | null } | null;
   pr: PullRequest | null;
   edited_files: number;
   timeline: TimelineEvent[];

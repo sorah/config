@@ -11,7 +11,8 @@ const STEP_COLORS = { done: COLORS.green, doing: COLORS.blue, todo: COLORS.muted
 
 export function detailHeight(agent: Agent, isWide: boolean, isTimelineExpanded: boolean): number {
   const plan = agent.plan ? agent.plan.steps.length + 2 : 0;
-  const report = agent.last_report ? Math.ceil(agent.last_report.text.length / 60) + 2 : 0;
+  const reportText = agent.last_report ? (isTimelineExpanded ? agent.last_report.text : agent.last_report.brief) : "";
+  const report = agent.last_report ? Math.ceil(reportText.length / 60) + reportText.split("\n").length + 2 : 0;
   const timeline = Math.min(agent.timeline.length, isTimelineExpanded ? agent.timeline.length : TIMELINE_ROWS) + 2;
   const facts = 7;
   return (isWide ? Math.max(plan + report, timeline + facts) : plan + report + timeline + facts) + 1;
@@ -51,13 +52,15 @@ function PlanSection({ agent, now }: { agent: Agent; now: Date }) {
   );
 }
 
-function ReportSection({ agent }: { agent: Agent }) {
+function ReportSection({ agent, isExpanded }: { agent: Agent; isExpanded: boolean }) {
   const report = agent.last_report;
   if (!report) return null;
+  const isShortened = report.brief !== report.text.replace(/\s+/g, " ").trim();
   return (
     <Box flexDirection="column">
       <Heading>{`LAST REPORT · ${clock(report.at)}`}</Heading>
-      <Text>{report.text}</Text>
+      <Text>{isExpanded ? report.text : report.brief}</Text>
+      {!isExpanded && isShortened && <Text color={COLORS.muted}>m: full report</Text>}
     </Box>
   );
 }
@@ -122,7 +125,7 @@ export function AgentDetail({ agent, width, now, isTimelineExpanded }: { agent: 
   const left = (
     <Box flexDirection="column" width={isWide ? width - right - 6 : width - 4}>
       <PlanSection agent={agent} now={now} />
-      <ReportSection agent={agent} />
+      <ReportSection agent={agent} isExpanded={isTimelineExpanded} />
     </Box>
   );
   const side = (

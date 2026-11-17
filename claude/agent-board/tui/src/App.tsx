@@ -170,7 +170,7 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
       )}
       <Box marginTop={1}>
         <Text color={message || error ? COLORS.orange : COLORS.muted}>
-          {message ?? error ?? "j/k move · enter expand · m more timeline · g go to pane · r resume · a archive · q quit"}
+          {message ?? error ?? "j/k move · enter expand · m more · g go to pane · r resume · a archive · q quit"}
         </Text>
       </Box>
     </Box>

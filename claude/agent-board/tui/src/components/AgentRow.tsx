@@ -8,7 +8,7 @@ export type Columns = { label: number; issue: number; title: number; links: numb
 
 export function columnsFor(width: number): Columns {
   const label = 22;
-  const issue = 11;
+  const issue = 24;
   const right = 9;
   const links = Math.min(28, Math.max(16, Math.floor(width * 0.2)));
   const title = Math.max(10, width - label - issue - links - right - 2);
@@ -26,7 +26,7 @@ function headlineLine(agent: Agent): string | null {
 }
 
 function reportLine(agent: Agent): string | null {
-  const text = agent.last_report?.text;
+  const text = agent.last_report?.brief;
   return text && !agent.headline.includes(text.slice(0, 40)) ? text : null;
 }
 
@@ -68,7 +68,7 @@ export function AgentRow({ agent, columns, isSelected, now }: { agent: Agent; co
           </Text>
         </Box>
         <Box width={columns.issue}>
-          <Text color={COLORS.blue}>{agent.issue ? truncate(agent.issue.key, columns.issue - 1) : ""}</Text>
+          <Text color={COLORS.blue}>{agent.issue ? truncate(agent.issue.short, columns.issue - 1) : ""}</Text>
         </Box>
         <Box width={columns.title}>
           <Text bold color={textColor}>

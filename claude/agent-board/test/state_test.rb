@@ -153,4 +153,29 @@ class StateTest < Minitest::Test
 
     assert_empty events
   end
+
+  def test_linear_issue_replaces_an_automatically_found_github_ref
+    s = new_session
+    apply(s, 'PostToolUse', tool_name: 'Bash', tool_input: {'command' => 'gh pr create --fill'}, tool_use_id: 't',
+                            tool_response: {'stdout' => "https://github.com/o/r/pull/9\n"})
+    AgentBoard::IssueRef.attach(s, AgentBoard::IssueRef.linear('WEB-7'), source: 'branch', now: NOW)
+
+    assert_equal 'WEB-7', s.issue.fetch('key')
+    assert_equal %w[o/r#9 WEB-7], s.refs.map { it.fetch('key') }
+  end
+
+  def test_explicit_link_is_not_replaced_by_a_detected_linear_key
+    s = new_session
+    AgentBoard::IssueRef.attach(s, AgentBoard::IssueRef.github('o/r', 3, kind: 'issues'), source: 'explicit', now: NOW)
+    AgentBoard::IssueRef.attach(s, AgentBoard::IssueRef.linear('WEB-7'), source: 'branch', now: NOW)
+
+    assert_equal 'o/r#3', s.issue.fetch('key')
+  end
+
+  def test_plain_drops_markdown_and_brief_keeps_the_opening
+    text = AgentBoard::Text.plain("**Done.** Fixed `gauge` in [app.rb](x).\n\n## Next\n- run tests")
+
+    assert_equal "Done. Fixed gauge in app.rb.\n\nNext\nrun tests", text
+    assert_equal 'Done. Fixed gauge in app.rb.', AgentBoard::Text.brief(text)
+  end
 end

@@ -17,6 +17,30 @@ module AgentBoard
       max && text.length > max ? "#{text[0, max - 1]}…" : text
     end
 
+    # Markdown from agents' turn summaries reduced to readable plain text.
+    def self.plain(markdown)
+      markdown.to_s
+        .gsub(/```.*?```/m, ' ')
+        .gsub(/!?\[([^\]]*)\]\([^)]*\)/, '\\1')
+        .gsub(/^[ \t]{0,3}(?:#+|>|[-*+]|\d+[.)])[ \t]+/, '')
+        .gsub(/(\*\*|__|\*|_|`|~~)(?=\S)(.+?)(?<=\S)\1/, '\\2')
+        .gsub(/^[ \t]*\|?(?:[ \t]*:?-{3,}:?[ \t]*\|)+[ \t]*$/, '')
+        .gsub(/\|/, ' ')
+        .gsub(/[ \t]+/, ' ')
+        .lines.map(&:strip).join("\n")
+        .gsub(/\n{3,}/, "\n\n")
+        .strip
+    end
+
+    # The first sentence or two of plain text, for one-line displays.
+    def self.brief(text, max: 200)
+      flat = text.to_s.gsub(/\s+/, ' ').strip
+      sentences = flat.scan(/.+?(?:[.!?](?=\s|\z)|\z)/).map(&:strip)
+      out = sentences.first.to_s
+      out = "#{out} #{sentences[1]}" if sentences[1] && (out.length + sentences[1].length) < max
+      clean(out, max:)
+    end
+
     # Applies clean to every string in a JSON-like structure.
     def self.deep_clean(value)
       case value

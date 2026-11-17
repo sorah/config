@@ -23,6 +23,28 @@ module AgentBoard
       threads.transform_values(&:value)
     end
 
+    # Titles of linked GitHub issues and PRs, keyed by issue key. Titles change rarely, so a day's cache.
+    def issue_titles(sessions)
+      keys = sessions.filter_map { it.issue&.fetch('key') }.uniq.select { it.match?(%r{\A[\w.-]+/[\w.-]+#\d+\z}) }
+      threads = keys.to_h { |key| [key, Thread.new { issue_title(key) }] }
+      threads.transform_values(&:value).compact
+    end
+
+    TITLE_TTL = 86_400
+
+    private def issue_title(key)
+      repo, number = key.split('#')
+      cache = @store.path('cache', 'pr', "title-#{Digest::SHA256.hexdigest(key)}.json")
+      return JSON.parse(File.read(cache))['title'] if File.exist?(cache) && @now - File.mtime(cache) < TITLE_TTL
+
+      out, status = Open3.capture2('gh', 'api', "repos/#{repo}/issues/#{number}", '--jq', '.title', err: File::NULL)
+      title = status.success? ? Text.clean(out, max: 120, single_line: true) : nil
+      @store.write_atomically(cache, JSON.generate({'title' => title}))
+      title
+    rescue Errno::ENOENT
+      nil
+    end
+
     private def fetch(session)
       ref = session.pr_url || session.branch
       cache = @store.path('cache', 'pr', "#{Digest::SHA256.hexdigest("#{session.cwd}\0#{ref}")}.json")
