@@ -1,7 +1,7 @@
 import { Box, Text } from "ink";
-import type { Agent } from "../snapshot.ts";
+import type { Agent, TimelineEvent } from "../snapshot.ts";
 import { COLORS, STATUS_COLORS } from "../theme.ts";
-import { ago, prLabel, prRef, truncate } from "../format.ts";
+import { ago, clock, prLabel, prRef, truncate } from "../format.ts";
 import { ProgressBar } from "./ProgressBar.tsx";
 
 export type Columns = { name: number; headline: number; links: number; right: number };
@@ -15,7 +15,17 @@ export function columnsFor(width: number): Columns {
 
 // Mirrors the line count AgentRow renders, for scrolling.
 export function rowHeight(agent: Agent): number {
-  return 1 + (secondLine(agent) || agent.issue ? 1 : 0) + (agent.plan ? 1 : 0);
+  return 1 + (secondLine(agent) || agent.issue ? 1 : 0) + (agent.plan ? 1 : 0) + (reportLine(agent) ? 1 : 0) + (activityLine(agent) ? 1 : 0);
+}
+
+function reportLine(agent: Agent): string | null {
+  const text = agent.last_report?.text;
+  return text && !agent.headline.includes(text.slice(0, 40)) ? text : null;
+}
+
+// The newest timeline event that adds something beyond the prompt and the report line.
+function activityLine(agent: Agent): TimelineEvent | null {
+  return agent.timeline.find((e) => !["prompt", "summary", "report"].includes(e.kind)) ?? null;
 }
 
 function secondLine(agent: Agent): string | null {
@@ -29,6 +39,8 @@ function rightLabel(agent: Agent, now: Date): string {
 
 export function AgentRow({ agent, columns, isSelected, now }: { agent: Agent; columns: Columns; isSelected: boolean; now: Date }) {
   const goal = secondLine(agent);
+  const report = reportLine(agent);
+  const activity = activityLine(agent);
   const label = agent.pr ? prLabel(agent.pr) : null;
   const isParked = agent.status === "parked";
   const headlineColor = isParked ? COLORS.muted : COLORS.text;
@@ -77,6 +89,18 @@ export function AgentRow({ agent, columns, isSelected, now }: { agent: Agent; co
             {" "}
             {agent.plan.done}/{agent.plan.total}
           </Text>
+        </Box>
+      )}
+      {report && (
+        <Box>
+          <Box width={columns.name} />
+          <Text color={COLORS.muted}>{truncate(`↳ ${report}`, columns.headline + columns.links - 1)}</Text>
+        </Box>
+      )}
+      {activity && (
+        <Box>
+          <Box width={columns.name} />
+          <Text color={COLORS.muted}>{truncate(`${clock(activity.at)} ${activity.kind} ${activity.text}`, columns.headline + columns.links - 1)}</Text>
         </Box>
       )}
     </Box>

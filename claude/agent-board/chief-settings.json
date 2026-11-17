@@ -45,8 +45,8 @@
       "mcp__claude_ai_Slack__slack_search_channels"
     ],
     "ask": [
-      "Bash(sorah-agent-board trash:*)",
-      "Bash(sorah-agent-board untrash:*)",
+      "Bash(sorah-agent-board archive:*)",
+      "Bash(sorah-agent-board unarchive:*)",
       "Bash(sorah-agent-board clear:*)",
       "Bash(sorah-agent-board resume:*)",
       "Bash(sorah-agent-board dispatch:*)",

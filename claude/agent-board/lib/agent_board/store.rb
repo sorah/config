@@ -15,7 +15,7 @@ module AgentBoard
     def initialize(root: self.class.default_root)
       @root = root
       File.umask(0o077)
-      %w[sessions events locks trash cache inbox].each { FileUtils.mkdir_p(path(it)) }
+      %w[sessions events locks archive cache inbox].each { FileUtils.mkdir_p(path(it)) }
     end
 
     attr_reader :root
@@ -68,18 +68,18 @@ module AgentBoard
       end.reverse
     end
 
-    def trash(id)
-      FileUtils.mv(path('sessions', "#{id}.json"), path('trash', "#{id}.json"))
-      move_if_exists(path('events', "#{id}.jsonl"), path('trash', "#{id}.jsonl"))
+    def archive(id)
+      FileUtils.mv(path('sessions', "#{id}.json"), path('archive', "#{id}.json"))
+      move_if_exists(path('events', "#{id}.jsonl"), path('archive', "#{id}.jsonl"))
     end
 
-    def untrash(id)
-      FileUtils.mv(path('trash', "#{id}.json"), path('sessions', "#{id}.json"))
-      move_if_exists(path('trash', "#{id}.jsonl"), path('events', "#{id}.jsonl"))
+    def unarchive(id)
+      FileUtils.mv(path('archive', "#{id}.json"), path('sessions', "#{id}.json"))
+      move_if_exists(path('archive', "#{id}.jsonl"), path('events', "#{id}.jsonl"))
     end
 
-    def trashed_ids
-      Dir[path('trash', '*.json')].map { File.basename(it, '.json') }
+    def archived_ids
+      Dir[path('archive', '*.json')].map { File.basename(it, '.json') }
     end
 
     # Newest mtime across everything a viewer renders, used by `watch` to detect changes.
@@ -88,7 +88,7 @@ module AgentBoard
       [files.size, files.filter_map { mtime(it) }.max || 0.0]
     end
 
-    # Files can vanish between the glob and the stat (atomic renames, trash).
+    # Files can vanish between the glob and the stat (atomic renames, archiving).
     private def mtime(file)
       File.mtime(file).to_f
     rescue Errno::ENOENT

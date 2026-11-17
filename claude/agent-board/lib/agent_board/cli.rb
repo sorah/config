@@ -39,7 +39,8 @@ module AgentBoard
         watch [--json]              block until something changes; --json streams snapshots
         seen --socket S --pane P    mark a finished turn as seen
         tui                         interactive board (Bun); --fixture FILE renders a saved snapshot
-        trash AGENT | untrash AGENT move a session to or from the trash
+        archive AGENT | unarchive AGENT
+                                    put a session away (or back); nothing is archived automatically
         hook                        Claude Code hook entry point (reads the payload on stdin)
     USAGE
 
@@ -76,8 +77,8 @@ module AgentBoard
       when 'dispatch' then dispatch
       when 'chief' then chief
       when 'seen' then seen
-      when 'trash' then store.trash(find_agent(text_arg).id)
-      when 'untrash' then untrash
+      when 'archive' then archive
+      when 'unarchive' then unarchive
       when 'tui' then tui
       when nil, 'help', '-h', '--help' then puts(USAGE)
       else raise Error, "unknown command: #{@command}\n#{USAGE}"
@@ -309,12 +310,19 @@ module AgentBoard
         end.first
     end
 
-    private def untrash
-      query = text_arg
-      ids = store.trashed_ids.select { it.start_with?(query) }
-      raise Error, "untrash: #{ids.empty? ? 'no' : 'ambiguous'} trashed session matching #{query}" unless ids.size == 1
+    private def archive
+      session = find_agent(text_arg)
+      store.archive(session.id)
+      puts("archived #{session.display_name} (#{session.short_id})")
+    end
 
-      store.untrash(ids.first)
+    private def unarchive
+      query = text_arg
+      ids = store.archived_ids.select { it.start_with?(query) }
+      raise Error, "unarchive: #{ids.empty? ? 'no' : 'ambiguous'} archived session matching #{query}" unless ids.size == 1
+
+      store.unarchive(ids.first)
+      puts("unarchived #{ids.first[0, 8]}")
     end
 
     private def find_agent(query)

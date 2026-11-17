@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import type { Agent, Group, Snapshot } from "./snapshot.ts";
 import { COLORS, GROUP_COLORS } from "./theme.ts";
 import { ago } from "./format.ts";
-import { useSnapshots, type SnapshotSource } from "./useSnapshots.ts";
+import { spawnSync } from "node:child_process";
+import { BOARD_BIN, useSnapshots, type SnapshotSource } from "./useSnapshots.ts";
 import { AgentRow, columnsFor, rowHeight } from "./components/AgentRow.tsx";
 import { AgentDetail, detailHeight } from "./components/AgentDetail.tsx";
 
@@ -59,6 +60,8 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isTimelineExpanded, setIsTimelineExpanded] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [pendingArchive, setPendingArchive] = useState<Agent | null>(null);
+  const [lastArchived, setLastArchived] = useState<Agent | null>(null);
   const topRef = useRef(0);
 
   const groups = snapshot?.groups.filter((g) => g.agents.length > 0) ?? [];
@@ -66,8 +69,23 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
   const selectedIndex = Math.max(0, agents.findIndex((a) => a.id === selectedId));
   const selected = agents[selectedIndex];
 
+  const board = (args: string[], done: string) => {
+    const result = spawnSync(BOARD_BIN, args, { encoding: "utf8" });
+    setMessage(result.status === 0 ? done : (result.stderr || `${args[0]} failed`).trim());
+    return result.status === 0;
+  };
+
   useInput((input, key) => {
     setMessage(null);
+    if (pendingArchive) {
+      setPendingArchive(null);
+      if (input === "y" && board(["archive", pendingArchive.id], `Archived ${pendingArchive.name}. u: undo`)) {
+        setLastArchived(pendingArchive);
+      } else if (input !== "y") {
+        setMessage("Not archived.");
+      }
+      return;
+    }
     const move = (delta: number) => {
       const next = agents[Math.min(agents.length - 1, Math.max(0, selectedIndex + delta))];
       if (next) setSelectedId(next.id);
@@ -86,6 +104,14 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
         onJump(selected);
         exit();
       }
+    } else if (input === "a" && selected) {
+      setPendingArchive(selected);
+      setMessage(`Archive ${selected.name}? It leaves the board until unarchived. y: archive, any other key: cancel`);
+    } else if (input === "u" && lastArchived) {
+      if (board(["unarchive", lastArchived.id], `Restored ${lastArchived.name}.`)) setLastArchived(null);
+    } else if (input === "r" && selected) {
+      if (selected.status !== "parked") setMessage("Only parked agents can be resumed.");
+      else board(["resume", selected.id], `Resumed ${selected.name} in a new tmux window.`);
     } else if (input === "q" || key.escape) exit();
   });
 
@@ -144,7 +170,7 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
       )}
       <Box marginTop={1}>
         <Text color={message || error ? COLORS.orange : COLORS.muted}>
-          {message ?? error ?? "j/k move · enter expand · m more timeline · g go to pane · q quit"}
+          {message ?? error ?? "j/k move · enter expand · m more timeline · g go to pane · r resume · a archive · q quit"}
         </Text>
       </Box>
     </Box>

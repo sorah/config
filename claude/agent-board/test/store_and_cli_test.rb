@@ -28,14 +28,14 @@ class StoreAndCliTest < Minitest::Test
     assert_raises(ArgumentError) { @store.load('../etc') }
   end
 
-  def test_trash_round_trip
+  def test_archive_round_trip
     @store.update('sess-1', now: NOW) { nil }
-    @store.trash('sess-1')
+    @store.archive('sess-1')
 
     assert_empty @store.sessions
-    assert_equal ['sess-1'], @store.trashed_ids
+    assert_equal ['sess-1'], @store.archived_ids
 
-    @store.untrash('sess-1')
+    @store.unarchive('sess-1')
 
     assert_equal ['sess-1'], @store.sessions.map(&:id)
   end
