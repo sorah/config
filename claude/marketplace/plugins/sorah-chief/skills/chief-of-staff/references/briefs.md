@@ -12,7 +12,7 @@ A brief replaces the user's need to reconstruct their day. Lead with the decisio
 
 ## Format
 
-Use the full template from `report.md`, with the optional `Focus` line from today's calendar first. A start brief uses every non-empty section.
+Use the full template from `report.md`, with the optional `Focus` line first, taken from the `intake` calendar records for today. A start brief uses every non-empty section.
 
 If `goals.md` has nothing for today, use `GOALS   none set · proposing: …` with two or three goals taken from what's in flight, and ask the user to confirm. Don't invent work.
 

@@ -29,7 +29,7 @@ module AgentBoard
       prs = @pull_requests ? PullRequests.new(store: @store, now: @now).for_sessions(agents) : {}
       groups = GROUPS.map do |key, title, statuses|
         members = agents.select { statuses.include?(it.status) }
-        {'key' => key, 'title' => title, 'agents' => sort(key, members).map { agent(it, prs[it.id]) }}
+        {'key' => key, 'title' => title, 'agents' => sort(key, members).map { Text.deep_clean(agent(it, prs[it.id])) }}
       end
       {
         'generated_at' => @now.iso8601,

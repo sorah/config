@@ -168,7 +168,7 @@ module AgentBoard
 
     private def read_inbox
       Dir[@store.path('inbox', 'chief', '*.json')].sort.map do |file|
-        message = JSON.parse(File.read(file))
+        message = Text.deep_clean(JSON.parse(File.read(file)))
         FileUtils.mv(file, @store.path('inbox', 'chief', 'read', File.basename(file)))
         message
       end

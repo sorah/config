@@ -8,6 +8,7 @@ module AgentBoard
   ROOT = File.expand_path('..', __dir__)
 end
 
+require_relative 'agent_board/text'
 require_relative 'agent_board/session'
 require_relative 'agent_board/issue_ref'
 require_relative 'agent_board/state'
@@ -19,4 +20,6 @@ require_relative 'agent_board/snapshot'
 require_relative 'agent_board/watch'
 require_relative 'agent_board/relay'
 require_relative 'agent_board/chief'
+require_relative 'agent_board/presence'
+require_relative 'agent_board/intake'
 require_relative 'agent_board/cli'
