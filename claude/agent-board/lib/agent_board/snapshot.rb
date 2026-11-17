@@ -25,7 +25,9 @@ module AgentBoard
     end
 
     def to_h
-      chief, agents = sessions.partition { it.name == CHIEF_NAME }
+      chief = sessions.select { it.name == CHIEF_NAME }
+      # The chief is listed only when it needs the user; its routine turns would otherwise always show as done.
+      agents = sessions.reject { it.name == CHIEF_NAME && !chief_attention?(it) }
       @labels = labels(agents)
       prs = @pull_requests ? PullRequests.new(store: @store, now: @now).for_sessions(agents) : {}
       @titles = @pull_requests ? PullRequests.new(store: @store, now: @now).issue_titles(agents) : {}
@@ -41,9 +43,13 @@ module AgentBoard
       }
     end
 
+    CHIEF_ATTENTION = %i[blocked asking error].freeze
+
     def needs_you_count
-      sessions.count { NEEDS_YOU.include?(it.status) && it.name != CHIEF_NAME }
+      sessions.count { it.name == CHIEF_NAME ? chief_attention?(it) : NEEDS_YOU.include?(it.status) }
     end
+
+    private def chief_attention?(session) = CHIEF_ATTENTION.include?(session.status)
 
     # A pane that disappeared without SessionEnd (killed window, tmux restart) parks its session.
     private def park_vanished(sessions)

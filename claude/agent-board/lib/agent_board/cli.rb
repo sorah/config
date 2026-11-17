@@ -24,6 +24,7 @@ module AgentBoard
                                     bind this (or another) session to a Linear or GitHub issue
 
         tell chief TEXT             leave a non-blocking note for the chief of staff
+        journal TEXT                append a line to the chief's journal for the current workday
 
       Intake (quarantined reads of external content):
         intake sweep [SOURCE...]    github (parsed), linear, slack, gmail, calendar (schema-bound reader)
@@ -93,6 +94,7 @@ module AgentBoard
       when 'dispatch' then gated('dispatch') { dispatch }
       when 'chief' then chief
       when 'intake' then intake
+      when 'journal' then journal
       when 'summarize', 'gen-title' then summarize
       when 'brief-issue' then brief_issue
       when 'seen' then seen
@@ -246,6 +248,17 @@ module AgentBoard
         result = summarizer.summarize(session.id) || {}
         puts("#{session.short_id} #{result.compact.map { |k, v| "#{k}: #{v}" }.join(' | ')}")
       end
+    end
+
+    # Appends "HH:MM TEXT" to the current workday's journal (workdays run 05:00 to 05:00).
+    private def journal
+      now = Time.now
+      workday = (now - (Store::WORKDAY_START_HOUR * 3600)).strftime('%F')
+      dir = store.path('chief', 'journal')
+      FileUtils.mkdir_p(dir)
+      line = "#{now.strftime('%H:%M')} #{Text.clean(text_arg, max: 300, single_line: true)}"
+      File.open(File.join(dir, "#{workday}.md"), 'a') { it.puts(line) }
+      puts(line)
     end
 
     private def gated(action)

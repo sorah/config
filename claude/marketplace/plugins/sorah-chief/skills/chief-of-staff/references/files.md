@@ -18,6 +18,8 @@ Check items off as the journal shows them done; ask before removing a goal. Drop
 
 ## chief/journal/<workday>.md
 
+Append only through `sorah-agent-board journal "TEXT"`; it adds the time and picks the workday file. Edit `goals.md` and `proposals.md` with the Edit/Write tools; your settings don't allow shell writes to these files.
+
 Named by `workday` from `chief/day.json`. The workday runs 05:00 to 05:00, so late-night work stays in the same file. One line per event, oldest first, local time:
 
 ```
