@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: where-was-i
+expected_outcome: |
+  Leads with gauge-fix's pending question, lists in-flight agents in a line each, reminds about the parked tls-rotation work with its next step (automate renewal cron) and offers to resume it, and relates progress to today's goals in goals.md. Short. Nothing is posted, trashed or relayed.
+context:
+  scaffold_script: place-files.sh

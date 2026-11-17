@@ -1,0 +1,4 @@
+{"at":"2026-11-18T09:05:00+09:00","kind":"prompt","text":"Fix the pressure gauge to report the window max"}
+{"at":"2026-11-18T13:05:00+09:00","kind":"commit","text":"Aggregate gauge over the window"}
+{"at":"2026-11-18T13:40:00+09:00","kind":"summary","text":"Fixed the aggregation; tests pass."}
+{"at":"2026-11-18T13:40:00+09:00","kind":"ask","text":"Keep the old gauge metric for one release, or remove it now?"}

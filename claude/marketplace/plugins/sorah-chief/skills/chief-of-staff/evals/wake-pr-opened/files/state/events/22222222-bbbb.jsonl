@@ -1,0 +1,3 @@
+{"at":"2026-11-17T13:05:00+09:00","kind":"prompt","text":"Implement token bucket limiter"}
+{"at":"2026-11-17T14:35:00+09:00","kind":"pr","text":"PR opened https://github.com/acme/webapp/pull/1277"}
+{"at":"2026-11-17T14:45:00+09:00","kind":"wait","text":"sam: review webapp#1277"}

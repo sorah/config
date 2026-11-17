@@ -280,6 +280,18 @@ restart_sec = "3"
 wanted_by = []
 start = false
 
+# The chief-of-staff Claude session on its own tmux server (-L sorah-chief), so
+# the default server and zshrc's auto-attach never see it.
+[bootstrap.linux.systemd.units.chief-of-staff]
+description = "Claude Code chief of staff (claude/agent-board)"
+type = "simple"
+working_directory = "{{ env.HOME }}"
+exec_start = "{{ config_root }}/bin/sorah-agent-board chief supervise"
+restart = "always"
+restart_sec = "10"
+wanted_by = []
+start = false
+
 # ----- macOS preferences ------------------------------------------------------
 #
 # Captured from this Mac on macOS 27.0 (26A5406e) in 2026-08, holding only the

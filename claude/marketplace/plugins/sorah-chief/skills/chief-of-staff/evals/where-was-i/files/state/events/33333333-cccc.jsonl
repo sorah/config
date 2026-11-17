@@ -1,0 +1,3 @@
+{"at":"2026-11-14T14:05:00+09:00","kind":"prompt","text":"Automate TLS rotation"}
+{"at":"2026-11-15T14:05:00+09:00","kind":"summary","text":"Renewal job works by hand; the cron wiring is next."}
+{"at":"2026-11-15T14:05:00+09:00","kind":"parked","text":"Session ended (exit)"}

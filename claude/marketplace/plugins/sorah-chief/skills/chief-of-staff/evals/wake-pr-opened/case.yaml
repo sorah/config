@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: wake-pr-opened
+expected_outcome: |
+  Summarizes that flaky-tests opened webapp#1293 for WEB-430, drafts the Linear move to In Review (and optionally a progress note) into chief/proposals.md instead of calling Linear, tells the user it is drafted, journals it, and re-arms the watch.
+context:
+  scaffold_script: place-files.sh

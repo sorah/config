@@ -20,6 +20,13 @@
       "description": "Reviews spec files and conducts exhaustive interview sessions to resolve ambiguities, gaps, and missing details until specs are implementation-ready.",
       "version": "0.1.3",
       "license": "CC0-1.0"
+    },
+    {
+      "name": "sorah-chief",
+      "source": "./claude/marketplace/plugins/sorah-chief",
+      "description": "Chief-of-staff operating manual for a long-running Claude session driving the tmux agent board (sorah-agent-board): keeps agents unblocked, remembers in-flight and parked work, keeps it traceable to Linear and GitHub, and triages inbound without posting on the user's behalf.",
+      "version": "0.1.0",
+      "license": "CC0-1.0"
     }
   ]
 }

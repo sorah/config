@@ -1,0 +1,37 @@
+{
+  "transcript_path": null,
+  "repo": "acme/webapp",
+  "tmux_socket": null,
+  "tmux_pane": null,
+  "turn_active": false,
+  "seen": true,
+  "blockers": [],
+  "pending_tools": {},
+  "ask": null,
+  "wait": {
+    "on": "sam",
+    "text": "review webapp#1277"
+  },
+  "error": null,
+  "plan": null,
+  "last_report": null,
+  "issue": {
+    "key": "WEB-377",
+    "url": null,
+    "tracker": "linear",
+    "source": "branch"
+  },
+  "issue_announced": null,
+  "pr_url": "https://github.com/acme/webapp/pull/1277",
+  "edited_files": [],
+  "parked_at": null,
+  "id": "22222222-bbbb",
+  "name": "rate-limiter",
+  "lane": "work:rate-limiter",
+  "cwd": "/work/webapp.invalid",
+  "branch": "sorah/web-377-rate-limit",
+  "goal": "Token-bucket rate limiter for the public API",
+  "started_at": "2026-11-17T13:05:00+09:00",
+  "updated_at": "2026-11-17T14:45:00+09:00",
+  "status_since": "2026-11-17T14:45:00+09:00"
+}

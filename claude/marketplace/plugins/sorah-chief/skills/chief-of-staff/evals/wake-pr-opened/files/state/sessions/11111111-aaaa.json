@@ -1,0 +1,67 @@
+{
+  "transcript_path": null,
+  "repo": "acme/webapp",
+  "tmux_socket": null,
+  "tmux_pane": null,
+  "turn_active": false,
+  "seen": false,
+  "blockers": [],
+  "pending_tools": {},
+  "ask": "Keep the old gauge metric for one release, or remove it now? Dashboards still read it (2 panels). I recommend keeping it one release.",
+  "wait": null,
+  "error": null,
+  "plan": {
+    "steps": [
+      {
+        "title": "Reproduce",
+        "status": "done",
+        "depth": 0
+      },
+      {
+        "title": "Write failing test",
+        "status": "done",
+        "depth": 0
+      },
+      {
+        "title": "Fix aggregation",
+        "status": "done",
+        "depth": 0
+      },
+      {
+        "title": "Decide on old metric",
+        "status": "doing",
+        "depth": 0
+      },
+      {
+        "title": "Open PR",
+        "status": "todo",
+        "depth": 0
+      }
+    ],
+    "started_at": "2026-11-18T09:05:00+09:00"
+  },
+  "last_report": {
+    "text": "Fixed the aggregation; tests pass. Need a decision on the old metric before opening the PR.",
+    "at": "2026-11-18T13:40:00+09:00",
+    "source": "turn"
+  },
+  "issue": {
+    "key": "WEB-420",
+    "url": null,
+    "tracker": "linear",
+    "source": "branch"
+  },
+  "issue_announced": null,
+  "pr_url": null,
+  "edited_files": [],
+  "parked_at": null,
+  "id": "11111111-aaaa",
+  "name": "gauge-fix",
+  "lane": "work:gauge-fix",
+  "cwd": "/work/webapp.invalid",
+  "branch": "sorah/web-420-gauge",
+  "goal": "Fix the pressure gauge to report the window max",
+  "started_at": "2026-11-18T09:05:00+09:00",
+  "updated_at": "2026-11-18T13:40:00+09:00",
+  "status_since": "2026-11-18T13:40:00+09:00"
+}

@@ -221,6 +221,8 @@ if command -v claude >/dev/null; then
   # Re-adding an existing marketplace or plugin is an error, not a no-op.
   claude plugin marketplace add "$repo" || true
   claude plugin add sorah-spec@sorah-marketplace || true
+  # Installed everywhere but enabled only by claude/agent-board/chief-settings.json.
+  claude plugin add sorah-chief@sorah-marketplace && claude plugin disable sorah-chief@sorah-marketplace || true
 fi
 
 ##### systemd ##################################################################

@@ -1,0 +1,38 @@
+{
+  "transcript_path": null,
+  "repo": "acme/webapp",
+  "tmux_socket": null,
+  "tmux_pane": null,
+  "turn_active": false,
+  "seen": false,
+  "blockers": [],
+  "pending_tools": {},
+  "ask": null,
+  "wait": null,
+  "error": null,
+  "plan": null,
+  "last_report": {
+    "text": "Opened webapp#1293: the flake was a shared tmp dir between parallel workers; each worker now gets its own. CI is green on 3 consecutive runs.",
+    "at": "2026-11-18T14:03:00+09:00",
+    "source": "turn"
+  },
+  "issue": {
+    "key": "WEB-430",
+    "url": null,
+    "tracker": "linear",
+    "source": "branch"
+  },
+  "issue_announced": null,
+  "pr_url": "https://github.com/acme/webapp/pull/1293",
+  "edited_files": [],
+  "parked_at": null,
+  "id": "44444444-dddd",
+  "name": "flaky-tests",
+  "lane": "work:flaky",
+  "cwd": "/work/webapp.invalid",
+  "branch": "sorah/web-430-flaky",
+  "goal": "Fix flaky integration tests in CI",
+  "started_at": "2026-11-18T10:45:00+09:00",
+  "updated_at": "2026-11-18T14:03:00+09:00",
+  "status_since": "2026-11-18T14:03:00+09:00"
+}

@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: wake-agent-question
+expected_outcome: |
+  Brings gauge-fix's question to the user in one compact message with context and a recommendation, without answering the agent itself, appends a journal line, and re-arms the watch.
+context:
+  scaffold_script: place-files.sh
