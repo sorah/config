@@ -4,23 +4,21 @@ import { COLORS, STATUS_COLORS } from "../theme.ts";
 import { ago, clock, prLabel, prRef, truncate } from "../format.ts";
 import { ProgressBar } from "./ProgressBar.tsx";
 
-export type Columns = { label: number; issue: number; title: number; links: number; right: number; body: number };
+export type Columns = { width: number; indent: number };
 
 export function columnsFor(width: number): Columns {
-  const label = 22;
-  const issue = 24;
-  const right = 9;
-  const links = Math.min(28, Math.max(16, Math.floor(width * 0.2)));
-  const title = Math.max(10, width - label - issue - links - right - 2);
-  return { label, issue, title, links, right, body: issue + title + links };
+  return { width, indent: 4 };
 }
+
+const ACTIVITY_LINES = 2;
 
 // Mirrors the line count AgentRow renders, for scrolling.
 export function rowHeight(agent: Agent): number {
-  return 1 + (headlineLine(agent) ? 1 : 0) + (agent.plan ? 1 : 0) + (reportLine(agent) ? 1 : 0) + (activityLine(agent) ? 1 : 0);
+  const activity = activityEvents(agent).length > 0 ? 1 : 0;
+  return 1 + (headlineLine(agent) ? 1 : 0) + (agent.plan ? 1 : 0) + (reportLine(agent) ? 1 : 0) + activity + (metaLine(agent) ? 1 : 0);
 }
 
-// The status line under the header: the question, dialog or wait, unless the title already says it.
+// The question, dialog or wait, unless the title already says it.
 function headlineLine(agent: Agent): string | null {
   return agent.headline && agent.headline !== agent.title && agent.headline !== agent.goal ? agent.headline : null;
 }
@@ -30,77 +28,92 @@ function reportLine(agent: Agent): string | null {
   return text && !agent.headline.includes(text.slice(0, 40)) ? text : null;
 }
 
-// The newest timeline event that adds something beyond the prompt and the report line.
-function activityLine(agent: Agent): TimelineEvent | null {
-  return agent.timeline.find((e) => !["prompt", "summary", "report"].includes(e.kind)) ?? null;
+// Recent events that add something beyond the prompt and the report line.
+function activityEvents(agent: Agent): TimelineEvent[] {
+  return agent.timeline.filter((e) => !["prompt", "summary", "report", "title"].includes(e.kind)).slice(0, ACTIVITY_LINES);
 }
 
-function rightLabel(agent: Agent, now: Date): string {
+function metaLine(agent: Agent): string | null {
+  const parts = [
+    agent.branch,
+    agent.cwd?.split("/").filter(Boolean).at(-1),
+    agent.edited_files > 0 ? `${agent.edited_files} files edited` : null,
+    agent.lane,
+  ].filter((p): p is string => Boolean(p));
+  return parts.length > 0 ? parts.join(" · ") : null;
+}
+
+function currentStep(agent: Agent): string | null {
+  const step = agent.plan?.steps.find((s) => s.status === "doing") ?? agent.plan?.steps.find((s) => s.status === "todo");
+  return step ? `${step.status === "doing" ? "now" : "next"}: ${step.title}` : null;
+}
+
+function ageLabel(agent: Agent, now: Date): string {
   if (agent.status === "working") return agent.stale ? "stale?" : "working";
   return ago(agent.since, now);
 }
 
-function BodyLine({ columns, color, text }: { columns: Columns; color: string; text: string }) {
-  return (
-    <Box>
-      <Box width={columns.label} />
-      <Text color={color}>{truncate(text, columns.body - 1)}</Text>
-    </Box>
-  );
+function Sep() {
+  return <Text color={COLORS.rule}> · </Text>;
 }
 
 export function AgentRow({ agent, columns, isSelected, now }: { agent: Agent; columns: Columns; isSelected: boolean; now: Date }) {
   const headline = headlineLine(agent);
   const report = reportLine(agent);
-  const activity = activityLine(agent);
-  const label = agent.pr ? prLabel(agent.pr) : null;
+  const activity = activityEvents(agent);
+  const meta = metaLine(agent);
+  const step = currentStep(agent);
+  const pr = agent.pr ? prLabel(agent.pr) : null;
   const isParked = agent.status === "parked";
   const textColor = isParked ? COLORS.muted : COLORS.text;
   const needsYou = ["blocked", "asking", "error", "done"].includes(agent.status);
+  const body = columns.width - columns.indent - 1;
   return (
-    <Box flexDirection="column">
+    <Box flexDirection="column" width={columns.width}>
       <Box>
-        <Box width={columns.label}>
+        <Text wrap="truncate-end">
           <Text color={isSelected ? COLORS.text : COLORS.rule}>{isSelected ? "› " : "  "}</Text>
           <Text color={STATUS_COLORS[agent.status]}>● </Text>
-          <Text bold={isSelected} inverse={isSelected} color={textColor}>
-            {truncate(agent.label, columns.label - 5)}
+          <Text bold inverse={isSelected} color={textColor}>
+            {agent.label}
           </Text>
-        </Box>
-        <Box width={columns.issue}>
-          <Text color={COLORS.blue}>{agent.issue ? truncate(agent.issue.short, columns.issue - 1) : ""}</Text>
-        </Box>
-        <Box width={columns.title}>
-          <Text bold color={textColor}>
-            {truncate(agent.title ?? "(untitled)", columns.title - 1)}
-          </Text>
-        </Box>
-        <Box width={columns.links}>
-          {agent.pr && label ? (
-            <Text>
-              <Text color={COLORS.blue}>{prRef(agent.pr)}</Text> <Text color={label.color}>{truncate(label.text, columns.links - prRef(agent.pr).length - 2)}</Text>
-            </Text>
-          ) : (
-            <Text color={COLORS.muted}>—</Text>
+          {agent.issue && (
+            <>
+              <Sep />
+              <Text color={COLORS.blue}>{agent.issue.short}</Text>
+            </>
           )}
-        </Box>
-        <Box width={columns.right} justifyContent="flex-end">
-          <Text color={COLORS.muted}>{rightLabel(agent, now)}</Text>
-        </Box>
-      </Box>
-      {headline && <BodyLine columns={columns} color={needsYou ? COLORS.orange : textColor} text={headline} />}
-      {agent.plan && (
-        <Box>
-          <Box width={columns.label} />
-          <ProgressBar plan={agent.plan} width={20} isBlocked={agent.status === "blocked"} />
-          <Text color={COLORS.muted}>
-            {" "}
-            {agent.plan.done}/{agent.plan.total}
+          <Sep />
+          <Text bold color={textColor}>
+            {agent.title ?? "(untitled)"}
           </Text>
-        </Box>
-      )}
-      {report && <BodyLine columns={columns} color={COLORS.muted} text={`↳ ${report}`} />}
-      {activity && <BodyLine columns={columns} color={COLORS.muted} text={`${clock(activity.at)} ${activity.kind} ${activity.text}`} />}
+          {agent.pr && pr && (
+            <>
+              <Sep />
+              <Text color={COLORS.blue}>{prRef(agent.pr)}</Text> <Text color={pr.color}>{pr.text}</Text>
+            </>
+          )}
+          <Sep />
+          <Text color={COLORS.muted}>{ageLabel(agent, now)}</Text>
+        </Text>
+      </Box>
+      <Box flexDirection="column" paddingLeft={columns.indent}>
+        {headline && <Text color={needsYou ? COLORS.orange : textColor}>{truncate(headline, body)}</Text>}
+        {agent.plan && (
+          <Box>
+            <ProgressBar plan={agent.plan} width={16} isBlocked={agent.status === "blocked"} />
+            <Text color={COLORS.muted}>
+              {` ${agent.plan.done}/${agent.plan.total}`}
+              {step ? `  ${truncate(step, body - 24)}` : ""}
+            </Text>
+          </Box>
+        )}
+        {report && <Text color={COLORS.muted}>{truncate(`↳ ${report}`, body)}</Text>}
+        {activity.length > 0 && (
+          <Text color={COLORS.muted}>{truncate(activity.map((e) => `${clock(e.at)} ${e.kind} ${e.text}`).join("  ·  "), body)}</Text>
+        )}
+        {meta && <Text color={COLORS.rule}>{truncate(meta, body)}</Text>}
+      </Box>
     </Box>
   );
 }
