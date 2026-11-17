@@ -280,8 +280,8 @@ restart_sec = "3"
 wanted_by = []
 start = false
 
-# The chief-of-staff Claude session on its own tmux server (-L sorah-chief), so
-# the default server and zshrc's auto-attach never see it.
+# Keeps the chief-of-staff Claude session (tmux session `chief`) running. It
+# only adds that session to a server the user already started, never starts one.
 [bootstrap.linux.systemd.units.chief-of-staff]
 description = "Claude Code chief of staff (claude/agent-board)"
 type = "simple"

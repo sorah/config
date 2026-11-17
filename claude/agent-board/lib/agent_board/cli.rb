@@ -38,7 +38,7 @@ module AgentBoard
                                     start a new agent in a window on the default tmux server
         watch --for chief           block until something needs triage; prints what changed as JSON
         chief ensure [--fresh]      start the chief session unless it is running
-        chief attach                attach to the chief's tmux server
+        chief attach                switch to (or attach) the chief's tmux session
         chief supervise             keep the chief running; fresh session daily at 05:00 (systemd)
 
       Viewer commands:
@@ -208,7 +208,8 @@ module AgentBoard
       end.parse!(@argv)
       raise Error, 'seen: --socket and --pane are required' if socket.nil? || pane.nil?
 
-      store.record_user_activity unless File.basename(socket) == Chief::SERVER
+      chief_pane = store.sessions.any? { it.name == Chief::NAME && it.tmux_socket == socket && it.tmux_pane == pane }
+      store.record_user_activity unless chief_pane
 
       store.sessions.each do |s|
         next unless s.tmux_socket == socket && s.tmux_pane == pane && s.status == :done

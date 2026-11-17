@@ -4,22 +4,27 @@ require 'securerandom'
 require 'shellwords'
 
 module AgentBoard
-  # Lifecycle of the chief-of-staff session, hosted on its own tmux server so the default server's
-  # attach behaviour (zsh/dot.zshrc) never sees it.
+  # Lifecycle of the chief-of-staff session: a `chief` session on the user's own tmux server. It is
+  # only ever added to a running server, so the server keeps being started by the user's login
+  # (zsh/dot.zshrc) with their environment and prefix.
   class Chief
-    SERVER = 'sorah-chief'
     SESSION = 'chief'
     NAME = Snapshot::CHIEF_NAME
-    PREFIX = 'C-q'
     SETTINGS = File.join(ROOT, 'chief-settings.json')
     COMMAND = '/sorah-chief:chief-of-staff'
+    # Without TMUX in the environment, tmux targets the default server even from inside another.
+    TMUX_ENV = {'TMUX' => nil, 'TMUX_PANE' => nil}.freeze
 
     def initialize(store:)
       @store = store
     end
 
+    def server_running?
+      tmux_ok?('list-sessions')
+    end
+
     def running?
-      out, status = Open3.capture2('tmux', '-L', SERVER, 'list-panes', '-t', SESSION, '-F', '#{pane_dead}', err: File::NULL)
+      out, status = Open3.capture2(TMUX_ENV, 'tmux', 'list-panes', '-t', "=#{SESSION}", '-F', '#{pane_dead}', err: File::NULL)
       status.success? && out.split.include?('0')
     rescue Errno::ENOENT
       false
@@ -27,8 +32,10 @@ module AgentBoard
 
     # Starts the chief when it is not running. Resumes its last session unless fresh.
     def ensure_running(fresh: false)
+      return :no_server unless server_running?
+
       if fresh
-        system('tmux', '-L', SERVER, 'kill-session', '-t', SESSION, err: File::NULL)
+        tmux_ok?('kill-session', '-t', "=#{SESSION}")
       elsif running?
         return :running
       end
@@ -41,16 +48,26 @@ module AgentBoard
       # An interactive login zsh gives the chief the same PATH, mise tools and agents as a terminal.
       shell = ['zsh', '-lic', inner].shelljoin
 
-      system('tmux', '-L', SERVER, 'kill-session', '-t', SESSION, err: File::NULL)
-      system('tmux', '-L', SERVER, '-f', File.join(Dir.home, '.tmux.conf'),
-             'new-session', '-d', '-s', SESSION, '-n', SESSION, '-c', Dir.home, shell, exception: true)
-      system('tmux', '-L', SERVER, 'set', '-g', 'prefix', PREFIX, exception: true)
-      system('tmux', '-L', SERVER, 'set', '-g', 'status-left', '#[bg=colour54,fg=white] chief ', exception: true)
+      tmux_ok?('kill-session', '-t', "=#{SESSION}")
+      system(TMUX_ENV, 'tmux', 'new-session', '-d', '-s', SESSION, '-n', SESSION, '-c', workdir, shell, exception: true)
       resume_id ? :resumed : :started
     end
 
+    # Its own folder, so trust and project settings never cover the whole home directory.
+    def workdir
+      @store.path('chief').tap { FileUtils.mkdir_p(it) }
+    end
+
     def attach
-      exec({'TMUX' => nil}, 'tmux', '-L', SERVER, 'attach-session', '-t', SESSION)
+      if ENV['TMUX']
+        exec('tmux', 'switch-client', '-t', "=#{SESSION}")
+      else
+        exec('tmux', 'attach-session', '-t', "=#{SESSION}")
+      end
+    end
+
+    private def tmux_ok?(*args)
+      system(TMUX_ENV, 'tmux', *args, out: File::NULL, err: File::NULL)
     end
 
     SUPERVISE_INTERVAL = 60
@@ -66,8 +83,10 @@ module AgentBoard
         state = File.exist?(state_file) ? JSON.parse(File.read(state_file)) : {}
         today = now.strftime('%F')
         if now.hour >= ROTATE_HOUR && state['rotated_on'] != today
-          ensure_running(fresh: true)
-          @store.write_atomically(state_file, JSON.generate(state.merge('rotated_on' => today)))
+          # Without a tmux server there is nothing to rotate yet; try again next round.
+          if ensure_running(fresh: true) != :no_server
+            @store.write_atomically(state_file, JSON.generate(state.merge('rotated_on' => today)))
+          end
         else
           ensure_running
         end
