@@ -5,6 +5,7 @@
       'Bash(rg:*)',
       'Bash(grep:*)',
       'Bash(mkdir:*)',
+      'Bash(sorah-agent-board:*)',
       'Read(~/git/config/**)',
       'Glob(~/git/config/**)',
       'Read(~/.rbenv/**/*)',
@@ -73,7 +74,39 @@
         ],
       },
     ],
-  },
+  } + std.foldl(
+    function(acc, event) acc + {
+      [event]+: [
+        {
+          _id: 'agent-board',
+          hooks: [
+            {
+              type: 'command',
+              // Errors go to a log so a broken working tree never interrupts live sessions.
+              command: 'env RBENV_VERSION= RBENV_DIR=/ ruby --disable-gems ~/git/config/bin/sorah-agent-board hook 2>>"${XDG_STATE_HOME:-$HOME/.local/state}/sorah-agent-board/hook-errors.log" || true',
+            },
+          ],
+        },
+      ],
+    },
+    [
+      'SessionStart',
+      'UserPromptSubmit',
+      'PreToolUse',
+      'PostToolUse',
+      'PostToolUseFailure',
+      'PermissionRequest',
+      'PermissionDenied',
+      'Elicitation',
+      'ElicitationResult',
+      'Notification',
+      'SubagentStart',
+      'Stop',
+      'StopFailure',
+      'SessionEnd',
+    ],
+    {},
+  ),
   preferredNotifChannel: 'terminal_bell',
   skipAutoPermissionPrompt: true,
   extraKnownMarketplaces: {

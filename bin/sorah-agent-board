@@ -1,0 +1,8 @@
+#!/usr/bin/env -S ruby --disable-gems
+# frozen_string_literal: true
+
+# Stdlib only; --disable-gems halves startup, which matters as a hook on every tool call.
+
+require_relative '../claude/agent-board/lib/agent_board'
+
+AgentBoard::CLI.run(ARGV)
