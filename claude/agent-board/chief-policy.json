@@ -1,0 +1,16 @@
+{
+  "classes": {
+    "exfil": {"absent": "deny", "present": "deny", "tainted": "deny"},
+    "store_write": {"absent": "deny", "present": "deny", "tainted": "deny"},
+    "external_read": {"absent": "deny", "present": "ask", "tainted": "ask"},
+    "external_write": {"absent": "deny", "present": "ask", "tainted": "ask"},
+    "board_gated": {"absent": "deny", "present": "allow", "tainted": "ask"},
+    "unparseable": {"absent": "deny", "present": "ask", "tainted": "ask"}
+  },
+  "exfil_commands": ["curl", "wget", "nc", "ncat", "socat", "ssh", "scp", "sftp", "rsync", "telnet"],
+  "external_read_commands": ["gh pr view", "gh pr diff", "gh pr checks", "gh pr list", "gh issue view", "gh issue list", "gh search", "gh run view", "gh release view"],
+  "external_write_commands": ["gh pr comment", "gh pr review", "gh pr edit", "gh pr merge", "gh pr close", "gh pr ready", "gh pr create", "gh issue create", "gh issue comment", "gh issue edit", "gh issue close", "gh release create", "gh repo"],
+  "external_read_tools": ["WebFetch", "WebSearch"],
+  "board_gated_subcommands": ["send", "link", "brief-issue", "dispatch", "resume", "clear", "archive", "unarchive"],
+  "store_paths": ["cache", "intake"]
+}

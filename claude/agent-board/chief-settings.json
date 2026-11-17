@@ -66,11 +66,25 @@
       "mcp__claude_ai_Slack__slack_send_message_draft",
       "mcp__claude_ai_Slack__slack_schedule_message",
       "mcp__claude_ai_Slack__slack_create_canvas",
-      "mcp__claude_ai_Slack__slack_update_canvas"
+      "mcp__claude_ai_Slack__slack_update_canvas",
+      "mcp__claude_ai_Linear__get_issue",
+      "mcp__claude_ai_Linear__list_issues",
+      "mcp__claude_ai_Linear__list_comments",
+      "mcp__claude_ai_Linear__get_notifications",
+      "mcp__claude_ai_Linear__get_project",
+      "mcp__claude_ai_Linear__list_projects",
+      "mcp__claude_ai_Linear__list_cycles",
+      "mcp__claude_ai_Linear__list_teams",
+      "mcp__claude_ai_Linear__get_document",
+      "mcp__claude_ai_Linear__list_documents",
+      "mcp__claude_ai_Linear__search_documentation",
+      "mcp__claude_ai_Linear__get_attachment",
+      "mcp__claude_ai_Linear__extract_images",
+      "mcp__claude_ai_Linear__get_diff",
+      "mcp__claude_ai_Linear__list_diffs",
+      "mcp__claude_ai_Linear__get_diff_threads"
     ],
     "deny": [
-      "WebFetch",
-      "WebSearch",
       "Bash(curl:*)",
       "Bash(wget:*)",
       "Bash(nc:*)",
@@ -78,37 +92,45 @@
       "Bash(ssh:*)",
       "Bash(scp:*)",
       "Bash(rsync:*)",
-      "Bash(gh pr view:*)",
-      "Bash(gh pr diff:*)",
-      "Bash(gh issue view:*)",
-      "Bash(gh api:*)",
-      "Read(~/.claude/projects/**)",
       "Write(~/.local/state/sorah-agent-board/cache/**)",
       "Edit(~/.local/state/sorah-agent-board/cache/**)",
       "Write(~/.local/state/sorah-agent-board/intake/**)",
-      "Edit(~/.local/state/sorah-agent-board/intake/**)",
-      "mcp__claude_ai_Linear__get_issue",
-      "mcp__claude_ai_Linear__list_issues",
-      "mcp__claude_ai_Linear__list_comments",
-      "mcp__claude_ai_Linear__get_project",
-      "mcp__claude_ai_Linear__list_projects",
-      "mcp__claude_ai_Linear__list_cycles",
-      "mcp__claude_ai_Linear__list_teams",
-      "mcp__claude_ai_Linear__get_notifications",
-      "mcp__claude_ai_Linear__whoami",
-      "mcp__claude_ai_Gmail__search_threads",
-      "mcp__claude_ai_Gmail__get_thread",
-      "mcp__claude_ai_Gmail__get_message",
-      "mcp__claude_ai_Gmail__list_labels",
-      "mcp__claude_ai_Google_Calendar__list_calendars",
-      "mcp__claude_ai_Google_Calendar__list_events",
-      "mcp__claude_ai_Google_Calendar__get_event",
-      "mcp__claude_ai_Google_Calendar__search_events",
-      "mcp__claude_ai_Slack__slack_read_channel",
-      "mcp__claude_ai_Slack__slack_read_thread",
-      "mcp__claude_ai_Slack__slack_search_public_and_private",
-      "mcp__claude_ai_Slack__slack_search_channels",
-      "Read(~/.local/state/sorah-agent-board/debug/**)"
+      "Edit(~/.local/state/sorah-agent-board/intake/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "_id": "agent-board-guard",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "env RBENV_VERSION= RBENV_DIR=/ ruby --disable-gems ~/git/config/bin/sorah-agent-board guard || exit 2"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "_id": "agent-board-guard",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "env RBENV_VERSION= RBENV_DIR=/ ruby --disable-gems ~/git/config/bin/sorah-agent-board guard || exit 2"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "_id": "agent-board-guard",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "env RBENV_VERSION= RBENV_DIR=/ ruby --disable-gems ~/git/config/bin/sorah-agent-board guard || exit 2"
+          }
+        ]
+      }
     ]
   }
 }

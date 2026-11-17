@@ -50,6 +50,7 @@ module AgentBoard
         archive AGENT | unarchive AGENT
                                     put a session away (or back); nothing is archived automatically
         hook                        Claude Code hook entry point (reads the payload on stdin)
+        guard                       chief-only permission hook applying chief-policy.json
     USAGE
 
     def self.run(argv)
@@ -66,6 +67,9 @@ module AgentBoard
 
     def run
       case @command
+      when 'guard'
+        output = Guard.new(store:).call(JSON.parse($stdin.read))
+        puts(output) if output
       when 'hook'
         output = Hook.new(store:).call($stdin.read)
         puts(output) if output
