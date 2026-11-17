@@ -132,7 +132,8 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
     } else if (input === "m") setIsTimelineExpanded(!isTimelineExpanded);
     else if (input === "g" && selected) {
       const socket = selected.tmux.socket;
-      if (!socket || !selected.tmux.pane || selected.status === "parked") setMessage("No live tmux pane for this agent.");
+      if (selected.status === "parked") setMessage("Parked: its pane is gone. r resumes it in a new tmux window.");
+      else if (!socket || !selected.tmux.pane) setMessage("This agent's tmux pane isn't known yet; it is recorded on the agent's next hook event.");
       else if (socket !== currentSocket()) setMessage(`Agent runs on another tmux server (${socket}).`);
       else {
         onJump(selected);

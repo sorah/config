@@ -69,7 +69,9 @@ module AgentBoard
       session = @store.update(id, now: @now) do |s|
         events = State.new(lookup: @lookup).apply(s, payload, now: @now)
         summarize = event == 'Stop' && s.name != Snapshot::CHIEF_NAME && (s.last_report || s.title.nil?)
-        events.concat(enrich(s, payload)) if %w[SessionStart PostToolUse].include?(event)
+        # Sessions that began before the hooks were installed, or skipped SessionStart, start untracked.
+        missing = s.tmux_pane.nil? && @env['TMUX_PANE'] || s.cwd.nil? && payload['cwd']
+        events.concat(enrich(s, payload.merge('hook_event_name' => missing ? 'SessionStart' : event))) if missing || %w[SessionStart PostToolUse].include?(event)
         context = context_for(s, event)
         events
       end
@@ -91,6 +93,8 @@ module AgentBoard
     private def enrich(session, payload)
       events = []
       if payload['hook_event_name'] == 'SessionStart'
+        session.cwd ||= payload['cwd']
+        session.transcript_path ||= payload['transcript_path']
         session.tmux_socket = Tmux.socket_from_env(@env)
         session.tmux_pane = @env['TMUX_PANE']
         session.lane = Tmux.lane(session.tmux_socket, session.tmux_pane)

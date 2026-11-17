@@ -120,7 +120,9 @@ module AgentBoard
     private def labels(agents)
       shared = agents.reject(&:name).group_by(&:tmux_session).select { |key, list| key && list.size > 1 }.keys
       agents.to_h do |s|
-        label = s.name || (shared.include?(s.tmux_session) ? s.lane : s.display_name)
+        # A numbered tmux session says nothing about the work, so its directory names it instead.
+        base = s.tmux_session&.match?(/\A\d+\z/) && s.cwd ? File.basename(s.cwd) : s.display_name
+        label = s.name || (shared.include?(s.tmux_session) ? "#{base}:#{s.tmux_window}" : base)
         [s.id, label]
       end
     end
