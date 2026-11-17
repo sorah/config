@@ -24,6 +24,10 @@ module AgentBoard
       @sessions ||= park_vanished(@store.sessions)
     end
 
+    private def live_panes
+      @live_panes ||= Tmux.panes(@store.sessions.filter_map(&:tmux_socket))
+    end
+
     def to_h
       chief = sessions.select { it.name == CHIEF_NAME }
       # The chief is listed only when it needs the user; its routine turns would otherwise always show as done.
@@ -57,7 +61,7 @@ module AgentBoard
     # A pane that disappeared without SessionEnd (killed window, tmux restart) parks its session.
     private def park_vanished(sessions)
       candidates = sessions.select { it.parked_at.nil? && it.tmux_socket && it.tmux_pane }
-      live = Tmux.live_panes(candidates.map(&:tmux_socket))
+      live = live_panes.transform_values { it.keys.to_set }
       sessions.map do |s|
         next s unless candidates.include?(s) && !live.fetch(s.tmux_socket).include?(s.tmux_pane)
 
@@ -85,7 +89,7 @@ module AgentBoard
         'name' => session.display_name,
         'label' => @labels.fetch(session.id),
         'title' => title(session),
-        'lane' => session.lane,
+        'lane' => current_lane(session),
         'cwd' => session.cwd,
         'branch' => session.branch,
         'status' => session.status.to_s,
@@ -117,12 +121,29 @@ module AgentBoard
     end
 
     # An explicit name, else the tmux session, plus the window when two agents share a session.
+    # An explicit board name, else the Claude session's own name (/rename), else from where the pane is now: a window name the user chose, the tmux
+    # session (unless numbered, which says nothing about the work), or the directory.
     private def labels(agents)
-      shared = agents.reject(&:name).group_by(&:tmux_session).select { |key, list| key && list.size > 1 }.keys
+      places = agents.to_h { [it.id, it.tmux_socket && live_panes.dig(it.tmux_socket, it.tmux_pane)] }
+      shared = agents.reject(&:name).group_by { places[it.id]&.session || it.tmux_session }
+                     .select { |key, list| key && list.size > 1 }.keys
       agents.to_h do |s|
-        # A numbered tmux session says nothing about the work, so its directory names it instead.
-        base = s.tmux_session&.match?(/\A\d+\z/) && s.cwd ? File.basename(s.cwd) : s.display_name
-        label = s.name || (shared.include?(s.tmux_session) ? "#{base}:#{s.tmux_window}" : base)
+        next [s.id, s.name] if s.name
+
+        claude_name = SessionName.for(@store, s)
+        next [s.id, claude_name] if claude_name
+
+        place = places[s.id]
+        session = place&.session || s.tmux_session
+        directory = s.cwd && File.basename(s.cwd)
+        window = place&.window_named ? place.window : nil
+        label = case
+                when session.nil? then s.display_name
+                when session.match?(/\A\d+\z/) then window || directory || session
+                when window then "#{session}:#{window}"
+                when shared.include?(session) then "#{session}:#{s.tmux_pane}"
+                else session
+                end
         [s.id, label]
       end
     end
@@ -136,6 +157,11 @@ module AgentBoard
 
       words = text.split
       words.size > TITLE_WORDS ? "#{words.first(TITLE_WORDS).join(' ')}…" : text
+    end
+
+    private def current_lane(session)
+      place = session.tmux_socket && live_panes.dig(session.tmux_socket, session.tmux_pane)
+      place ? "#{place.session}:#{place.window}" : session.lane
     end
 
     private def headline(session)

@@ -27,9 +27,21 @@ module AgentBoard
 
     # Pane IDs alive per socket. A socket whose server is gone maps to an empty set.
     def self.live_panes(sockets)
+      panes(sockets).transform_values { it.keys.to_set }
+    end
+
+    Pane = Data.define(:session, :window, :window_named)
+
+    # Where each live pane sits right now, per socket. Window names that tmux did not auto-rename
+    # are ones the user chose.
+    def self.panes(sockets)
       sockets.uniq.to_h do |socket|
-        out = File.socket?(socket) ? run(socket, 'list-panes', '-a', '-F', '#{pane_id}') : nil
-        [socket, out ? out.split.to_set : Set.new]
+        out = File.socket?(socket) ? run(socket, 'list-panes', '-a', '-F', "\#{pane_id}\t\#{session_name}\t\#{window_name}\t\#{automatic-rename}") : nil
+        rows = out.to_s.lines.filter_map do |line|
+          id, session, window, auto = line.chomp.split("\t", 4)
+          [id, Pane.new(session:, window:, window_named: auto == '0')] if id
+        end
+        [socket, rows.to_h]
       end
     end
 
