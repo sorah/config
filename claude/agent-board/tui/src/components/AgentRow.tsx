@@ -1,6 +1,6 @@
 import { Box, Text } from "ink";
 import type { Agent, TimelineEvent } from "../snapshot.ts";
-import { COLORS, STATUS_COLORS } from "../theme.ts";
+import { COLORS, RECAP_LABELS, STATUS_COLORS } from "../theme.ts";
 import { ago, clock, prLabel, prRef, truncate } from "../format.ts";
 import { ProgressBar } from "./ProgressBar.tsx";
 
@@ -36,9 +36,9 @@ function reportLine(agent: Agent): string | null {
   return text && !agent.headline.includes(text.slice(0, 40)) ? text : null;
 }
 
-// Recent events that add something beyond the prompt and the report line.
+// The latest outcomes, skipping the report the row already shows.
 function activityEvents(agent: Agent): TimelineEvent[] {
-  return agent.timeline.filter((e) => !["prompt", "summary", "report", "title"].includes(e.kind)).slice(0, ACTIVITY_LINES);
+  return agent.recap.filter((e) => !["did", "report"].includes(e.kind)).slice(0, ACTIVITY_LINES);
 }
 
 function metaLine(agent: Agent): string | null {
@@ -119,7 +119,7 @@ export function AgentRow({ agent, columns, isSelected, now }: { agent: Agent; co
         {decideLine(agent) && <Text color={COLORS.orange}>{truncate(`decide: ${decideLine(agent)}`, body)}</Text>}
         {report && <Text color={COLORS.muted}>{truncate(`↳ ${report}`, body)}</Text>}
         {activity.length > 0 && (
-          <Text color={COLORS.muted}>{truncate(activity.map((e) => `${clock(e.at)} ${e.kind} ${e.text}`).join("  ·  "), body)}</Text>
+          <Text color={COLORS.muted}>{truncate(activity.map((e) => `${clock(e.at)} ${RECAP_LABELS[e.kind] ? `${RECAP_LABELS[e.kind]} ` : ""}${e.text}`).join("  ·  "), body)}</Text>
         )}
         {meta && <Text color={COLORS.rule}>{truncate(meta, body)}</Text>}
       </Box>

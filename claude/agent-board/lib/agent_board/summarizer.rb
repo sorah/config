@@ -37,10 +37,13 @@ module AgentBoard
       @store.update(id) do |s|
         s.title_attempted_at = Time.now.iso8601
         s.title_generated = result['title'] if result['title'] && s.title.nil?
-        if report && s.last_report && s.last_report['at'] == report['at']
-          s.last_report = s.last_report.merge('digest' => result.slice('did', 'now', 'decide').merge('at' => Time.now.iso8601))
-        end
-        nil
+        next [] unless report && s.last_report && s.last_report['at'] == report['at']
+
+        s.last_report = s.last_report.merge('digest' => result.slice('did', 'now', 'decide').merge('at' => Time.now.iso8601))
+        # Concise outcomes for the timeline, in place of the raw turn summary.
+        at = report.fetch('at')
+        [(result['did'] && {'at' => at, 'kind' => 'did', 'text' => result['did']}),
+         (result['decide'] && {'at' => at, 'kind' => 'decide', 'text' => result['decide']})].compact
       end
       result
     ensure

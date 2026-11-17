@@ -1,41 +1,44 @@
 # frozen_string_literal: true
 
 module AgentBoard
-  # Condenses a session's timeline to outcomes and the user's real inputs, newest first.
+  # Condenses a session's timeline to outcomes and the user's real inputs, newest first: task
+  # changes, milestones, decisions and concise reports, without routine prompts or raw summaries.
   module Recap
-    OUTCOMES = %w[dispatch link plan commit pr ask wait message error parked resumed report cleared].freeze
-    # A prompt right after one of these is the user answering the agent.
-    AWAITING = %w[ask wait blocked].freeze
     LIMIT = 12
+    OUTCOMES = %w[dispatch link plan commit pr did decide ask wait message error parked report cleared].freeze
+    # A prompt right after one of these is the user answering the agent.
+    AWAITING = %w[ask wait blocked decide].freeze
 
     # events: oldest first.
     def self.build(events)
+      first_prompt = events.find { it['kind'] == 'prompt' && Presence.user_prompt?(it['text']) }
       recap = []
       previous = nil
-      events.each_with_index do |event, i|
-        entry = entry_for(event, previous, first_prompt: events.find { it['kind'] == 'prompt' }.equal?(event))
-        recap << entry if entry && recap.last&.values_at('kind', 'text') != entry.values_at('kind', 'text')
-        previous = event unless %w[summary notification].include?(event['kind'])
-        recap.reject! { it['kind'] == 'check' && it['text'] == entry['text'] && !it.equal?(entry) } if entry&.dig('kind') == 'check'
-        _ = i
+      events.each do |event|
+        entry = entry_for(event, previous, first_prompt: event.equal?(first_prompt))
+        previous = event unless %w[summary title].include?(event['kind'])
+        next if entry.nil? || recap.last&.values_at('kind', 'text') == entry.values_at('kind', 'text')
+
+        # Only the latest result of a repeated check matters.
+        recap.reject! { it['kind'] == 'check' && check_command(it) == check_command(entry) } if entry['kind'] == 'check'
+        recap << entry
       end
       recap.last(LIMIT).reverse
     end
 
     def self.entry_for(event, previous, first_prompt:)
-      kind = event['kind']
       text = event['text'].to_s
-      case kind
+      case event['kind']
       when 'prompt'
-        return if !Presence.user_prompt?(text)
+        return unless Presence.user_prompt?(text)
         return relabel(event, 'started', text) if first_prompt
         return relabel(event, 'answered', text) if previous && AWAITING.include?(previous['kind'])
 
         nil
-      when 'step' then text.end_with?('→ done') ? event : nil
-      when 'blocked' then text.start_with?('question:', 'plan:') ? event : nil
-      when 'check' then text.end_with?('passed') ? relabel(event, 'check', text.sub(/ passed\z/, ' ✓')) : relabel(event, 'check', text)
-      when *OUTCOMES then event
+      when 'step' then text.end_with?('→ todo') ? nil : event
+      when 'blocked' then text.start_with?('question:', 'plan:') ? relabel(event, 'ask', text) : nil
+      when 'check' then text.end_with?('passed') ? nil : relabel(event, 'check', text)
+      when *OUTCOMES then relabel(event, event['kind'], text)
       end
     end
 
@@ -43,8 +46,10 @@ module AgentBoard
       event.merge('kind' => kind, 'text' => first_sentence(text))
     end
 
+    def self.check_command(entry) = entry['text'].sub(/ failed \(.*\)\z/, '')
+
     def self.first_sentence(text)
-      line = text.lines.first.to_s.strip
+      line = Text.plain(text).lines.first.to_s.strip
       line[/\A.{1,160}?[.!?](?=\s|\z)/] || line[0, 160]
     end
   end

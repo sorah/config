@@ -104,6 +104,7 @@ module AgentBoard
         'pr' => pr,
         'edited_files' => session.edited_files.size,
         'timeline' => @store.timeline(session.id, limit: @timeline_limit),
+        'recap' => Recap.build(@store.timeline(session.id, limit: 300).reverse),
         'tmux' => {'socket' => session.tmux_socket, 'pane' => session.tmux_pane},
       }
     end
@@ -143,8 +144,8 @@ module AgentBoard
       when :asking then "you: #{session.ask}"
       when :waiting then "#{session.wait.fetch('on')}: #{session.wait.fetch('text')}"
       when :error then "error: #{session.error}"
-      when :parked then next_step(session.plan) || session.goal || '(no goal recorded)'
-      else session.goal || '(no goal recorded)'
+      when :parked then next_step(session.plan) || session.goal || ''
+      else session.goal || ''
       end
     end
 

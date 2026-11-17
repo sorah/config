@@ -60,6 +60,7 @@ export type Agent = {
   pr: PullRequest | null;
   edited_files: number;
   timeline: TimelineEvent[];
+  recap: TimelineEvent[];
   tmux: { socket: string | null; pane: string | null };
 };
 

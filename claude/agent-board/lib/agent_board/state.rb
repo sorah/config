@@ -151,11 +151,10 @@ module AgentBoard
 
     private def bash_milestone(command, failed:)
       case command
-      when /\bgit\s+commit\b/
+      when /\bgit\s+(?:-C\s+\S+\s+)?commit\b/
         return if failed
 
-        subject = lookup.commit_subject(session.cwd)
-        event('commit', subject || command.slice(0, 120))
+        event('commit', lookup.commit_subject(command_dir(command)) || commit_message(command) || 'commit')
       when /\bgh\s+pr\s+create\b/
         return if failed
 
@@ -169,6 +168,21 @@ module AgentBoard
         outcome = failed ? "failed (#{payload['error']})" : 'passed'
         event('check', "#{command.lines.first.strip.slice(0, 100)} #{outcome}")
       end
+    end
+
+    # The directory a command runs git in: a leading `cd DIR &&`, `git -C DIR`, else the session's.
+    private def command_dir(command)
+      dir = command[/\A\s*cd\s+("[^"]+"|'[^']+'|\S+)\s*&&/, 1] || command[/\bgit\s+-C\s+("[^"]+"|'[^']+'|\S+)/, 1]
+      return session.cwd if dir.nil?
+
+      File.expand_path(dir.delete(%q('")).sub(/\A~(?=\/|\z)/, Dir.home), session.cwd || Dir.home)
+    end
+
+    # The subject from `-m "..."` or the first line of a heredoc message.
+    private def commit_message(command)
+      message = command[/\s-m\s+(?:"([^"]+)"|'([^']+)')/, 1] || command[/\s-m\s+'([^']+)'/, 1] ||
+                command[/<<-?\s*'?(\w+)'?\s*\n(.*?)\n/m, 2]
+      message&.lines&.first&.strip&.slice(0, 120)
     end
 
     private def record_edit(path)

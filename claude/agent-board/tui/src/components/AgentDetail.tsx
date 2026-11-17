@@ -1,7 +1,7 @@
 import { Box, Text } from "ink";
 import type { ReactNode } from "react";
 import type { Agent } from "../snapshot.ts";
-import { COLORS, TIMELINE_COLORS } from "../theme.ts";
+import { COLORS, RECAP_LABELS, TIMELINE_COLORS } from "../theme.ts";
 import { ago, clock, prLabel, prRef, truncate } from "../format.ts";
 import { ProgressBar } from "./ProgressBar.tsx";
 
@@ -13,7 +13,7 @@ export function detailHeight(agent: Agent, isWide: boolean, isTimelineExpanded: 
   const plan = agent.plan ? agent.plan.steps.length + 2 : 0;
   const reportText = agent.last_report ? (isTimelineExpanded ? agent.last_report.text : agent.last_report.brief) : "";
   const report = agent.last_report ? Math.ceil(reportText.length / 60) + reportText.split("\n").length + 2 : 0;
-  const timeline = Math.min(agent.timeline.length, isTimelineExpanded ? agent.timeline.length : TIMELINE_ROWS) + 2;
+  const timeline = (isTimelineExpanded ? agent.timeline.length : Math.max(1, Math.min(agent.recap.length, TIMELINE_ROWS))) + 3;
   const facts = 7;
   return (isWide ? Math.max(plan + report, timeline + facts) : plan + report + timeline + facts) + 1;
 }
@@ -73,20 +73,28 @@ function ReportSection({ agent, isExpanded }: { agent: Agent; isExpanded: boolea
   );
 }
 
+// The recap by default (outcomes and the user's inputs); m switches to the raw timeline.
 function TimelineSection({ agent, width, isExpanded }: { agent: Agent; width: number; isExpanded: boolean }) {
-  const shown = isExpanded ? agent.timeline : agent.timeline.slice(0, TIMELINE_ROWS);
-  const hidden = agent.timeline.length - shown.length;
+  const events = isExpanded ? agent.timeline : agent.recap.slice(0, TIMELINE_ROWS);
+  const hidden = isExpanded ? 0 : agent.recap.length - events.length;
   return (
     <Box flexDirection="column" marginBottom={1}>
-      <Heading>TIMELINE</Heading>
-      {shown.map((event, i) => (
-        <Box key={i}>
-          <Text color={TIMELINE_COLORS[event.kind] ?? COLORS.muted}>● </Text>
-          <Text color={COLORS.muted}>{clock(event.at)} </Text>
-          <Text>{truncate(`${event.kind === "summary" ? "" : `${event.kind} `}${event.text}`, width - 9)}</Text>
-        </Box>
-      ))}
-      {hidden > 0 && <Text color={COLORS.muted}>{`  m: show ${hidden} more`}</Text>}
+      <Heading>{isExpanded ? "TIMELINE (all events)" : "TIMELINE"}</Heading>
+      {events.map((event, i) => {
+        const label = isExpanded ? event.kind : (RECAP_LABELS[event.kind] ?? event.kind);
+        return (
+          <Box key={i}>
+            <Text color={TIMELINE_COLORS[event.kind] ?? COLORS.muted}>● </Text>
+            <Text color={COLORS.muted}>{clock(event.at)} </Text>
+            <Text wrap="truncate-end">
+              {label && <Text color={COLORS.muted}>{`${label} `}</Text>}
+              {truncate(event.text, width - 9 - label.length)}
+            </Text>
+          </Box>
+        );
+      })}
+      {hidden > 0 && <Text color={COLORS.muted}>{`  ${hidden} older · m: all events`}</Text>}
+      {!isExpanded && events.length === 0 && <Text color={COLORS.muted}>  nothing notable yet</Text>}
     </Box>
   );
 }

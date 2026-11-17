@@ -31,7 +31,33 @@ export const STATUS_COLORS: Record<Status, string> = {
   parked: COLORS.grey,
 };
 
+// How recap kinds read in the timeline, matching the board's reference layout.
+export const RECAP_LABELS: Record<string, string> = {
+  started: "Started",
+  answered: "You",
+  ask: "Asked",
+  decide: "Needs decision",
+  did: "Report",
+  report: "Report",
+  message: "",
+  step: "",
+  plan: "",
+  commit: "Commit",
+  pr: "",
+  check: "Check",
+  link: "Linked",
+  wait: "Waiting on",
+  parked: "Parked",
+  error: "Error",
+  dispatch: "Dispatched",
+  cleared: "Cleared",
+};
+
 export const TIMELINE_COLORS: Record<string, string> = {
+  started: COLORS.blue,
+  answered: COLORS.purple,
+  did: COLORS.orange,
+  decide: COLORS.orange,
   step: COLORS.blue,
   plan: COLORS.blue,
   summary: COLORS.green,
