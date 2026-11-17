@@ -37,6 +37,8 @@ export type Agent = {
   id: string;
   short_id: string;
   name: string;
+  label: string;
+  title: string | null;
   lane: string | null;
   cwd: string | null;
   branch: string | null;

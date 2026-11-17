@@ -17,6 +17,7 @@ module AgentBoard
         wait --on WHO TEXT          you are blocked on someone other than the user
         plan STEP...                declare 3-7 steps; indent a step with two spaces to nest it
         step N done|doing|todo      update step N (1-based)
+        title TEXT                  a 3-6 word title for this work, shown on the board
         link [--agent AGENT] KEY_OR_URL
                                     bind this (or another) session to a Linear or GitHub issue
 
@@ -79,6 +80,7 @@ module AgentBoard
       when 'plan' then update_self { |s, now| plan(s, now) }
       when 'step' then update_self { |s, now| step(s, now) }
       when 'link' then link_command
+      when 'title' then update_self { |s, now| title(s, now) }
       when 'snapshot' then snapshot
       when 'count' then count
       when 'watch' then watch
@@ -165,6 +167,11 @@ module AgentBoard
 
     # Without --agent the caller links its own session; with it, the chief links another agent, whose
     # hook then tells that agent at its next prompt or tool call.
+    private def title(session, now)
+      session.title = Text.clean(text_arg, max: 48, single_line: true)
+      [event(now, 'title', session.title)]
+    end
+
     private def link_command
       agent = nil
       OptionParser.new { it.on('--agent AGENT') { |v| agent = v } }.parse!(@argv)

@@ -91,7 +91,8 @@ module AgentBoard
         session.tmux_socket = Tmux.socket_from_env(@env)
         session.tmux_pane = @env['TMUX_PANE']
         session.lane = Tmux.lane(session.tmux_socket, session.tmux_pane)
-        session.name ||= @env['SORAH_AGENT_BOARD_NAME'] || session.lane&.split(':', 2)&.last
+        # Window names are usually just the auto-renamed command, so only an explicit name is kept.
+        session.name ||= @env['SORAH_AGENT_BOARD_NAME']
         session.repo = Git.repo(session.cwd)
         events.concat(apply_dispatch(session))
       elsif !(payload['tool_name'] == 'Bash' && payload.dig('tool_input', 'command').to_s.match?(/\bgit\s+(switch|checkout)\b/))

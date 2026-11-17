@@ -79,7 +79,7 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
     setMessage(null);
     if (pendingArchive) {
       setPendingArchive(null);
-      if (input === "y" && board(["archive", pendingArchive.id], `Archived ${pendingArchive.name}. u: undo`)) {
+      if (input === "y" && board(["archive", pendingArchive.id], `Archived ${pendingArchive.label}. u: undo`)) {
         setLastArchived(pendingArchive);
       } else if (input !== "y") {
         setMessage("Not archived.");
@@ -106,12 +106,12 @@ export function App({ source, onJump }: { source: SnapshotSource; onJump: (agent
       }
     } else if (input === "a" && selected) {
       setPendingArchive(selected);
-      setMessage(`Archive ${selected.name}? It leaves the board until unarchived. y: archive, any other key: cancel`);
+      setMessage(`Archive ${selected.label}? It leaves the board until unarchived. y: archive, any other key: cancel`);
     } else if (input === "u" && lastArchived) {
-      if (board(["unarchive", lastArchived.id], `Restored ${lastArchived.name}.`)) setLastArchived(null);
+      if (board(["unarchive", lastArchived.id], `Restored ${lastArchived.label}.`)) setLastArchived(null);
     } else if (input === "r" && selected) {
       if (selected.status !== "parked") setMessage("Only parked agents can be resumed.");
-      else board(["resume", selected.id], `Resumed ${selected.name} in a new tmux window.`);
+      else board(["resume", selected.id], `Resumed ${selected.label} in a new tmux window.`);
     } else if (input === "q" || key.escape) exit();
   });
 

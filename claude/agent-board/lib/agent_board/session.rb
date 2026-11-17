@@ -13,6 +13,7 @@ module AgentBoard
     :lane,
     :name,
     :goal,
+    :title,
     :turn_active,
     :seen,
     :blockers,
@@ -71,7 +72,11 @@ module AgentBoard
 
     def short_id = id[0, 8]
 
-    def display_name = name || File.basename(cwd || short_id)
+    def display_name = name || tmux_session || File.basename(cwd || short_id)
+
+    def tmux_session = lane&.split(':', 2)&.first
+
+    def tmux_window = lane&.split(':', 2)&.last
 
     def tracked? = !issue.nil?
 

@@ -26,6 +26,7 @@ module AgentBoard
 
     def to_h
       chief, agents = sessions.partition { it.name == CHIEF_NAME }
+      @labels = labels(agents)
       prs = @pull_requests ? PullRequests.new(store: @store, now: @now).for_sessions(agents) : {}
       groups = GROUPS.map do |key, title, statuses|
         members = agents.select { statuses.include?(it.status) }
@@ -72,6 +73,8 @@ module AgentBoard
         'id' => session.id,
         'short_id' => session.short_id,
         'name' => session.display_name,
+        'label' => @labels.fetch(session.id),
+        'title' => title(session),
         'lane' => session.lane,
         'cwd' => session.cwd,
         'branch' => session.branch,
@@ -93,6 +96,27 @@ module AgentBoard
         'timeline' => @store.timeline(session.id, limit: @timeline_limit),
         'tmux' => {'socket' => session.tmux_socket, 'pane' => session.tmux_pane},
       }
+    end
+
+    # An explicit name, else the tmux session, plus the window when two agents share a session.
+    private def labels(agents)
+      shared = agents.reject(&:name).group_by(&:tmux_session).select { |key, list| key && list.size > 1 }.keys
+      agents.to_h do |s|
+        label = s.name || (shared.include?(s.tmux_session) ? s.lane : s.display_name)
+        [s.id, label]
+      end
+    end
+
+    TITLE_WORDS = 6
+
+    # A few words for the work: the issue title, the agent's own title, or the start of its first prompt.
+    private def title(session)
+      issue_title = session.issue && issue(session.issue)&.fetch('title')
+      text = issue_title || session.title || session.goal
+      return if text.nil?
+
+      words = text.split
+      words.size > TITLE_WORDS ? "#{words.first(TITLE_WORDS).join(' ')}…" : text
     end
 
     private def headline(session)
