@@ -84,6 +84,23 @@ module AgentBoard
       session.pending_tools[id] = tool_digest(tool, payload['tool_input']) if id
       kind = QUESTION_TOOLS[tool]
       add_blocker(kind, id, question_summary(tool)) if kind
+      text = activity_text(tool, payload['tool_input'] || {})
+      session.activity = {'text' => text, 'at' => @now.iso8601} if text
+    end
+
+    # What a tool call is doing, in the words its caller gave it where there are some.
+    private def activity_text(tool, input)
+      name = ->(path) { path && File.basename(path.to_s) }
+      text = case tool
+             when 'Bash' then input['description'] || input['command'].to_s.lines.first
+             when 'Edit', 'MultiEdit', 'Write', 'NotebookEdit' then "editing #{name[input['file_path'] || input['notebook_path']]}"
+             when 'Read' then "reading #{name[input['file_path']]}"
+             when 'Grep', 'Glob' then "searching #{input['pattern']}"
+             when 'Agent', 'Task' then "subagent: #{input['description']}"
+             when 'WebFetch', 'WebSearch' then 'looking things up on the web'
+             when /\Amcp__/ then "#{tool.split('__', 3).last.tr('_', ' ')}"
+             end
+      text && Text.clean(text.to_s, max: 100, single_line: true)
     end
 
     private def post_tool_use(failed:)
@@ -123,6 +140,7 @@ module AgentBoard
     end
 
     private def stop
+      session.activity = nil
       session.turn_active = false
       session.seen = false
       session.blockers = []

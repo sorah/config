@@ -61,6 +61,7 @@ export type Agent = {
   edited_files: number;
   timeline: TimelineEvent[];
   recap: TimelineEvent[];
+  activity: { text: string; at: string } | null;
   tmux: { socket: string | null; pane: string | null };
 };
 

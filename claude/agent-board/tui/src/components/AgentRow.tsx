@@ -15,7 +15,7 @@ const ACTIVITY_LINES = 2;
 // Mirrors the line count AgentRow renders, for scrolling.
 export function rowHeight(agent: Agent): number {
   const activity = activityEvents(agent).length > 0 ? 1 : 0;
-  return 1 + (decideLine(agent) ? 1 : 0) + (headlineLine(agent) ? 1 : 0) + (agent.plan ? 1 : 0) + (reportLine(agent) ? 1 : 0) + activity + (metaLine(agent) ? 1 : 0);
+  return 1 + (agent.activity ? 1 : 0) + (decideLine(agent) ? 1 : 0) + (headlineLine(agent) ? 1 : 0) + (agent.plan ? 1 : 0) + (reportLine(agent) ? 1 : 0) + activity + (metaLine(agent) ? 1 : 0);
 }
 
 // The question, dialog or wait, unless the title already says it.
@@ -117,6 +117,7 @@ export function AgentRow({ agent, columns, isSelected, now }: { agent: Agent; co
             </Text>
           </Box>
         )}
+        {agent.activity && <Text color={COLORS.blue}>{truncate(`working: ${agent.activity.text} (${ago(agent.activity.at, now)})`, body)}</Text>}
         {decideLine(agent) && <Text color={COLORS.orange}>{truncate(`decide: ${decideLine(agent)}`, body)}</Text>}
         {report && <Text color={COLORS.muted}>{truncate(`↳ ${report}`, body)}</Text>}
         {activity.length > 0 && (

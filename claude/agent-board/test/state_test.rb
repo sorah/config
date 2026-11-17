@@ -178,4 +178,22 @@ class StateTest < Minitest::Test
     assert_equal "Done. Fixed gauge in app.rb.\n\nNext\nrun tests", text
     assert_equal 'Done. Fixed gauge in app.rb.', AgentBoard::Text.brief(text)
   end
+
+  def test_filler_digest_values_are_dropped_but_real_ones_kept
+    assert AgentBoard::Summarizer.filler?('nothing; waiting...')
+    assert AgentBoard::Summarizer.filler?('No decision needed.')
+    refute AgentBoard::Summarizer.filler?('Nothing blocks; adding tests')
+    refute AgentBoard::Summarizer.filler?('Waiting on sam to review')
+  end
+
+  def test_tool_calls_record_what_the_agent_is_doing
+    s = new_session
+    apply(s, 'PreToolUse', tool_name: 'Bash', tool_input: {'command' => 'bundle exec rspec', 'description' => 'Run the test suite'}, tool_use_id: 't')
+
+    assert_equal 'Run the test suite', s.activity.fetch('text')
+
+    apply(s, 'Stop', last_assistant_message: 'done')
+
+    assert_nil s.activity
+  end
 end

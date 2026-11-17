@@ -16,6 +16,7 @@ module AgentBoard
     :title,
     :title_generated,
     :title_attempted_at,
+    :activity,
     :turn_active,
     :seen,
     :blockers,
