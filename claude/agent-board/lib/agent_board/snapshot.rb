@@ -122,10 +122,9 @@ module AgentBoard
       last_report.merge('text' => text, 'brief' => Text.brief(text), 'digest' => digest)
     end
 
-    # An explicit name, else the tmux session, plus the window when two agents share a session.
     # An explicit board name, else the Claude session's own name (/rename), else from where the pane is now: a window name the user chose, the tmux
     # session (unless numbered, which says nothing about the work), or the directory.
-    private def labels(agents)
+    def labels(agents = sessions)
       places = agents.to_h { [it.id, it.tmux_socket && live_panes.dig(it.tmux_socket, it.tmux_pane)] }
       shared = agents.reject(&:name).group_by { places[it.id]&.session || it.tmux_session }
                      .select { |key, list| key && list.size > 1 }.keys
@@ -200,9 +199,11 @@ module AgentBoard
       cached = @store.path('cache', 'issues', "#{key.tr('/#', '__')}.json")
       title = File.exist?(cached) ? JSON.parse(File.read(cached))['title'] : nil
       title ||= @titles&.fetch(key, nil)
-      others = Array(session.refs).map { it['key'] }.reject { it == key }
-      # Linear keys read first, whichever reference is primary.
-      shown = ([key] + others).uniq.sort_by.with_index { |k, i| [k.include?('/') ? 1 : 0, i] }.first(2)
+      refs = Array(session.refs)
+      others = refs.map { it['key'] }.reject { it == key }
+      # One Linear and one GitHub reference, Linear first; issues an agent merely looked at rank last.
+      rank = ->(ref) { [ref['key'] == key ? 0 : 1, IssueRef::PINNED_SOURCES.include?(ref['source']) ? 0 : 1, ref['source'] == 'tool' ? 1 : 0] }
+      shown = ([issue] + refs).group_by { it['key'].include?('/') ? 1 : 0 }.sort.map { |_, list| list.min_by.with_index { |ref, i| [*rank[ref], i] }['key'] }
       short = shown.map { short_key(it) }.join(' ')
       issue.slice('key', 'url', 'tracker', 'source').merge('title' => title, 'short' => short, 'related' => others)
     end

@@ -59,6 +59,15 @@ class StoreAndCliTest < Minitest::Test
     assert_equal [1, 4], agent.fetch('plan').values_at('done', 'total')
   end
 
+  def test_agent_option_matches_the_claude_session_name
+    transcript = File.join(@dir, 'transcript.jsonl')
+    File.write(transcript, %({"type":"custom-title","customTitle":"perms-rollout"}\n))
+    @store.update('sess-1', now: NOW) { it.transcript_path = transcript; nil }
+    with_env('SORAH_AGENT_BOARD_HOME' => @dir) { cli('link', '--agent', 'perms-rollout', 'https://github.com/o/r/issues/7') }
+
+    assert_equal 'o/r#7', @store.load('sess-1').issue.fetch('key')
+  end
+
   private def cli(*argv)
     out, = capture_io { AgentBoard::CLI.new(argv).run }
     out

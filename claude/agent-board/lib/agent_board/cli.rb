@@ -459,7 +459,8 @@ module AgentBoard
 
     private def find_agent(query)
       sessions = store.sessions
-      matches = sessions.select { it.display_name == query }
+      labels = Snapshot.new(store:, pull_requests: false).labels(sessions)
+      matches = sessions.select { labels[it.id] == query || it.display_name == query }
       matches = sessions.select { it.id.start_with?(query) } if matches.empty?
       raise Error, "no session matching #{query}" if matches.empty?
       raise Error, "ambiguous: #{matches.map { "#{it.display_name} (#{it.short_id})" }.join(', ')}" if matches.size > 1
