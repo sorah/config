@@ -275,6 +275,12 @@ module AgentBoard
           o.on('--ref REF') { opts[:ref] = it }
         end.parse!(@argv)
         kind = @argv.shift.to_s
+        if opts[:agent]
+          session = find_agent(opts[:agent])
+          pending = session.ask || session.last_report&.dig('digest', 'decide')
+          # The agent's own question is already on its board row.
+          raise Error, "attention: #{opts[:agent]} already shows its question on the board: #{pending}" if kind == 'decide' && pending
+        end
         puts("##{board.add(kind:, text: text_arg, **opts)}")
       when 'resolve'
         id, outcome = @argv

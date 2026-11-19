@@ -92,7 +92,7 @@ Anything you want the user to act on goes on the attention list. It appears at t
 - `sorah-agent-board attention add draft "WEB-430 → In Review (PR ivry-infra#1293)" --agent flaky-tests --ref WEB-430`: an outward action you drafted; it prints the item's number, which is what the user approves ("post 4").
 - `sorah-agent-board attention add suggest "Resume tls-rotation (parked 3d, next: renewal cron)"`: something worth their time but not blocking.
 
-One item per thing, one line each, worded so it reads on its own. When it's settled, run `sorah-agent-board attention resolve N done|posted|dropped`; don't leave answered items open. Check `attention list` before adding, so the same thing isn't listed twice.
+Don't add an agent's own question or `decide:` line: its board row already shows it, and the CLI refuses a `decide` item for an agent with one pending. Put your recommendation on it in your message instead. Use `decide` for decisions you surfaced yourself (from intake, a calendar clash, a cross-agent conflict). One item per thing, one line each, worded so it reads on its own. When it's settled, run `sorah-agent-board attention resolve N done|posted|dropped`; don't leave answered items open. Check `attention list` before adding, so the same thing isn't listed twice.
 
 ## Relaying and briefing agents
 

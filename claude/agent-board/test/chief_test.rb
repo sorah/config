@@ -66,6 +66,20 @@ class ChiefTest < Minitest::Test
     assert_nil s.issue_announced
   end
 
+  def test_attention_refuses_a_decision_the_agent_already_asked
+    @store.update('sess-1', now: NOW) do |s|
+      s.name = 'flaky-tests'
+      s.last_report = {'at' => NOW.iso8601, 'text' => 'r', 'digest' => {'decide' => 'Quarantine or fix?'}}
+      nil
+    end
+    with_env('SORAH_AGENT_BOARD_HOME' => @dir) do
+      assert_raises(AgentBoard::CLI::Error) { AgentBoard::CLI.new(['attention', 'add', 'decide', 'Quarantine?', '--agent', 'flaky-tests']).run }
+      capture_io { AgentBoard::CLI.new(['attention', 'add', 'draft', 'WEB-430 → In Review', '--agent', 'flaky-tests']).run }
+    end
+
+    assert_equal ['draft'], AgentBoard::Attention.new(store: @store).open_items.map { it['kind'] }
+  end
+
   def test_relay_refuses_while_a_dialog_is_open
     session = @store.update('sess-1', now: NOW) do |s|
       s.tmux_socket = '/nonexistent.invalid'
