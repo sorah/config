@@ -40,6 +40,7 @@ module AgentBoard
         return :running
       end
 
+      update_plugin
       resume_id = fresh ? nil : last_session_id
       claude = ['claude', '--name', NAME, '--remote-control', NAME, '--settings', SETTINGS]
       claude += ['--resume', resume_id] if resume_id
@@ -63,6 +64,13 @@ module AgentBoard
         exec('tmux', 'switch-client', '-t', "=#{SESSION}")
       else
         exec('tmux', 'attach-session', '-t', "=#{SESSION}")
+      end
+    end
+
+    # Claude Code runs an installed copy of the plugin, refreshed only by an update.
+    private def update_plugin
+      [%w[marketplace update sorah-marketplace], %w[update sorah-chief@sorah-marketplace]].each do |args|
+        system('claude', 'plugin', *args, in: File::NULL, out: File::NULL, err: File::NULL, exception: false)
       end
     end
 
